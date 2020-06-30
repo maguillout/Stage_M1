@@ -1,7 +1,6 @@
 from django.conf import settings
 from django.db import models
 from django.utils import timezone
-import pandas as pd
 
 # Create your models here.
 
@@ -18,3 +17,4 @@ class Table(models.Model):
 
     def importation(self):
         self.tab=pd.read_csv(self.path_file, sep =';')
+

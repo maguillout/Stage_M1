@@ -1,0 +1,59 @@
+.content {
+    margin-left: 40px;
+}
+
+.date {
+    color: #828282;
+    font-size: 10pt;
+}
+
+.page-header {
+    background-color: #4aace0;
+    color: #ffffff;
+    margin-top: 0;
+    padding: 20px 20px 20px 40px;
+}
+
+.page-header h1 {
+    color: #ffffff;
+    font-size: 30pt;
+}
+
+.etape h2{
+    font-size: 25pt;
+    color: #000000;
+}
+
+.post, h3{
+    font-size: 16pt;
+    color: green;
+}
+
+/*Navigation bar*/
+
+nav ul{
+	padding: 0px;
+	margin: 0px;
+	list-style-type:none;
+}
+
+nav li{
+	display:inline-block;
+	width: 200px;
+	height: 50px;
+	padding: 10px;	
+}
+
+nav li :hover{
+	background-color: #e6f0ff;
+}
+
+nav li a{
+	display:block;
+	text-decoration: none;
+	color: #FFFFFF;
+}
+
+
+
+Context | Request Context

@@ -1,11 +1,19 @@
-<html>
-    <head>
-        <title>Exome analysis for diagnosis of renal pathologies</title>
-    </head>
-    <body>
-        <p>Pipeline initialisation</p>
-        <p>Running pipelines</p>
-	<p>Variants analysis</p>
-	<p>Databases</p>
-    </body>
-</html>
+{% extends 'variantsViz/base.html' %}
+
+{% block content %}
+		<div class="content container">
+		    <div class="row">
+		        <div class="col-md-8">
+			    	{% for t in tabs %}
+		        	<div class="post">	            
+		           	 <h3><a href="">{{ t.sample_id }}</a></h3>
+		          	  <div class="date">
+		          	      <p>importé: {{ t.created_date }}</p>
+		         	   </div>
+		          	  <p>{{ t.tab|linebreaksbr }}</p>
+	       			 </div>
+	  				{% endfor %}		            
+		        </div>
+		    </div>
+		</div>
+{% endblock %}

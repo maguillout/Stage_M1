@@ -18,5 +18,7 @@ from django.urls import path, include
 
 urlpatterns = [
     path('admin/', admin.site.urls),
+    #importation des url de l'application variantsViz
     path('', include('variantsViz.urls')),
 ]
+
