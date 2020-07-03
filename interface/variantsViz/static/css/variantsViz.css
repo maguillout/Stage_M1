@@ -1,14 +1,16 @@
 .content {
     margin-left: 40px;
+    margin-top: 15px;
 }
 
 .date {
     color: #828282;
     font-size: 10pt;
+    margin-top: 15px;
 }
 
 .page-header {
-    background-color: #4aace0;
+    background-color: #6782c9;
     color: #ffffff;
     margin-top: 0;
     padding: 20px 20px 20px 40px;
@@ -19,15 +21,27 @@
     font-size: 30pt;
 }
 
-.etape h2{
+h2{
     font-size: 25pt;
-    color: #000000;
+    color: #6782c9;
+    margin-left: 20px;
 }
 
 .post, h3{
-    font-size: 16pt;
-    color: green;
+    font-size: 12pt;
+    margin-top: 15px;
 }
+
+label{
+	padding: 10px 10px 10px; /* 3 valeurs */
+	margin-top: 15px;
+}
+
+button{
+	margin-top: 10px;
+}
+
+
 
 /*Navigation bar*/
 
@@ -45,7 +59,7 @@ nav li{
 }
 
 nav li :hover{
-	background-color: #e6f0ff;
+	background-color: #c2cde9;
 }
 
 nav li a{
@@ -56,4 +70,29 @@ nav li a{
 
 
 
+/*Details*/
+details {
+    border: 1px solid #aaa;
+    border-radius: 4px;
+    padding: .5em .5em 0;
+}
+
+summary {
+    font-weight: bold;
+    margin: -.5em -.5em 0;
+    padding: .5em;
+}
+
+details[open] {
+    padding: .5em;
+}
+
+details[open] summary {
+    border-bottom: 1px solid #aaa;
+    margin-bottom: .5em;
+}
+
+details > summary::-webkit-details-marker {
+  display: none;
+}
 Context | Request Context

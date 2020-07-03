@@ -1,0 +1,27 @@
+{% extends 'variantsViz/base.html' %}
+
+{% block content %}
+
+<h2>Running jobs</h2>
+
+<label for="file">Job 1</label>
+
+<div class="date">
+Started on 28 Jun 2020
+</div>
+<p>	Current step: annotation
+
+	<progress id="file" max="100" value="70"> 70% </progress>
+</p>
+
+<label for="file">Job 2</label>
+
+<div class="date">
+Started on 30 Jun 2020
+</div>
+<p>	Current step: align
+
+	<progress id="file" max="100" value="30"> 30% </progress>
+</p>
+
+{% endblock %}

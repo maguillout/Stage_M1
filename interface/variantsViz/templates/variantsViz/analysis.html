@@ -1,8 +1,22 @@
 {% extends 'variantsViz/base.html' %}
 
 {% block content %}
-gfedgmifgh
-gshrtghqsrh
-htqrhqsghsh
-tqshrhsrh
+
+<h2>Variants analysis</h2>
+
+
+
+<details>
+    <summary>ACMG classification</summary>
+    <p class="pm">
+     <input type="checkbox" name="pm1" checked value="1"> PM1: Located in a mutational hot spot and/or critical and well-established functional domain (e.g., active site of an enzyme) without benign variation<br>
+     <input type="checkbox" name="pm2" checked value="1"> PM2: Absent from controls (or at extremely low frequency if recessive) in Exome Sequencing Project, 1000 Genomes Project, or Exome Aggregation Consortium<br>
+     <input type="checkbox" name="pm3"  value="1"> PM3: For recessive disorders, detected in trans with a pathogenic variant<br></font>
+     <input type="checkbox" name="pm4"  value="1"> PM4: Protein length changes as a result of in-frame deletions/insertions in a nonrepeat region or stop-loss variants<br>     
+	</p>
+	<button>Save changes</button>
+</details>
+
+
+
 {% endblock %}

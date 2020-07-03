@@ -1,24 +1,47 @@
-{% load static %}
-<html>
-    <head>
-        <title>Exome analysis for diagnosis of renal pathologies</title>
-        <link rel="stylesheet" href="//maxcdn.bootstrapcdn.com/bootstrap/3.2.0/css/bootstrap.min.css">
-        <link rel="stylesheet" href="//maxcdn.bootstrapcdn.com/bootstrap/3.2.0/css/bootstrap-theme.min.css">
-        <link rel="stylesheet" href="{% static 'css/variantsViz.css' %}">
-    </head>
-    <body>
-         <div class="page-header">
-            <h1>Exome analysis for diagnosis of renal pathologies</h1>  
-        </div> 
-        <div class="navbar navbar-default navbar-fixed-top" role="navigation">
-    <div class="container">
-            <li><a href="/initialisation">Pipeline initialisation</li>
-            <li><a href="/running">Running pipelines</li>   
-            <li><a href="/analysis">Variants analysis</li>  
-            <li><a href="/database">Database</li>
-            <li><a href="/account">My account</li> 
-            </div>  
-        </div>
+{% extends 'variantsViz/base.html' %}
 
-    </body>
-</html>
+{% block content %}
+
+<h2> Initialisation </h2>
+<h3> Here you can submit a job, by selecting fastq.gz files </h3>
+
+<label class="import-fastq" for="largeFile">Upload fastq files</label>
+<input id="myfiles" multiple type="file" accept=".fastq.gz">
+
+
+<label>Job id</label>
+<input type="text" id="job_id" >
+
+<datalist id="diseasesList">
+	{% for d in diseaseList %}
+		<option > {{ d }} </option>
+	{% endfor %}
+</datalist>
+
+<form action="/your-name/" method="post">
+    <label  for="diseasesList"> Name of the disease:</label>
+    <input id="diseasesList" value="{{ diseases }}" class="choice" list="diseasesList" name="disease-choice" style="width:400;">
+    <input type="submit" value="Submit">
+</form>
+
+<label>Suggested genes:</label>
+	{% for c in diseases %}
+		<input type="checkbox" name={{ c }} checked>
+		<label for={{ c }}>{{ c }}</label>
+	{% endfor %}
+</input>
+
+<p class="gm">
+	<label>Genetic model of the disease:</label>
+	<select name="genet_model">
+		<option  selected="selected" value="0">Unknown</option>
+		<option  value="1">Autosomal dominant</option>
+		<option  value="2">Autosomal recessive</option>
+		<option value="3">X</option>
+	</select>
+</p>
+
+<button type="button">Launch job</button>
+
+                  
+{% endblock %}

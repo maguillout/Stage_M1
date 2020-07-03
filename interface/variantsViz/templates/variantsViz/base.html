@@ -16,16 +16,17 @@
 					<li><a href="/running">Running pipelines</a></li>	
  					<li><a href="/analysis">Variants analysis</a></li>	
 					<li><a href="/database">Database</a></li>
-					<li><a href="/account">My account</a></li>
-					<li><a href="admin/logout/">Log out</a></li> 
+					<li><a href="/account">My account: <b>{{ user.username }}</b></a></li>
+					<li><a href="/admin">Admin access</a></li> 
+					<li><a href="/deconnexion">Log out</a></li> 
 			    </ul>
 			</nav>	
 		</div>
-
 	    <div class="content container">
 	    	<div class="row">
           		<div class="col-md-8">
             {% block content %}
+            
             {% endblock %}
             	</div>
             </div>
