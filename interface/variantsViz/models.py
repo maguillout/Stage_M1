@@ -30,5 +30,15 @@ class Job(models.Model):
     def __str__(self):
         return self.sample_id
 
-from django.contrib.auth.models import User
+class variantsTable(models.Model):
+    author = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
+    sample_id = models.CharField(max_length=200)
+    path_file = models.CharField(max_length=200)
+    real_path_file = models.FilePathField(path='/home/maelle/Bureau/Stage/Data')
+    #text = models.TextField()
+    tab = models.TextField()
+    created_date = models.DateTimeField(default=timezone.now)
+
+    def __str__(self):
+        return self.sample_id
 

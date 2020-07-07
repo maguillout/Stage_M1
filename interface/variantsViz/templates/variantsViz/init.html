@@ -5,31 +5,30 @@
 <h2> Initialisation </h2>
 <h3> Here you can submit a job, by selecting fastq.gz files </h3>
 
-<label class="import-fastq" for="largeFile">Upload fastq files</label>
-<input id="myfiles" multiple type="file" accept=".fastq.gz">
+<div class="upload fastq">
+	<label class="import-fastq" for="largeFile">Upload fastq patient files</label>
+	<input id="myfiles" type="file" accept=".fastq.gz">
 
+	<label class="import-fastq" for="largeFile">Upload father fastq files</label>
+	<input id="largeFile" name="largeFile" type="file"  accept=".fastq.gz">
 
-<label>Job id</label>
-<input type="text" id="job_id" >
+	<label class="import-fastq" for="largeFile">Upload mother fastq files</label>
+	<input id="largeFile" name="largeFile" type="file"  accept=".fastq.gz">
 
-<datalist id="diseasesList">
+	<label>Job id</label>
+	<input type="text" id="job_id" >
+</div>
+
+<div>
+	<label for="diseasesList"> Name of the disease:</label>
+	<input class="choice" list="diseasesList" id="disease-choice" name="disease-choice" placeholder="Select a disease" style="width:400;">
+
+	<datalist id="diseasesList">
 	{% for d in diseaseList %}
 		<option > {{ d }} </option>
 	{% endfor %}
-</datalist>
-
-<form action="/your-name/" method="post">
-    <label  for="diseasesList"> Name of the disease:</label>
-    <input id="diseasesList" value="{{ diseases }}" class="choice" list="diseasesList" name="disease-choice" style="width:400;">
-    <input type="submit" value="Submit">
-</form>
-
-<label>Suggested genes:</label>
-	{% for c in diseases %}
-		<input type="checkbox" name={{ c }} checked>
-		<label for={{ c }}>{{ c }}</label>
-	{% endfor %}
-</input>
+	</datalist>
+</div>
 
 <p class="gm">
 	<label>Genetic model of the disease:</label>
@@ -41,7 +40,17 @@
 	</select>
 </p>
 
-<button type="button">Launch job</button>
+<label class = importantLabels>Supplementary parameters</label>
+<div class="checkboxes">
+<input type="checkbox" name="incidental finding">
+<label for="incidental finding">Search also for incidental finding</label>
+<input type="checkbox" name="whole exome">
+<label for="whole exome">Search in whole exome</label>
+</div>
+
+<button type="button">Submit</button>
+
+
 
                   
 {% endblock %}
