@@ -9,7 +9,41 @@
 <p> dernierèes activités</p>
 <p> modification mdp, mail ...</p>
 
-<div class="my_table"> {{ res | safe }} </div>
 
+<h2>Latest activities</h2>
+
+<table data-toggle="table">
+	  	<thead>
+		    <td>Date</td>
+		    <td>User </td>
+		    <td>Object</td>
+		    <td>Activity</td>
+	  	</thead>
+	  	<tr> 
+	  		<td> July 9, 2020, 5:51 p.m</td>           
+	       	<td> user1</td>	      	
+	      	<td> Pathology</td>
+	      	<td> Modified Alport syndrome (OMIM:120070)</td>
+		</tr>
+	  	<tr> 
+	  		<td> July 8, 2020, 5:57 p.m</td>           
+	       	<td> user2</td>	      	
+	      	<td> Variant</td>
+	      	<td> Added rs144521247 to database</td>
+		</tr>
+	  	<tr> 
+	  		<td> July 8, 2020, 4:51 p.m</td>           
+	       	<td> user1</td>	      	
+	      	<td> Variant</td>
+	      	<td> Modified rs124421369 from "Likely Pathogenic" to "Pathogenic"</td>
+		</tr>
+	</table>
+
+<div class="date">
+July 9, 2020, 5:51 p.m. :
+</div>
+<p>	user1:
+</p>
 
 {% endblock %}
+

@@ -11,5 +11,7 @@ urlpatterns = [
     path('analysis/', views.analysis, name='analysis'),
     path('database/', views.database, name='database'),
     path('account/', views.account, name='account'),
+    path('new_pathology/', views.new_patho, name='new_patho'),
+
 ]
 

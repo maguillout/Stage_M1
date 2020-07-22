@@ -6,7 +6,16 @@
 
 <h2>Variants analysis</h2>
 
+
+<h3>Without variants missing populations frequencies</h3>
 {% include 'variantsViz/data_table.html' %}
+
+<details>
+    <summary>All variants</summary>
+{% include 'variantsViz/data_table_no_filtered.html' %}
+</details>
+
+<p>
    
 <details>
     <summary>ACMG classification</summary>
@@ -35,7 +44,7 @@
                  <p class="pp">
                  <input type="checkbox" name="pp1" value="1">  PP1: Cosegregation with disease in multiple affected family members in a gene definitively known to cause the disease<br>
                  <input type="checkbox" name="pp2" value="1">  PP2: Missense variant in a gene that has a low rate of benign missense variation and in which missense variants are a common mechanism of disease<br>
-                 <input type="checkbox" name="pp3" value="1"> < PP3: Multiple lines of computational evidence support a deleterious effect on the gene or gene product (conservation, evolutionary, splicing impact, etc.)<br>
+                 <input type="checkbox" name="pp3" value="1">  PP3: Multiple lines of computational evidence support a deleterious effect on the gene or gene product (conservation, evolutionary, splicing impact, etc.)<br>
                  <input type="checkbox" name="pp4" value="1">  PP4: Patient's phenotype or family history is highly specific for a disease with a single genetic etiology<br>
                  <input type="checkbox" name="pp5" value="1">  PP5: Reputable source recently reports variant as pathogenic, but the evidence is not available to the laboratory to perform an independent evaluation<br>
                  <input type="checkbox" name="pp6" value="1">  <I><U>PP6: The user has additional <select name="pp_add" > <option selected="selected" value="1">1</option> <option value="2">2</option> <option value="3">3</option> <option value="4">4</option> <option value="5">5</option> <option value="6">6</option> <option value="7">7</option> <option value="8">8</option> <option value="9">9</option> <option value="10">10</option> </select>  supporting pathogenic evidence</I></U><br>
@@ -73,8 +82,9 @@
 		<button>Save changes</button>
 </details>
 
-
+</p>
 
 
 
 {% endblock %}
+
