@@ -18,6 +18,12 @@ The graphical interface can lead to:
 - analyze the variants
 - etablish and manage a database
 
+## Installation
+See [Installation page](https://gitlab.com/maelleg/interface/-/wikis/Documentation/Installation)
+
+## How to use the pipeline?
+See [Usage page](https://gitlab.com/maelleg/interface/-/wikis/Documentation/Usage)
+
 ## Tools
 ### Pipeline
 - [Snakemake](https://snakemake.readthedocs.io/)
