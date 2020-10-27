@@ -1,0 +1,52 @@
+{% extends 'variantsViz/base.html' %}
+
+{% block content %}
+
+{% if messages %}
+	{% for message in messages %}
+		<div>
+			<strong>{{message|safe}}</strong>
+		</div>
+	{% endfor %}
+
+{% else %}
+
+	<h2>Add pathologies to database</h2>
+	<p>{{order}}</p>
+
+	<p>Fields should be filed in this order and separated by a ';' in a csv file (with a header) like this:</p>
+	<p>
+		<table data-toggle="table">
+			<thead>
+				<td>Name;</td>
+			    <td>Associated genes (Ensembl_id, separated by ',');</td>
+			    <td>Other information (eventually)</td>
+			</thead>
+			<tr>
+				<td>name1;</td>
+			    <td>geneA, geneB;</td>
+			    <td>info1</td>
+			</tr>
+			<tr>
+				<td>name2;</td>
+			    <td>geneA;</td>
+			    <td>""</td>
+			</tr>
+		</table>
+	</p>
+
+	<p>
+		<form method="post" enctype="multipart/form-data">
+				{% csrf_token %}
+				<input type = "file" name="file">
+				<button type="submit"> Upload </button>
+		</form>
+	</p>
+
+{% endif %}
+
+<p>{{nb_patho}} added to database</p>
+
+{% endblock %}
+
+

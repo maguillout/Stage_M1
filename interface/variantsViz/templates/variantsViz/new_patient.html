@@ -1,0 +1,13 @@
+{% extends 'variantsViz/base.html' %}
+
+{% block content %}
+
+
+{% if envoi %}Job submited{% endif %}
+
+<form action="{% url "new_patient" %}" method="post">
+    {% csrf_token %}
+    {{ form.as_p }}
+    <input type="submit" value="Submit" />
+</form>
+{% endblock %}

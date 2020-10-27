@@ -1,0 +1,13 @@
+{% extends 'variantsViz/base.html' %}
+
+{% block content %}
+
+
+<h2>{{ patho.name }} </h2>
+<h3>Description</h3>
+<p>{{ patho.info }}</p>
+<p>Associated genes :</p>
+<p>{{ patho.associated_gene_OMIM }}</p>
+<p>Occuring x times in the database - list of patients</p>
+
+{% endblock %}
