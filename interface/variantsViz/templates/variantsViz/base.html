@@ -1,0 +1,41 @@
+{% load static %}
+<html>
+    <head>
+        <title>Exome analysis for diagnosis of renal pathologies</title>
+        <link rel="stylesheet" href="//maxcdn.bootstrapcdn.com/bootstrap/3.2.0/css/bootstrap.min.css">
+        <link rel="stylesheet" href="//maxcdn.bootstrapcdn.com/bootstrap/3.2.0/css/bootstrap-theme.min.css">
+        <link rel="stylesheet" href="{% static 'css/variantsViz.css' %}">
+        
+
+    </head>
+
+    <body>
+        <div class="page-header">
+	        <h1>Exome analysis for diagnosis of renal pathologies</h1>	    
+			<nav>
+			    <ul>			    	
+			    	<li><a href="/initialisation">Pipeline initialisation</a></li>	
+					<li><a href="/running">Running pipelines</a></li>	
+ 					<li><a href="/analysis">Variants analysis</a></li>	
+					<li><a href="/database">Database</a></li>
+					<li><a href="/account">My account: <b>{{ user.username }}</b></a></li>
+					<li><a href="/admin">Admin access</a></li> 
+					<li><a href="/deconnexion">Log out</a></li> 
+			    </ul>
+			</nav>	
+			<a href="{% url 'new_patho' %}" class="top-menu"><span class="glyphicon glyphicon-plus"></span></a>
+		</div>
+	    <div class="content container">
+	    	<div class="row">
+          		<div class="col-md-8">
+            {% block content %}
+            
+            {% endblock %}
+            	</div>
+            </div>
+	    </div>
+    </body>
+
+    
+</html>
+
