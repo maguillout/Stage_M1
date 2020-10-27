@@ -1,0 +1,29 @@
+Building DAG of jobs...
+Using shell: /usr/bin/bash
+Provided cluster nodes: 12
+Job counts:
+	count	jobs
+	1	annotANNOVAR
+	1	annotINTERVAR
+	2	bgzip
+	1	extractGNOMAD
+	1	extractGNOMADVEP
+	1	gunzipCADD
+	1	scoreCADD
+	2	tabix
+	1	target
+	11
+
+[Fri Aug 21 10:11:50 2020]
+rule bgzip:
+    input: VCF/hapcaller.recal.combined.annot.gnomad.vep.filtered.vcf
+    output: VCF/hapcaller.recal.combined.annot.gnomad.vep.filtered.vcf.gz
+    jobid: 13
+    reason: Missing output files: VCF/hapcaller.recal.combined.annot.gnomad.vep.filtered.vcf.gz; Updated input files: VCF/hapcaller.recal.combined.annot.gnomad.vep.filtered.vcf
+    wildcards: base=VCF/hapcaller.recal.combined.annot.gnomad.vep.filtered
+
+bgzip -f VCF/hapcaller.recal.combined.annot.gnomad.vep.filtered.vcf
+Submitted job 13 with external jobid 'Your job 4088347 ("snakejob.bgzip.13.sh") has been submitted'.
+Terminating processes on user request, this might take some time.
+Will exit after finishing currently running jobs.
+Cancelling snakemake on user request.

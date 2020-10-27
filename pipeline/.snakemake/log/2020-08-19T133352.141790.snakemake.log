@@ -1,0 +1,45 @@
+Building DAG of jobs...
+Using shell: /usr/bin/bash
+Provided cluster nodes: 12
+Job counts:
+	count	jobs
+	1	gunzipCADD
+	1	scoreCADD
+	1	target
+	3
+
+[Wed Aug 19 13:33:52 2020]
+rule scoreCADD:
+    input: VCF/hapcaller.recal.combined.annot.gnomad.vep.filtered.vcf.gz
+    output: CSV/cadd.tsv.gz
+    jobid: 15
+    reason: Missing output files: CSV/cadd.tsv.gz
+
+/sandbox/users/mguillout/tools/CADD-scripts/CADD.sh 		-o CSV/cadd.tsv.gz 		-a 		-g GRCh37 		-v v1.6 VCF/hapcaller.recal.combined.annot.gnomad.vep.filtered.vcf.gz
+Submitted job 15 with external jobid 'Your job 4082181 ("snakejob.scoreCADD.15.sh") has been submitted'.
+[Wed Aug 19 13:34:52 2020]
+Finished job 15.
+1 of 3 steps (33%) done
+
+[Wed Aug 19 13:34:52 2020]
+rule gunzipCADD:
+    input: CSV/cadd.tsv.gz
+    output: CSV/cadd.tsv
+    jobid: 5
+    reason: Missing output files: CSV/cadd.tsv; Input files updated by another job: CSV/cadd.tsv.gz
+
+gunzip CSV/cadd.tsv.gz |  sed 1d CSV/cadd.tsv -i
+Submitted job 5 with external jobid 'Your job 4082182 ("snakejob.gunzipCADD.5.sh") has been submitted'.
+[Wed Aug 19 13:35:02 2020]
+Error in rule gunzipCADD:
+    jobid: 5
+    output: CSV/cadd.tsv
+    shell:
+        gunzip CSV/cadd.tsv.gz |  sed 1d CSV/cadd.tsv -i
+        (one of the commands exited with non-zero exit code; note that snakemake uses bash strict mode!)
+    cluster_jobid: Your job 4082182 ("snakejob.gunzipCADD.5.sh") has been submitted
+
+Error executing rule gunzipCADD on cluster (jobid: 5, external: Your job 4082182 ("snakejob.gunzipCADD.5.sh") has been submitted, jobscript: /sandbox/shares/nextcloud/mguillout/files/Application/pipeline/testPipeline4/.snakemake/tmp.k1dlbzje/snakejob.gunzipCADD.5.sh). For error details see the cluster log and the log files of the involved rule(s).
+Shutting down, this might take some time.
+Exiting because a job execution failed. Look above for error message
+Complete log: /sandbox/shares/nextcloud/mguillout/files/Application/pipeline/.snakemake/log/2020-08-19T133352.141790.snakemake.log

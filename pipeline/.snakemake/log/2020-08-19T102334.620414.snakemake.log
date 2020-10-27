@@ -1,0 +1,116 @@
+Building DAG of jobs...
+Using shell: /usr/bin/bash
+Provided cluster nodes: 12
+Job counts:
+	count	jobs
+	1	annotANNOVAR
+	1	annotINTERVAR
+	1	annotVEP
+	1	baseRecalibration
+	3	bgzip
+	1	combineGVCF
+	1	combineVCF
+	1	createGVCFList
+	3	depthOfCoverage
+	1	extractGNOMAD
+	1	extractGNOMADVEP
+	1	filterIndels
+	1	filterSNVs
+	1	filtrationVEP
+	1	freqGNOMAD
+	1	genotypeGVCF
+	1	haplotypeCaller
+	1	picardMetrics
+	1	scoreCADD
+	1	selectIndels
+	1	selectSNVs
+	3	tabix
+	1	target
+	29
+
+[Wed Aug 19 10:23:35 2020]
+rule baseRecalibration:
+    input: Samples/Sample1/BAM/Sample1.recal.table, /sandbox/users/mguillout/pipeline/REFERENCES/human_g1k_v37.fasta, Samples/Sample1/BAM/Sample1.realign.bam, Samples/Sample1/BAM/Sample1.realign.bai, /sandbox/users/mguillout/pipeline/REFERENCES/human_g1k_v37.dict, gatkPresent.txt
+    output: Samples/Sample1/BAM/Sample1.final.bam, Samples/Sample1/BAM/Sample1.final.bai
+    jobid: 15
+    reason: Updated input files: Samples/Sample1/BAM/Sample1.realign.bai, Samples/Sample1/BAM/Sample1.realign.bam, gatkPresent.txt, Samples/Sample1/BAM/Sample1.recal.table
+    wildcards: sample=Sample1
+    threads: 8
+
+gatk -Djava.io.tmpdir=Samples/Sample1/BAM -XX:ParallelGCThreads=5 -Xmx4g -T PrintReads 		-nct 8 		-R /sandbox/users/mguillout/pipeline/REFERENCES/human_g1k_v37.fasta 		--bam_compression 9 		-BQSR Samples/Sample1/BAM/Sample1.recal.table 		--disable_indel_quals 		-I Samples/Sample1/BAM/Sample1.realign.bam 		-o Samples/Sample1/BAM/Sample1.final.bam 		--validation_strictness LENIENT 		-l INFO
+Submitted job 15 with external jobid 'Your job 4077798 ("snakejob.baseRecalibration.15.sh") has been submitted'.
+Write-protecting output file Samples/Sample1/BAM/Sample1.final.bam.
+Write-protecting output file Samples/Sample1/BAM/Sample1.final.bai.
+Removing temporary output file Samples/Sample1/BAM/Sample1.recal.table.
+Removing temporary output file Samples/Sample1/BAM/Sample1.realign.bai.
+Removing temporary output file Samples/Sample1/BAM/Sample1.realign.bam.
+[Wed Aug 19 10:26:15 2020]
+Finished job 15.
+1 of 29 steps (3%) done
+
+[Wed Aug 19 10:26:15 2020]
+rule depthOfCoverage:
+    input: /sandbox/users/mguillout/pipeline/REFERENCES/human_g1k_v37.fasta, Samples/Sample1/BAM/Sample1.final.bam, Samples/Sample1/BAM/Sample1.final.bai, BED/autosomes.bed, /sandbox/users/mguillout/pipeline/REFERENCES/human_g1k_v37.fasta.fai, gatkPresent.txt
+    output: Samples/Sample1/QC/Sample1.gatk_doc.autosomes.sample_cumulative_coverage_counts, Samples/Sample1/QC/Sample1.gatk_doc.autosomes.sample_cumulative_coverage_proportions, Samples/Sample1/QC/Sample1.gatk_doc.autosomes.sample_statistics, Samples/Sample1/QC/Sample1.gatk_doc.autosomes.sample_summary
+    jobid: 6
+    reason: Updated input files: gatkPresent.txt; Input files updated by another job: Samples/Sample1/BAM/Sample1.final.bai, Samples/Sample1/BAM/Sample1.final.bam
+    wildcards: sample=Sample1, capture=autosomes
+
+gatk -Djava.io.tmpdir=Samples/Sample1/QC -XX:ParallelGCThreads=3 -Xmx5g -T DepthOfCoverage 		-R /sandbox/users/mguillout/pipeline/REFERENCES/human_g1k_v37.fasta 		--validation_strictness LENIENT 		-L:capture,BED BED/autosomes.bed 		--minMappingQuality 30 		-ct 1 -ct 5 -ct 10 -ct 15 -ct 20 -ct 25 -ct 30 		-I Samples/Sample1/BAM/Sample1.final.bam 		-o Samples/Sample1/QC/Sample1.gatk_doc.autosomes 		-omitIntervals 		-omitBaseOutput
+Submitted job 6 with external jobid 'Your job 4077801 ("snakejob.depthOfCoverage.6.sh") has been submitted'.
+
+[Wed Aug 19 10:26:15 2020]
+rule depthOfCoverage:
+    input: /sandbox/users/mguillout/pipeline/REFERENCES/human_g1k_v37.fasta, Samples/Sample1/BAM/Sample1.final.bam, Samples/Sample1/BAM/Sample1.final.bai, BED/chrY.bed, /sandbox/users/mguillout/pipeline/REFERENCES/human_g1k_v37.fasta.fai, gatkPresent.txt
+    output: Samples/Sample1/QC/Sample1.gatk_doc.chrY.sample_cumulative_coverage_counts, Samples/Sample1/QC/Sample1.gatk_doc.chrY.sample_cumulative_coverage_proportions, Samples/Sample1/QC/Sample1.gatk_doc.chrY.sample_statistics, Samples/Sample1/QC/Sample1.gatk_doc.chrY.sample_summary
+    jobid: 8
+    reason: Updated input files: gatkPresent.txt; Input files updated by another job: Samples/Sample1/BAM/Sample1.final.bai, Samples/Sample1/BAM/Sample1.final.bam
+    wildcards: sample=Sample1, capture=chrY
+
+gatk -Djava.io.tmpdir=Samples/Sample1/QC -XX:ParallelGCThreads=3 -Xmx5g -T DepthOfCoverage 		-R /sandbox/users/mguillout/pipeline/REFERENCES/human_g1k_v37.fasta 		--validation_strictness LENIENT 		-L:capture,BED BED/chrY.bed 		--minMappingQuality 30 		-ct 1 -ct 5 -ct 10 -ct 15 -ct 20 -ct 25 -ct 30 		-I Samples/Sample1/BAM/Sample1.final.bam 		-o Samples/Sample1/QC/Sample1.gatk_doc.chrY 		-omitIntervals 		-omitBaseOutput
+Submitted job 8 with external jobid 'Your job 4077802 ("snakejob.depthOfCoverage.8.sh") has been submitted'.
+
+[Wed Aug 19 10:26:15 2020]
+rule picardMetrics:
+    input: Samples/Sample1/BAM/Sample1.final.bam, Samples/Sample1/BAM/Sample1.final.bai, BED/capture.interval_list, /sandbox/users/mguillout/pipeline/REFERENCES/human_g1k_v37.fasta
+    output: Samples/Sample1/QC/Sample1.picard_metrics.alignment_summary_metrics, Samples/Sample1/QC/Sample1.picard_metrics.base_distribution_by_cycle_metrics, Samples/Sample1/QC/Sample1.picard_metrics.base_distribution_by_cycle.pdf, Samples/Sample1/QC/Sample1.picard_metrics.insert_size_histogram.pdf, Samples/Sample1/QC/Sample1.picard_metrics.insert_size_metrics, Samples/Sample1/QC/Sample1.picard_metrics.quality_by_cycle_metrics, Samples/Sample1/QC/Sample1.picard_metrics.quality_by_cycle.pdf, Samples/Sample1/QC/Sample1.picard_metrics.quality_distribution_metrics, Samples/Sample1/QC/Sample1.picard_metrics.quality_distribution.pdf
+    jobid: 9
+    reason: Input files updated by another job: Samples/Sample1/BAM/Sample1.final.bai, Samples/Sample1/BAM/Sample1.final.bam
+    wildcards: sample=Sample1
+
+picard -Xmx2g CollectMultipleMetrics 		I=Samples/Sample1/BAM/Sample1.final.bam 		O=Samples/Sample1/QC/Sample1.picard_metrics 		R=/sandbox/users/mguillout/pipeline/REFERENCES/human_g1k_v37.fasta 		INTERVALS=BED/capture.interval_list
+Submitted job 9 with external jobid 'Your job 4077803 ("snakejob.picardMetrics.9.sh") has been submitted'.
+
+[Wed Aug 19 10:26:15 2020]
+rule haplotypeCaller:
+    input: /sandbox/users/mguillout/pipeline/REFERENCES/human_g1k_v37.fasta, BED/capture.extended1000.bed, Samples/Sample1/BAM/Sample1.final.bam, Samples/Sample1/BAM/Sample1.final.bai, /sandbox/users/mguillout/pipeline/REFERENCES/dbsnp_138.b37.vcf.gz, /sandbox/users/mguillout/pipeline/REFERENCES/human_g1k_v37.dict, gatkPresent.txt
+    output: Samples/Sample1/VCF/Sample1.hapcaller.g.vcf, Samples/Sample1/VCF/Sample1.hapcaller.g.vcf.idx
+    jobid: 51
+    reason: Updated input files: gatkPresent.txt; Input files updated by another job: Samples/Sample1/BAM/Sample1.final.bai, Samples/Sample1/BAM/Sample1.final.bam
+    wildcards: sample=Sample1
+
+gatk -Djava.io.tmpdir=Samples/Sample1/VCF -XX:ParallelGCThreads=5 -Xmx3g -T HaplotypeCaller 		-R /sandbox/users/mguillout/pipeline/REFERENCES/human_g1k_v37.fasta 		--emitRefConfidence GVCF 		-variant_index_type LINEAR 		-variant_index_parameter 128000 		-stand_call_conf 30.0 		-nct 1 		-rf ReadLength 		-minRead 0 		-maxRead 10000 		-S SILENT 		-L:capture,BED BED/capture.extended1000.bed 		-I Samples/Sample1/BAM/Sample1.final.bam 		--dbsnp:dbsnp,VCF /sandbox/users/mguillout/pipeline/REFERENCES/dbsnp_138.b37.vcf.gz 		-o Samples/Sample1/VCF/Sample1.hapcaller.g.vcf
+Submitted job 51 with external jobid 'Your job 4077804 ("snakejob.haplotypeCaller.51.sh") has been submitted'.
+
+[Wed Aug 19 10:26:15 2020]
+rule depthOfCoverage:
+    input: /sandbox/users/mguillout/pipeline/REFERENCES/human_g1k_v37.fasta, Samples/Sample1/BAM/Sample1.final.bam, Samples/Sample1/BAM/Sample1.final.bai, BED/chrX.bed, /sandbox/users/mguillout/pipeline/REFERENCES/human_g1k_v37.fasta.fai, gatkPresent.txt
+    output: Samples/Sample1/QC/Sample1.gatk_doc.chrX.sample_cumulative_coverage_counts, Samples/Sample1/QC/Sample1.gatk_doc.chrX.sample_cumulative_coverage_proportions, Samples/Sample1/QC/Sample1.gatk_doc.chrX.sample_statistics, Samples/Sample1/QC/Sample1.gatk_doc.chrX.sample_summary
+    jobid: 7
+    reason: Updated input files: gatkPresent.txt; Input files updated by another job: Samples/Sample1/BAM/Sample1.final.bai, Samples/Sample1/BAM/Sample1.final.bam
+    wildcards: sample=Sample1, capture=chrX
+
+gatk -Djava.io.tmpdir=Samples/Sample1/QC -XX:ParallelGCThreads=3 -Xmx5g -T DepthOfCoverage 		-R /sandbox/users/mguillout/pipeline/REFERENCES/human_g1k_v37.fasta 		--validation_strictness LENIENT 		-L:capture,BED BED/chrX.bed 		--minMappingQuality 30 		-ct 1 -ct 5 -ct 10 -ct 15 -ct 20 -ct 25 -ct 30 		-I Samples/Sample1/BAM/Sample1.final.bam 		-o Samples/Sample1/QC/Sample1.gatk_doc.chrX 		-omitIntervals 		-omitBaseOutput
+Submitted job 7 with external jobid 'Your job 4077805 ("snakejob.depthOfCoverage.7.sh") has been submitted'.
+[Wed Aug 19 10:26:45 2020]
+Finished job 8.
+2 of 29 steps (7%) done
+[Wed Aug 19 10:26:55 2020]
+Finished job 7.
+3 of 29 steps (10%) done
+[Wed Aug 19 10:27:05 2020]
+Finished job 9.
+4 of 29 steps (14%) done
+Terminating processes on user request, this might take some time.
+Will exit after finishing currently running jobs.
+Complete log: /sandbox/shares/nextcloud/mguillout/files/Application/pipeline/.snakemake/log/2020-08-19T102334.620414.snakemake.log

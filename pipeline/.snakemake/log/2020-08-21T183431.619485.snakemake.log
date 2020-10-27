@@ -1,0 +1,27 @@
+Building DAG of jobs...
+Using shell: /usr/bin/bash
+Provided cluster nodes: 12
+Job counts:
+	count	jobs
+	1	merge_fields
+	1	target
+	2
+
+[Fri Aug 21 18:34:34 2020]
+rule merge_fields:
+    input: VCF/hapcaller.recal.combined.annot.gnomad.vep.filtered.annovar.vcf.hg19_multianno.txt, CSV/res_intervar.hg19_multianno.txt.intervar, CSV/gnomad_vep.tsv, CSV/cadd.tsv
+    output: CSV/main_results.tsv
+    jobid: 3
+    reason: Missing output files: CSV/main_results.tsv
+
+Submitted job 3 with external jobid 'Your job 4089927 ("snakejob.merge_fields.3.sh") has been submitted'.
+[Fri Aug 21 18:34:54 2020]
+Error in rule merge_fields:
+    jobid: 3
+    output: CSV/main_results.tsv
+    cluster_jobid: Your job 4089927 ("snakejob.merge_fields.3.sh") has been submitted
+
+Error executing rule merge_fields on cluster (jobid: 3, external: Your job 4089927 ("snakejob.merge_fields.3.sh") has been submitted, jobscript: /sandbox/shares/nextcloud/mguillout/files/Application/pipeline/testVB_32/.snakemake/tmp.4v7yka_x/snakejob.merge_fields.3.sh). For error details see the cluster log and the log files of the involved rule(s).
+Shutting down, this might take some time.
+Exiting because a job execution failed. Look above for error message
+Complete log: /sandbox/shares/nextcloud/mguillout/files/Application/pipeline/.snakemake/log/2020-08-21T183431.619485.snakemake.log

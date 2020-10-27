@@ -1,0 +1,60 @@
+Building DAG of jobs...
+Using shell: /usr/bin/bash
+Provided cluster nodes: 12
+Job counts:
+	count	jobs
+	1	extractGNOMAD
+	1	extractGNOMADVEP
+	1	merge_fields
+	1	target
+	4
+
+[Mon Aug 24 02:25:11 2020]
+rule extractGNOMAD:
+    input: /sandbox/users/mguillout/pipeline/REFERENCES/human_g1k_v37.fasta, VCF/hapcaller.recal.combined.annot.gnomad.vep.filtered.vcf.gz
+    output: CSV/gnomad_freq.tsv
+    jobid: 25
+    reason: Missing output files: CSV/gnomad_freq.tsv
+
+gatk -T VariantsToTable 		-R /sandbox/users/mguillout/pipeline/REFERENCES/human_g1k_v37.fasta 		-V VCF/hapcaller.recal.combined.annot.gnomad.vep.filtered.vcf.gz 		-o CSV/gnomad_freq.tsv 		-F CHROM 		-F POS 		-F REF 		-F ALT 		-F END 		-F ID 		-GF DP 		-GF GT 		--allowMissingData 		-F gnomad.AF_AFR 		-F gnomad.AF_ASJ 		-F gnomad.AF_AMR 		-F gnomad.AF_EAS 		-F gnomad.AF_FIN 		-F gnomad.AF_NFE 		-F gnomad.AF_OTH 		-F gnomad.AF_SAS 
+Submitted job 25 with external jobid 'Your job 4090845 ("snakejob.extractGNOMAD.25.sh") has been submitted'.
+Write-protecting output file CSV/gnomad_freq.tsv.
+[Mon Aug 24 02:25:41 2020]
+Finished job 25.
+1 of 4 steps (25%) done
+
+[Mon Aug 24 02:25:41 2020]
+rule extractGNOMADVEP:
+    input: VCF/hapcaller.recal.combined.annot.gnomad.vep.filtered.vcf.gz, CSV/gnomad_freq.tsv
+    output: CSV/gnomad_vep.tsv
+    jobid: 12
+    reason: Missing output files: CSV/gnomad_vep.tsv; Input files updated by another job: CSV/gnomad_freq.tsv
+
+vep-annotation-reporter  VCF/hapcaller.recal.combined.annot.gnomad.vep.filtered.vcf.gz 	Feature HGVSc HGVSp Protein_position Amino_acids Codons CLIN_SIG PUBMED 		-t CSV/gnomad_freq.tsv 		-o CSV/gnomad_vep.tsv 		
+Submitted job 12 with external jobid 'Your job 4090848 ("snakejob.extractGNOMADVEP.12.sh") has been submitted'.
+[Mon Aug 24 02:26:01 2020]
+Finished job 12.
+2 of 4 steps (50%) done
+
+[Mon Aug 24 02:26:01 2020]
+rule merge_fields:
+    input: VCF/hapcaller.recal.combined.annot.gnomad.vep.filtered.annovar.vcf.hg19_multianno.txt, CSV/res_intervar.hg19_multianno.txt.intervar, CSV/gnomad_vep.tsv, CSV/cadd.tsv
+    output: CSV/main_results.tsv
+    jobid: 3
+    reason: Missing output files: CSV/main_results.tsv; Input files updated by another job: CSV/gnomad_vep.tsv
+
+Submitted job 3 with external jobid 'Your job 4090849 ("snakejob.merge_fields.3.sh") has been submitted'.
+[Mon Aug 24 02:26:22 2020]
+Finished job 3.
+3 of 4 steps (75%) done
+
+[Mon Aug 24 02:26:22 2020]
+localrule target:
+    input: VCF/hapcaller.recal.combined.annot.gnomad.vep.filtered.annovar.vcf.hg19_multianno.vcf.gz, VCF/hapcaller.recal.combined.annot.gnomad.vep.filtered.annovar.vcf.hg19_multianno.vcf.gz.tbi, CSV/main_results.tsv, Samples/Sample1/QC/Sample1.gatk_doc.autosomes.sample_cumulative_coverage_counts, Samples/Sample1/QC/Sample1.gatk_doc.autosomes.sample_cumulative_coverage_proportions, Samples/Sample1/QC/Sample1.gatk_doc.autosomes.sample_statistics, Samples/Sample1/QC/Sample1.gatk_doc.autosomes.sample_summary, Samples/Sample1/QC/Sample1.gatk_doc.chrX.sample_cumulative_coverage_counts, Samples/Sample1/QC/Sample1.gatk_doc.chrX.sample_cumulative_coverage_proportions, Samples/Sample1/QC/Sample1.gatk_doc.chrX.sample_statistics, Samples/Sample1/QC/Sample1.gatk_doc.chrX.sample_summary, Samples/Sample1/QC/Sample1.gatk_doc.chrY.sample_cumulative_coverage_counts, Samples/Sample1/QC/Sample1.gatk_doc.chrY.sample_cumulative_coverage_proportions, Samples/Sample1/QC/Sample1.gatk_doc.chrY.sample_statistics, Samples/Sample1/QC/Sample1.gatk_doc.chrY.sample_summary, Samples/Sample1/QC/Sample1.picard_metrics.alignment_summary_metrics, Samples/Sample1/QC/Sample1.picard_metrics.base_distribution_by_cycle_metrics, Samples/Sample1/QC/Sample1.picard_metrics.base_distribution_by_cycle.pdf, Samples/Sample1/QC/Sample1.picard_metrics.insert_size_histogram.pdf, Samples/Sample1/QC/Sample1.picard_metrics.insert_size_metrics, Samples/Sample1/QC/Sample1.picard_metrics.quality_by_cycle_metrics, Samples/Sample1/QC/Sample1.picard_metrics.quality_by_cycle.pdf, Samples/Sample1/QC/Sample1.picard_metrics.quality_distribution_metrics, Samples/Sample1/QC/Sample1.picard_metrics.quality_distribution.pdf, Samples/Sample1/QC/Sample1.fastqc.forward_fastqc.zip, Samples/Sample1/QC/Sample1.fastqc.reverse_fastqc.zip
+    jobid: 0
+    reason: Input files updated by another job: CSV/main_results.tsv
+
+[Mon Aug 24 02:26:22 2020]
+Finished job 0.
+4 of 4 steps (100%) done
+Complete log: /sandbox/shares/nextcloud/mguillout/files/Application/pipeline/.snakemake/log/2020-08-24T022511.221417.snakemake.log

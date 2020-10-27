@@ -1,0 +1,3 @@
+NameError in line 707 of /sandbox/shares/nextcloud/mguillout/files/Application/pipeline/Snakefile:
+name 'sample' is not defined
+  File "/sandbox/shares/nextcloud/mguillout/files/Application/pipeline/Snakefile", line 707, in <module>

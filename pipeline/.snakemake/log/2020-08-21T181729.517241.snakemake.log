@@ -1,0 +1,370 @@
+Building DAG of jobs...
+Using shell: /usr/bin/bash
+Provided cluster nodes: 12
+Job counts:
+	count	jobs
+	1	annotANNOVAR
+	1	annotINTERVAR
+	1	annotVEP
+	3	bgzip
+	1	combineGVCF
+	1	combineVCF
+	1	createGVCFList
+	1	extractGNOMAD
+	1	extractGNOMADVEP
+	1	filterIndels
+	1	filterSNVs
+	1	filtration_freq_and_genes
+	1	freqGNOMAD
+	1	genotypeGVCF
+	1	gunzipCADD
+	1	merge_fields
+	1	scoreCADD
+	1	selectIndels
+	1	selectSNVs
+	3	tabix
+	1	target
+	25
+
+[Fri Aug 21 18:17:30 2020]
+rule createGVCFList:
+    input: Samples/Sample1/VCF/Sample1.hapcaller.g.vcf
+    output: VCF/gvcf.list
+    jobid: 52
+    reason: Missing output files: VCF/gvcf.list
+
+Submitted job 52 with external jobid 'Your job 4089869 ("snakejob.createGVCFList.52.sh") has been submitted'.
+[Fri Aug 21 18:17:40 2020]
+Finished job 52.
+1 of 25 steps (4%) done
+
+[Fri Aug 21 18:17:40 2020]
+rule combineGVCF:
+    input: /sandbox/users/mguillout/pipeline/REFERENCES/human_g1k_v37.fasta, VCF/gvcf.list, /sandbox/users/mguillout/pipeline/REFERENCES/human_g1k_v37.dict, gatkPresent.txt
+    output: VCF/hapcaller.combined.g.vcf.gz, VCF/hapcaller.combined.g.vcf.gz.tbi
+    jobid: 51
+    reason: Missing output files: VCF/hapcaller.combined.g.vcf.gz.tbi, VCF/hapcaller.combined.g.vcf.gz; Input files updated by another job: VCF/gvcf.list
+
+gatk -Djava.io.tmpdir=VCF -XX:ParallelGCThreads=3 -Xmx10g -T CombineGVCFs 		-R /sandbox/users/mguillout/pipeline/REFERENCES/human_g1k_v37.fasta 		--variant VCF/gvcf.list 		-S SILENT 		-o VCF/hapcaller.combined.g.vcf.gz
+Submitted job 51 with external jobid 'Your job 4089870 ("snakejob.combineGVCF.51.sh") has been submitted'.
+Removing temporary output file VCF/gvcf.list.
+[Fri Aug 21 18:20:21 2020]
+Finished job 51.
+2 of 25 steps (8%) done
+
+[Fri Aug 21 18:20:21 2020]
+rule genotypeGVCF:
+    input: /sandbox/users/mguillout/pipeline/REFERENCES/human_g1k_v37.fasta, VCF/hapcaller.combined.g.vcf.gz, VCF/hapcaller.combined.g.vcf.gz.tbi, /sandbox/users/mguillout/pipeline/REFERENCES/human_g1k_v37.dict, gatkPresent.txt
+    output: VCF/hapcaller.genotyped.vcf.gz, VCF/hapcaller.genotyped.vcf.gz.tbi
+    jobid: 50
+    reason: Missing output files: VCF/hapcaller.genotyped.vcf.gz.tbi, VCF/hapcaller.genotyped.vcf.gz; Input files updated by another job: VCF/hapcaller.combined.g.vcf.gz.tbi, VCF/hapcaller.combined.g.vcf.gz
+
+gatk -Djava.io.tmpdir=VCF -XX:ParallelGCThreads=3 -Xmx3g -T GenotypeGVCFs 		-R /sandbox/users/mguillout/pipeline/REFERENCES/human_g1k_v37.fasta 		--variant VCF/hapcaller.combined.g.vcf.gz 		-S SILENT 		-o VCF/hapcaller.genotyped.vcf.gz
+Submitted job 50 with external jobid 'Your job 4089874 ("snakejob.genotypeGVCF.50.sh") has been submitted'.
+Removing temporary output file VCF/hapcaller.combined.g.vcf.gz.
+Removing temporary output file VCF/hapcaller.combined.g.vcf.gz.tbi.
+[Fri Aug 21 18:23:02 2020]
+Finished job 50.
+3 of 25 steps (12%) done
+
+[Fri Aug 21 18:23:02 2020]
+rule selectIndels:
+    input: /sandbox/users/mguillout/pipeline/REFERENCES/human_g1k_v37.fasta, VCF/hapcaller.genotyped.vcf.gz, VCF/hapcaller.genotyped.vcf.gz.tbi, /sandbox/users/mguillout/pipeline/REFERENCES/human_g1k_v37.dict, gatkPresent.txt
+    output: VCF/hapcaller.indel.recal.select.vcf.gz, VCF/hapcaller.indel.recal.select.vcf.gz.tbi
+    jobid: 49
+    reason: Missing output files: VCF/hapcaller.indel.recal.select.vcf.gz, VCF/hapcaller.indel.recal.select.vcf.gz.tbi; Input files updated by another job: VCF/hapcaller.genotyped.vcf.gz.tbi, VCF/hapcaller.genotyped.vcf.gz
+
+gatk -Djava.io.tmpdir=VCF -XX:ParallelGCThreads=3 -Xmx3g -T SelectVariants 		-R /sandbox/users/mguillout/pipeline/REFERENCES/human_g1k_v37.fasta 		--logging_level FATAL 		-selectType INDEL 		--variant VCF/hapcaller.genotyped.vcf.gz 		-o VCF/hapcaller.indel.recal.select.vcf.gz
+Submitted job 49 with external jobid 'Your job 4089875 ("snakejob.selectIndels.49.sh") has been submitted'.
+
+[Fri Aug 21 18:23:02 2020]
+rule selectSNVs:
+    input: /sandbox/users/mguillout/pipeline/REFERENCES/human_g1k_v37.fasta, VCF/hapcaller.genotyped.vcf.gz, VCF/hapcaller.genotyped.vcf.gz.tbi, /sandbox/users/mguillout/pipeline/REFERENCES/human_g1k_v37.dict, gatkPresent.txt
+    output: VCF/hapcaller.snv.recal.select.vcf.gz, VCF/hapcaller.snv.recal.select.vcf.gz.tbi
+    jobid: 48
+    reason: Missing output files: VCF/hapcaller.snv.recal.select.vcf.gz, VCF/hapcaller.snv.recal.select.vcf.gz.tbi; Input files updated by another job: VCF/hapcaller.genotyped.vcf.gz.tbi, VCF/hapcaller.genotyped.vcf.gz
+
+gatk -Djava.io.tmpdir=VCF -XX:ParallelGCThreads=3 -Xmx3g -T SelectVariants 		-R /sandbox/users/mguillout/pipeline/REFERENCES/human_g1k_v37.fasta 		--logging_level FATAL 		-selectType SNP 		--variant VCF/hapcaller.genotyped.vcf.gz 		-o VCF/hapcaller.snv.recal.select.vcf.gz
+Submitted job 48 with external jobid 'Your job 4089876 ("snakejob.selectSNVs.48.sh") has been submitted'.
+[Fri Aug 21 18:23:32 2020]
+Finished job 49.
+4 of 25 steps (16%) done
+Removing temporary output file VCF/hapcaller.genotyped.vcf.gz.tbi.
+Removing temporary output file VCF/hapcaller.genotyped.vcf.gz.
+[Fri Aug 21 18:23:32 2020]
+Finished job 48.
+5 of 25 steps (20%) done
+
+[Fri Aug 21 18:23:32 2020]
+rule filterIndels:
+    input: /sandbox/users/mguillout/pipeline/REFERENCES/human_g1k_v37.fasta, VCF/hapcaller.indel.recal.select.vcf.gz, VCF/hapcaller.indel.recal.select.vcf.gz.tbi, /sandbox/users/mguillout/pipeline/REFERENCES/human_g1k_v37.dict, gatkPresent.txt
+    output: VCF/hapcaller.indel.recal.filter.vcf.gz, VCF/hapcaller.indel.recal.filter.vcf.gz.tbi
+    jobid: 47
+    reason: Missing output files: VCF/hapcaller.indel.recal.filter.vcf.gz, VCF/hapcaller.indel.recal.filter.vcf.gz.tbi; Input files updated by another job: VCF/hapcaller.indel.recal.select.vcf.gz, VCF/hapcaller.indel.recal.select.vcf.gz.tbi
+
+gatk -Djava.io.tmpdir=VCF -XX:ParallelGCThreads=3 -Xmx3g -T VariantFiltration 		-R /sandbox/users/mguillout/pipeline/REFERENCES/human_g1k_v37.fasta 		--logging_level FATAL  		--filterExpression 'QD < 2.0' --filterName 'FAILS_HARD_FILTER_INDEL_QD' 		--filterExpression 'FS > 200.0' --filterName 'FAILS_HARD_FILTER_INDEL_FS' 		--filterExpression 'ReadPosRankSum < -20.0' --filterName 'FAILS_HARD_FILTER_INDEL_ReadPosRankSum' 		--filterExpression 'SOR > 10.0' --filterName 'FAILS_HARD_FILTER_INDEL_SOR' 		--variant VCF/hapcaller.indel.recal.select.vcf.gz 		-o VCF/hapcaller.indel.recal.filter.vcf.gz
+Submitted job 47 with external jobid 'Your job 4089878 ("snakejob.filterIndels.47.sh") has been submitted'.
+
+[Fri Aug 21 18:23:32 2020]
+rule filterSNVs:
+    input: /sandbox/users/mguillout/pipeline/REFERENCES/human_g1k_v37.fasta, VCF/hapcaller.snv.recal.select.vcf.gz, VCF/hapcaller.snv.recal.select.vcf.gz.tbi, /sandbox/users/mguillout/pipeline/REFERENCES/human_g1k_v37.dict, gatkPresent.txt
+    output: VCF/hapcaller.snv.recal.filter.vcf.gz, VCF/hapcaller.snv.recal.filter.vcf.gz.tbi
+    jobid: 46
+    reason: Missing output files: VCF/hapcaller.snv.recal.filter.vcf.gz.tbi, VCF/hapcaller.snv.recal.filter.vcf.gz; Input files updated by another job: VCF/hapcaller.snv.recal.select.vcf.gz, VCF/hapcaller.snv.recal.select.vcf.gz.tbi
+
+gatk -Djava.io.tmpdir=VCF -XX:ParallelGCThreads=3 -Xmx3g -T VariantFiltration 		-R /sandbox/users/mguillout/pipeline/REFERENCES/human_g1k_v37.fasta 		--logging_level FATAL  		--filterExpression 'QD < 2.0' --filterName 'FAILS_HARD_FILTER_SNP_QD' 		--filterExpression 'FS > 60.0' --filterName 'FAILS_HARD_FILTER_SNP_FS' 		--filterExpression 'MQ < 30.0' --filterName 'FAILS_HARD_FILTER_SNP_MQ' 		--filterExpression 'MQRankSum < -12.5' --filterName 'FAILS_HARD_FILTER_SNP_MQRankSum' 		--filterExpression 'ReadPosRankSum < -8.0' --filterName 'FAILS_HARD_FILTER_SNP_ReadPosRankSum' 		--variant VCF/hapcaller.snv.recal.select.vcf.gz 		-o VCF/hapcaller.snv.recal.filter.vcf.gz
+Submitted job 46 with external jobid 'Your job 4089879 ("snakejob.filterSNVs.46.sh") has been submitted'.
+Removing temporary output file VCF/hapcaller.indel.recal.select.vcf.gz.
+Removing temporary output file VCF/hapcaller.indel.recal.select.vcf.gz.tbi.
+[Fri Aug 21 18:24:02 2020]
+Finished job 47.
+6 of 25 steps (24%) done
+Removing temporary output file VCF/hapcaller.snv.recal.select.vcf.gz.
+Removing temporary output file VCF/hapcaller.snv.recal.select.vcf.gz.tbi.
+[Fri Aug 21 18:24:02 2020]
+Finished job 46.
+7 of 25 steps (28%) done
+
+[Fri Aug 21 18:24:02 2020]
+rule combineVCF:
+    input: /sandbox/users/mguillout/pipeline/REFERENCES/human_g1k_v37.fasta, VCF/hapcaller.snv.recal.filter.vcf.gz, VCF/hapcaller.snv.recal.filter.vcf.gz.tbi, VCF/hapcaller.indel.recal.filter.vcf.gz, VCF/hapcaller.indel.recal.filter.vcf.gz.tbi, /sandbox/users/mguillout/pipeline/REFERENCES/human_g1k_v37.dict, gatkPresent.txt
+    output: VCF/hapcaller.recal.combined.vcf.gz, VCF/hapcaller.recal.combined.vcf.gz.tbi
+    jobid: 43
+    reason: Missing output files: VCF/hapcaller.recal.combined.vcf.gz.tbi, VCF/hapcaller.recal.combined.vcf.gz; Input files updated by another job: VCF/hapcaller.indel.recal.filter.vcf.gz, VCF/hapcaller.snv.recal.filter.vcf.gz.tbi, VCF/hapcaller.indel.recal.filter.vcf.gz.tbi, VCF/hapcaller.snv.recal.filter.vcf.gz
+
+gatk -Djava.io.tmpdir=VCF -XX:ParallelGCThreads=3 -Xmx3g -T CombineVariants 		-R /sandbox/users/mguillout/pipeline/REFERENCES/human_g1k_v37.fasta 		--genotypemergeoption PRIORITIZE 		--rod_priority_list SNP,INDEL 		--variant:SNP VCF/hapcaller.snv.recal.filter.vcf.gz 		--variant:INDEL VCF/hapcaller.indel.recal.filter.vcf.gz 		-o VCF/hapcaller.recal.combined.vcf.gz
+Submitted job 43 with external jobid 'Your job 4089882 ("snakejob.combineVCF.43.sh") has been submitted'.
+Removing temporary output file VCF/hapcaller.snv.recal.filter.vcf.gz.tbi.
+Removing temporary output file VCF/hapcaller.snv.recal.filter.vcf.gz.
+Removing temporary output file VCF/hapcaller.indel.recal.filter.vcf.gz.
+Removing temporary output file VCF/hapcaller.indel.recal.filter.vcf.gz.tbi.
+[Fri Aug 21 18:24:32 2020]
+Finished job 43.
+8 of 25 steps (32%) done
+
+[Fri Aug 21 18:24:32 2020]
+rule freqGNOMAD:
+    input: /sandbox/users/mguillout/pipeline/REFERENCES/human_g1k_v37.fasta, VCF/hapcaller.recal.combined.vcf.gz, VCF/hapcaller.recal.combined.vcf.gz.tbi, /sandbox/users/mguillout/pipeline/REFERENCES/gnomad.exomes.r2.0.1.sites.vcf.gz, /sandbox/users/mguillout/pipeline/REFERENCES/dbsnp_138.b37.vcf.gz, /sandbox/users/mguillout/pipeline/REFERENCES/human_g1k_v37.dict, gatkPresent.txt
+    output: VCF/hapcaller.recal.combined.annot.gnomad.vcf.gz, VCF/hapcaller.recal.combined.annot.gnomad.vcf.gz.tbi
+    jobid: 40
+    reason: Missing output files: VCF/hapcaller.recal.combined.annot.gnomad.vcf.gz.tbi, VCF/hapcaller.recal.combined.annot.gnomad.vcf.gz; Input files updated by another job: VCF/hapcaller.recal.combined.vcf.gz.tbi, VCF/hapcaller.recal.combined.vcf.gz
+
+gatk -Djava.io.tmpdir=VCF		-XX:ParallelGCThreads=3 		-Xmx3g 		-T VariantAnnotator 		-R /sandbox/users/mguillout/pipeline/REFERENCES/human_g1k_v37.fasta 		--variant VCF/hapcaller.recal.combined.vcf.gz 		-L VCF/hapcaller.recal.combined.vcf.gz 		--resource:gnomad /sandbox/users/mguillout/pipeline/REFERENCES/gnomad.exomes.r2.0.1.sites.vcf.gz 		--resourceAlleleConcordance 		-E gnomad.AF_AFR 		-E gnomad.AF_ASJ 		-E gnomad.AF_AMR 		-E gnomad.AF_EAS 		-E gnomad.AF_FIN 		-E gnomad.AF_NFE 		-E gnomad.AF_OTH 		-E gnomad.AF_SAS 		--dbsnp /sandbox/users/mguillout/pipeline/REFERENCES/dbsnp_138.b37.vcf.gz 		-o VCF/hapcaller.recal.combined.annot.gnomad.vcf.gz
+Submitted job 40 with external jobid 'Your job 4089883 ("snakejob.freqGNOMAD.40.sh") has been submitted'.
+Removing temporary output file VCF/hapcaller.recal.combined.vcf.gz.tbi.
+Removing temporary output file VCF/hapcaller.recal.combined.vcf.gz.
+Removing temporary output file gatkPresent.txt.
+[Fri Aug 21 18:25:22 2020]
+Finished job 40.
+9 of 25 steps (36%) done
+
+[Fri Aug 21 18:25:22 2020]
+rule annotVEP:
+    input: /sandbox/users/mguillout/pipeline/REFERENCES/human_g1k_v37.fasta, VCF/hapcaller.recal.combined.annot.gnomad.vcf.gz, VCF/hapcaller.recal.combined.annot.gnomad.vcf.gz.tbi, /sandbox/users/mguillout/pipeline/REFERENCES/VEP/CACHE/homo_sapiens_merged_86_GRCh37_cache.done
+    output: VCF/hapcaller.recal.combined.annot.gnomad.vep.vcf
+    jobid: 38
+    reason: Missing output files: VCF/hapcaller.recal.combined.annot.gnomad.vep.vcf; Input files updated by another job: VCF/hapcaller.recal.combined.annot.gnomad.vcf.gz.tbi, VCF/hapcaller.recal.combined.annot.gnomad.vcf.gz
+
+variant_effect_predictor.pl 		--pick 		--cache --dir /sandbox/users/mguillout/pipeline/REFERENCES/VEP/CACHE 		--dir_plugins /sandbox/users/mguillout/tools/VEP_plugins 		--species homo_sapiens_merged 		--assembly GRCh37 		--db_version 86 		--fasta /sandbox/users/mguillout/pipeline/REFERENCES/human_g1k_v37.fasta 		--offline 		--symbol 		--format vcf 		--force_overwrite 		--sift=b 		--polyphen=b 		--xref_refseq 		-i VCF/hapcaller.recal.combined.annot.gnomad.vcf.gz 		-o VCF/hapcaller.recal.combined.annot.gnomad.vep.vcf 		--quiet 		--vcf 		--gmaf 		--pubmed 		--hgvs 		--no_stats
+Submitted job 38 with external jobid 'Your job 4089884 ("snakejob.annotVEP.38.sh") has been submitted'.
+Write-protecting output file VCF/hapcaller.recal.combined.annot.gnomad.vep.vcf.
+[Fri Aug 21 18:40:29 2020]
+Finished job 38.
+10 of 25 steps (40%) done
+
+[Fri Aug 21 18:40:29 2020]
+rule bgzip:
+    input: VCF/hapcaller.recal.combined.annot.gnomad.vep.vcf
+    output: VCF/hapcaller.recal.combined.annot.gnomad.vep.vcf.gz
+    jobid: 35
+    reason: Missing output files: VCF/hapcaller.recal.combined.annot.gnomad.vep.vcf.gz; Input files updated by another job: VCF/hapcaller.recal.combined.annot.gnomad.vep.vcf
+    wildcards: base=VCF/hapcaller.recal.combined.annot.gnomad.vep
+
+bgzip -f VCF/hapcaller.recal.combined.annot.gnomad.vep.vcf
+Submitted job 35 with external jobid 'Your job 4089932 ("snakejob.bgzip.35.sh") has been submitted'.
+[Fri Aug 21 18:40:59 2020]
+Finished job 35.
+11 of 25 steps (44%) done
+
+[Fri Aug 21 18:40:59 2020]
+rule tabix:
+    input: VCF/hapcaller.recal.combined.annot.gnomad.vep.vcf.gz
+    output: VCF/hapcaller.recal.combined.annot.gnomad.vep.vcf.gz.tbi
+    jobid: 36
+    reason: Missing output files: VCF/hapcaller.recal.combined.annot.gnomad.vep.vcf.gz.tbi; Input files updated by another job: VCF/hapcaller.recal.combined.annot.gnomad.vep.vcf.gz
+    wildcards: base=VCF/hapcaller.recal.combined.annot.gnomad.vep.vcf.gz
+
+tabix -f -p vcf VCF/hapcaller.recal.combined.annot.gnomad.vep.vcf.gz
+Submitted job 36 with external jobid 'Your job 4089933 ("snakejob.tabix.36.sh") has been submitted'.
+[Fri Aug 21 18:41:29 2020]
+Finished job 36.
+12 of 25 steps (48%) done
+
+[Fri Aug 21 18:41:29 2020]
+rule filtration_freq_and_genes:
+    input: VCF/hapcaller.recal.combined.annot.gnomad.vep.vcf.gz, VCF/hapcaller.recal.combined.annot.gnomad.vep.vcf.gz.tbi
+    output: VCF/hapcaller.recal.combined.annot.gnomad.vep.filtered.vcf
+    jobid: 31
+    reason: Missing output files: VCF/hapcaller.recal.combined.annot.gnomad.vep.filtered.vcf; Input files updated by another job: VCF/hapcaller.recal.combined.annot.gnomad.vep.vcf.gz, VCF/hapcaller.recal.combined.annot.gnomad.vep.vcf.gz.tbi
+
+filter_vep.pl 			-i VCF/hapcaller.recal.combined.annot.gnomad.vep.vcf.gz 			-o VCF/hapcaller.recal.combined.annot.gnomad.vep.filtered.vcf 			-filter '(Gene in ENSG00000121904;ENSG00000198883;ENSG00000156500) and (GMAF < 0.05 or not GMAF)'
+Submitted job 31 with external jobid 'Your job 4089935 ("snakejob.filtration_freq_and_genes.31.sh") has been submitted'.
+Write-protecting output file VCF/hapcaller.recal.combined.annot.gnomad.vep.filtered.vcf.
+[Fri Aug 21 18:41:49 2020]
+Finished job 31.
+13 of 25 steps (52%) done
+
+[Fri Aug 21 18:41:49 2020]
+rule bgzip:
+    input: VCF/hapcaller.recal.combined.annot.gnomad.vep.filtered.vcf
+    output: VCF/hapcaller.recal.combined.annot.gnomad.vep.filtered.vcf.gz
+    jobid: 23
+    reason: Missing output files: VCF/hapcaller.recal.combined.annot.gnomad.vep.filtered.vcf.gz; Input files updated by another job: VCF/hapcaller.recal.combined.annot.gnomad.vep.filtered.vcf
+    wildcards: base=VCF/hapcaller.recal.combined.annot.gnomad.vep.filtered
+
+bgzip -f VCF/hapcaller.recal.combined.annot.gnomad.vep.filtered.vcf
+Submitted job 23 with external jobid 'Your job 4089936 ("snakejob.bgzip.23.sh") has been submitted'.
+[Fri Aug 21 18:42:09 2020]
+Finished job 23.
+14 of 25 steps (56%) done
+
+[Fri Aug 21 18:42:09 2020]
+rule extractGNOMAD:
+    input: /sandbox/users/mguillout/pipeline/REFERENCES/human_g1k_v37.fasta, VCF/hapcaller.recal.combined.annot.gnomad.vep.filtered.vcf.gz
+    output: CSV/gnomad_freq.tsv
+    jobid: 25
+    reason: Missing output files: CSV/gnomad_freq.tsv; Input files updated by another job: VCF/hapcaller.recal.combined.annot.gnomad.vep.filtered.vcf.gz
+
+gatk -T VariantsToTable 		-R /sandbox/users/mguillout/pipeline/REFERENCES/human_g1k_v37.fasta 		-V VCF/hapcaller.recal.combined.annot.gnomad.vep.filtered.vcf.gz 		-o CSV/gnomad_freq.tsv 		-F CHROM 		-F POS 		-F REF 		-F ALT 		-F END 		-F ID 		-F DP 		--allowMissingData 		-F gnomad.AF_AFR 		-F gnomad.AF_ASJ 		-F gnomad.AF_AMR 		-F gnomad.AF_EAS 		-F gnomad.AF_FIN 		-F gnomad.AF_NFE 		-F gnomad.AF_OTH 		-F gnomad.AF_SAS 
+Submitted job 25 with external jobid 'Your job 4089937 ("snakejob.extractGNOMAD.25.sh") has been submitted'.
+
+[Fri Aug 21 18:42:09 2020]
+rule scoreCADD:
+    input: VCF/hapcaller.recal.combined.annot.gnomad.vep.filtered.vcf.gz, /sandbox/users/mguillout/tools/CADD-scripts/CADD.sh
+    output: CSV/cadd.tsv.gz
+    jobid: 26
+    reason: Missing output files: CSV/cadd.tsv.gz; Input files updated by another job: VCF/hapcaller.recal.combined.annot.gnomad.vep.filtered.vcf.gz
+
+ /sandbox/users/mguillout/tools/CADD-scripts/CADD.sh 		-o CSV/cadd.tsv.gz 		-a 		-g GRCh37 		-v v1.6 VCF/hapcaller.recal.combined.annot.gnomad.vep.filtered.vcf.gz
+Submitted job 26 with external jobid 'Your job 4089938 ("snakejob.scoreCADD.26.sh") has been submitted'.
+
+[Fri Aug 21 18:42:09 2020]
+rule tabix:
+    input: VCF/hapcaller.recal.combined.annot.gnomad.vep.filtered.vcf.gz
+    output: VCF/hapcaller.recal.combined.annot.gnomad.vep.filtered.vcf.gz.tbi
+    jobid: 24
+    reason: Missing output files: VCF/hapcaller.recal.combined.annot.gnomad.vep.filtered.vcf.gz.tbi; Input files updated by another job: VCF/hapcaller.recal.combined.annot.gnomad.vep.filtered.vcf.gz
+    wildcards: base=VCF/hapcaller.recal.combined.annot.gnomad.vep.filtered.vcf.gz
+
+tabix -f -p vcf VCF/hapcaller.recal.combined.annot.gnomad.vep.filtered.vcf.gz
+Submitted job 24 with external jobid 'Your job 4089939 ("snakejob.tabix.24.sh") has been submitted'.
+[Fri Aug 21 18:42:19 2020]
+Finished job 24.
+15 of 25 steps (60%) done
+
+[Fri Aug 21 18:42:19 2020]
+rule annotANNOVAR:
+    input: VCF/hapcaller.recal.combined.annot.gnomad.vep.filtered.vcf.gz, VCF/hapcaller.recal.combined.annot.gnomad.vep.filtered.vcf.gz.tbi, /sandbox/users/mguillout/tools/annovar, /sandbox/users/mguillout/tools/annovar/humandb
+    output: VCF/hapcaller.recal.combined.annot.gnomad.vep.filtered.annovar.vcf.hg19_multianno.vcf, VCF/hapcaller.recal.combined.annot.gnomad.vep.filtered.annovar.vcf.avinput, VCF/hapcaller.recal.combined.annot.gnomad.vep.filtered.annovar.vcf.hg19_multianno.txt
+    jobid: 10
+    reason: Missing output files: VCF/hapcaller.recal.combined.annot.gnomad.vep.filtered.annovar.vcf.avinput, VCF/hapcaller.recal.combined.annot.gnomad.vep.filtered.annovar.vcf.hg19_multianno.txt, VCF/hapcaller.recal.combined.annot.gnomad.vep.filtered.annovar.vcf.hg19_multianno.vcf; Input files updated by another job: VCF/hapcaller.recal.combined.annot.gnomad.vep.filtered.vcf.gz.tbi, VCF/hapcaller.recal.combined.annot.gnomad.vep.filtered.vcf.gz
+
+perl /sandbox/users/mguillout/tools/annovar/table_annovar.pl VCF/hapcaller.recal.combined.annot.gnomad.vep.filtered.vcf.gz  		/sandbox/users/mguillout/tools/annovar/humandb		-buildver hg19 		-out VCF/hapcaller.recal.combined.annot.gnomad.vep.filtered.annovar.vcf 		-remove 		-protocol refGene,knownGene,cytoBand,dgvMerged,gwasCatalog,dbnsfp35a,gnomad211_exome,clinvar_20190305 		-operation gx,g,r,r,r,f,f,f 		-nastring . 		-polish 		-otherinfo 		-xref /sandbox/users/mguillout/tools/annovar/humandb/hg19_refGene.txt 		-vcfinput
+Submitted job 10 with external jobid 'Your job 4089940 ("snakejob.annotANNOVAR.10.sh") has been submitted'.
+Write-protecting output file CSV/gnomad_freq.tsv.
+[Fri Aug 21 18:42:29 2020]
+Finished job 25.
+16 of 25 steps (64%) done
+
+[Fri Aug 21 18:42:29 2020]
+rule extractGNOMADVEP:
+    input: VCF/hapcaller.recal.combined.annot.gnomad.vep.filtered.vcf.gz, CSV/gnomad_freq.tsv
+    output: CSV/gnomad_vep.tsv
+    jobid: 12
+    reason: Missing output files: CSV/gnomad_vep.tsv; Input files updated by another job: CSV/gnomad_freq.tsv, VCF/hapcaller.recal.combined.annot.gnomad.vep.filtered.vcf.gz
+
+vep-annotation-reporter  VCF/hapcaller.recal.combined.annot.gnomad.vep.filtered.vcf.gz 	Feature HGVSc HGVSp Protein_position Amino_acids Codons CLIN_SIG PUBMED 		-t CSV/gnomad_freq.tsv 		-o CSV/gnomad_vep.tsv 		
+Submitted job 12 with external jobid 'Your job 4089942 ("snakejob.extractGNOMADVEP.12.sh") has been submitted'.
+[Fri Aug 21 18:42:49 2020]
+Finished job 12.
+17 of 25 steps (68%) done
+Write-protecting output file VCF/hapcaller.recal.combined.annot.gnomad.vep.filtered.annovar.vcf.hg19_multianno.vcf.
+[Fri Aug 21 18:42:59 2020]
+Finished job 10.
+18 of 25 steps (72%) done
+
+[Fri Aug 21 18:42:59 2020]
+rule bgzip:
+    input: VCF/hapcaller.recal.combined.annot.gnomad.vep.filtered.annovar.vcf.hg19_multianno.vcf
+    output: VCF/hapcaller.recal.combined.annot.gnomad.vep.filtered.annovar.vcf.hg19_multianno.vcf.gz
+    jobid: 1
+    reason: Missing output files: VCF/hapcaller.recal.combined.annot.gnomad.vep.filtered.annovar.vcf.hg19_multianno.vcf.gz; Input files updated by another job: VCF/hapcaller.recal.combined.annot.gnomad.vep.filtered.annovar.vcf.hg19_multianno.vcf
+    wildcards: base=VCF/hapcaller.recal.combined.annot.gnomad.vep.filtered.annovar.vcf.hg19_multianno
+
+bgzip -f VCF/hapcaller.recal.combined.annot.gnomad.vep.filtered.annovar.vcf.hg19_multianno.vcf
+Submitted job 1 with external jobid 'Your job 4089948 ("snakejob.bgzip.1.sh") has been submitted'.
+
+[Fri Aug 21 18:42:59 2020]
+rule annotINTERVAR:
+    input: VCF/hapcaller.recal.combined.annot.gnomad.vep.filtered.annovar.vcf.avinput, /sandbox/users/mguillout/tools/annovar, /sandbox/users/mguillout/tools/annovar/humandb, /sandbox/users/mguillout/tools/InterVar-master
+    output: CSV/res_intervar.hg19_multianno.txt.intervar
+    jobid: 11
+    reason: Missing output files: CSV/res_intervar.hg19_multianno.txt.intervar; Input files updated by another job: VCF/hapcaller.recal.combined.annot.gnomad.vep.filtered.annovar.vcf.avinput
+
+python /sandbox/users/mguillout/tools/InterVar-master/Intervar.py 		-i VCF/hapcaller.recal.combined.annot.gnomad.vep.filtered.annovar.vcf.avinput 		-o CSV/res_intervar 		--buildver hg19 		--input_type AVinput 		--database_intervar /sandbox/users/mguillout/tools/InterVar-master/intervardb 		--config=/sandbox/users/mguillout/tools/InterVar-master/config.ini 		--convert2annovar /sandbox/users/mguillout/tools/annovar/convert2annovar.pl 		--table_annovar /sandbox/users/mguillout/tools/annovar/table_annovar.pl 		--annotate_variation /sandbox/users/mguillout/tools/annovar/annotate_variation.pl 		--database_locat /sandbox/users/mguillout/tools/annovar/humandb
+Submitted job 11 with external jobid 'Your job 4089949 ("snakejob.annotINTERVAR.11.sh") has been submitted'.
+[Fri Aug 21 18:43:19 2020]
+Finished job 26.
+19 of 25 steps (76%) done
+
+[Fri Aug 21 18:43:19 2020]
+rule gunzipCADD:
+    input: CSV/cadd.tsv.gz
+    output: CSV/cadd.tsv
+    jobid: 13
+    reason: Missing output files: CSV/cadd.tsv; Input files updated by another job: CSV/cadd.tsv.gz
+
+gunzip CSV/cadd.tsv.gz ;  sed 1d CSV/cadd.tsv -i
+[Fri Aug 21 18:43:19 2020]
+Finished job 1.
+20 of 25 steps (80%) done
+Submitted job 13 with external jobid 'Your job 4089952 ("snakejob.gunzipCADD.13.sh") has been submitted'.
+
+[Fri Aug 21 18:43:19 2020]
+rule tabix:
+    input: VCF/hapcaller.recal.combined.annot.gnomad.vep.filtered.annovar.vcf.hg19_multianno.vcf.gz
+    output: VCF/hapcaller.recal.combined.annot.gnomad.vep.filtered.annovar.vcf.hg19_multianno.vcf.gz.tbi
+    jobid: 2
+    reason: Missing output files: VCF/hapcaller.recal.combined.annot.gnomad.vep.filtered.annovar.vcf.hg19_multianno.vcf.gz.tbi; Input files updated by another job: VCF/hapcaller.recal.combined.annot.gnomad.vep.filtered.annovar.vcf.hg19_multianno.vcf.gz
+    wildcards: base=VCF/hapcaller.recal.combined.annot.gnomad.vep.filtered.annovar.vcf.hg19_multianno.vcf.gz
+
+tabix -f -p vcf VCF/hapcaller.recal.combined.annot.gnomad.vep.filtered.annovar.vcf.hg19_multianno.vcf.gz
+Submitted job 2 with external jobid 'Your job 4089953 ("snakejob.tabix.2.sh") has been submitted'.
+[Fri Aug 21 18:43:39 2020]
+Finished job 13.
+21 of 25 steps (84%) done
+[Fri Aug 21 18:43:39 2020]
+Finished job 2.
+22 of 25 steps (88%) done
+[Fri Aug 21 18:56:56 2020]
+Finished job 11.
+23 of 25 steps (92%) done
+
+[Fri Aug 21 18:56:56 2020]
+rule merge_fields:
+    input: VCF/hapcaller.recal.combined.annot.gnomad.vep.filtered.annovar.vcf.hg19_multianno.txt, CSV/res_intervar.hg19_multianno.txt.intervar, CSV/gnomad_vep.tsv, CSV/cadd.tsv
+    output: CSV/main_results.tsv
+    jobid: 3
+    reason: Missing output files: CSV/main_results.tsv; Input files updated by another job: CSV/cadd.tsv, CSV/gnomad_vep.tsv, CSV/res_intervar.hg19_multianno.txt.intervar, VCF/hapcaller.recal.combined.annot.gnomad.vep.filtered.annovar.vcf.hg19_multianno.txt
+
+Submitted job 3 with external jobid 'Your job 4089990 ("snakejob.merge_fields.3.sh") has been submitted'.
+[Fri Aug 21 18:57:16 2020]
+Error in rule merge_fields:
+    jobid: 3
+    output: CSV/main_results.tsv
+    cluster_jobid: Your job 4089990 ("snakejob.merge_fields.3.sh") has been submitted
+
+Error executing rule merge_fields on cluster (jobid: 3, external: Your job 4089990 ("snakejob.merge_fields.3.sh") has been submitted, jobscript: /sandbox/shares/nextcloud/mguillout/files/Application/pipeline/testVB_29/.snakemake/tmp.cu_ectga/snakejob.merge_fields.3.sh). For error details see the cluster log and the log files of the involved rule(s).
+Shutting down, this might take some time.
+Exiting because a job execution failed. Look above for error message
+Complete log: /sandbox/shares/nextcloud/mguillout/files/Application/pipeline/.snakemake/log/2020-08-21T181729.517241.snakemake.log

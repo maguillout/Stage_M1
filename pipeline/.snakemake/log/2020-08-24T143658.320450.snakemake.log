@@ -1,0 +1,90 @@
+Building DAG of jobs...
+Using shell: /usr/bin/bash
+Provided cluster nodes: 12
+Job counts:
+	count	jobs
+	5	annotINTERVAR
+	5	merge_fields
+	1	target
+	11
+
+[Mon Aug 24 14:37:00 2020]
+rule annotINTERVAR:
+    input: VCF/hapcaller.recal.combined.annot.gnomad.vep.filtered.annovar.vcf.hg19_multianno.vcf.gz, /sandbox/users/mguillout/tools/annovar, /sandbox/users/mguillout/tools/annovar/humandb, /sandbox/users/mguillout/tools/InterVar-master
+    output: CSV/res_intervar.Sample10.hg19_multianno.txt.intervar
+    jobid: 39
+    reason: Missing output files: CSV/res_intervar.Sample10.hg19_multianno.txt.intervar
+    wildcards: sample=Sample10
+
+python /sandbox/users/mguillout/tools/InterVar-master/Intervar.py 		-i VCF/hapcaller.recal.combined.annot.gnomad.vep.filtered.annovar.vcf.hg19_multianno.vcf.gz 		-o CSV/res_intervar 		--buildver hg19 		--input_type VCF_m 		--database_intervar /sandbox/users/mguillout/tools/InterVar-master/intervardb 		--config=/sandbox/users/mguillout/tools/InterVar-master/config.ini 		--convert2annovar /sandbox/users/mguillout/tools/annovar/convert2annovar.pl 		--table_annovar /sandbox/users/mguillout/tools/annovar/table_annovar.pl 		--annotate_variation /sandbox/users/mguillout/tools/annovar/annotate_variation.pl 		--database_locat /sandbox/users/mguillout/tools/annovar/humandb
+Submitted job 39 with external jobid 'Your job 4091533 ("snakejob.annotINTERVAR.39.sh") has been submitted'.
+
+[Mon Aug 24 14:37:00 2020]
+rule annotINTERVAR:
+    input: VCF/hapcaller.recal.combined.annot.gnomad.vep.filtered.annovar.vcf.hg19_multianno.vcf.gz, /sandbox/users/mguillout/tools/annovar, /sandbox/users/mguillout/tools/annovar/humandb, /sandbox/users/mguillout/tools/InterVar-master
+    output: CSV/res_intervar.Sample1.hg19_multianno.txt.intervar
+    jobid: 43
+    reason: Missing output files: CSV/res_intervar.Sample1.hg19_multianno.txt.intervar
+    wildcards: sample=Sample1
+
+python /sandbox/users/mguillout/tools/InterVar-master/Intervar.py 		-i VCF/hapcaller.recal.combined.annot.gnomad.vep.filtered.annovar.vcf.hg19_multianno.vcf.gz 		-o CSV/res_intervar 		--buildver hg19 		--input_type VCF_m 		--database_intervar /sandbox/users/mguillout/tools/InterVar-master/intervardb 		--config=/sandbox/users/mguillout/tools/InterVar-master/config.ini 		--convert2annovar /sandbox/users/mguillout/tools/annovar/convert2annovar.pl 		--table_annovar /sandbox/users/mguillout/tools/annovar/table_annovar.pl 		--annotate_variation /sandbox/users/mguillout/tools/annovar/annotate_variation.pl 		--database_locat /sandbox/users/mguillout/tools/annovar/humandb
+Submitted job 43 with external jobid 'Your job 4091534 ("snakejob.annotINTERVAR.43.sh") has been submitted'.
+
+[Mon Aug 24 14:37:00 2020]
+rule annotINTERVAR:
+    input: VCF/hapcaller.recal.combined.annot.gnomad.vep.filtered.annovar.vcf.hg19_multianno.vcf.gz, /sandbox/users/mguillout/tools/annovar, /sandbox/users/mguillout/tools/annovar/humandb, /sandbox/users/mguillout/tools/InterVar-master
+    output: CSV/res_intervar.Sample29.hg19_multianno.txt.intervar
+    jobid: 42
+    reason: Missing output files: CSV/res_intervar.Sample29.hg19_multianno.txt.intervar
+    wildcards: sample=Sample29
+
+python /sandbox/users/mguillout/tools/InterVar-master/Intervar.py 		-i VCF/hapcaller.recal.combined.annot.gnomad.vep.filtered.annovar.vcf.hg19_multianno.vcf.gz 		-o CSV/res_intervar 		--buildver hg19 		--input_type VCF_m 		--database_intervar /sandbox/users/mguillout/tools/InterVar-master/intervardb 		--config=/sandbox/users/mguillout/tools/InterVar-master/config.ini 		--convert2annovar /sandbox/users/mguillout/tools/annovar/convert2annovar.pl 		--table_annovar /sandbox/users/mguillout/tools/annovar/table_annovar.pl 		--annotate_variation /sandbox/users/mguillout/tools/annovar/annotate_variation.pl 		--database_locat /sandbox/users/mguillout/tools/annovar/humandb
+Submitted job 42 with external jobid 'Your job 4091535 ("snakejob.annotINTERVAR.42.sh") has been submitted'.
+
+[Mon Aug 24 14:37:00 2020]
+rule annotINTERVAR:
+    input: VCF/hapcaller.recal.combined.annot.gnomad.vep.filtered.annovar.vcf.hg19_multianno.vcf.gz, /sandbox/users/mguillout/tools/annovar, /sandbox/users/mguillout/tools/annovar/humandb, /sandbox/users/mguillout/tools/InterVar-master
+    output: CSV/res_intervar.Sample33.hg19_multianno.txt.intervar
+    jobid: 45
+    reason: Missing output files: CSV/res_intervar.Sample33.hg19_multianno.txt.intervar
+    wildcards: sample=Sample33
+
+python /sandbox/users/mguillout/tools/InterVar-master/Intervar.py 		-i VCF/hapcaller.recal.combined.annot.gnomad.vep.filtered.annovar.vcf.hg19_multianno.vcf.gz 		-o CSV/res_intervar 		--buildver hg19 		--input_type VCF_m 		--database_intervar /sandbox/users/mguillout/tools/InterVar-master/intervardb 		--config=/sandbox/users/mguillout/tools/InterVar-master/config.ini 		--convert2annovar /sandbox/users/mguillout/tools/annovar/convert2annovar.pl 		--table_annovar /sandbox/users/mguillout/tools/annovar/table_annovar.pl 		--annotate_variation /sandbox/users/mguillout/tools/annovar/annotate_variation.pl 		--database_locat /sandbox/users/mguillout/tools/annovar/humandb
+Submitted job 45 with external jobid 'Your job 4091536 ("snakejob.annotINTERVAR.45.sh") has been submitted'.
+
+[Mon Aug 24 14:37:00 2020]
+rule annotINTERVAR:
+    input: VCF/hapcaller.recal.combined.annot.gnomad.vep.filtered.annovar.vcf.hg19_multianno.vcf.gz, /sandbox/users/mguillout/tools/annovar, /sandbox/users/mguillout/tools/annovar/humandb, /sandbox/users/mguillout/tools/InterVar-master
+    output: CSV/res_intervar.Sample32.hg19_multianno.txt.intervar
+    jobid: 44
+    reason: Missing output files: CSV/res_intervar.Sample32.hg19_multianno.txt.intervar
+    wildcards: sample=Sample32
+
+python /sandbox/users/mguillout/tools/InterVar-master/Intervar.py 		-i VCF/hapcaller.recal.combined.annot.gnomad.vep.filtered.annovar.vcf.hg19_multianno.vcf.gz 		-o CSV/res_intervar 		--buildver hg19 		--input_type VCF_m 		--database_intervar /sandbox/users/mguillout/tools/InterVar-master/intervardb 		--config=/sandbox/users/mguillout/tools/InterVar-master/config.ini 		--convert2annovar /sandbox/users/mguillout/tools/annovar/convert2annovar.pl 		--table_annovar /sandbox/users/mguillout/tools/annovar/table_annovar.pl 		--annotate_variation /sandbox/users/mguillout/tools/annovar/annotate_variation.pl 		--database_locat /sandbox/users/mguillout/tools/annovar/humandb
+Submitted job 44 with external jobid 'Your job 4091537 ("snakejob.annotINTERVAR.44.sh") has been submitted'.
+[Mon Aug 24 14:42:50 2020]
+Finished job 39.
+1 of 11 steps (9%) done
+
+[Mon Aug 24 14:42:50 2020]
+rule merge_fields:
+    input: VCF/hapcaller.recal.combined.annot.gnomad.vep.filtered.annovar.vcf.hg19_multianno.txt, CSV/res_intervar.Sample10.hg19_multianno.txt.intervar, CSV/gnomad_vep.tsv, CSV/cadd.tsv
+    output: CSV/individual_results_Sample10.tsv
+    jobid: 3
+    reason: Missing output files: CSV/individual_results_Sample10.tsv; Input files updated by another job: CSV/res_intervar.Sample10.hg19_multianno.txt.intervar
+    wildcards: sample=Sample10
+
+Submitted job 3 with external jobid 'Your job 4091539 ("snakejob.merge_fields.3.sh") has been submitted'.
+[Mon Aug 24 14:43:10 2020]
+Error in rule merge_fields:
+    jobid: 3
+    output: CSV/individual_results_Sample10.tsv
+    cluster_jobid: Your job 4091539 ("snakejob.merge_fields.3.sh") has been submitted
+
+Error executing rule merge_fields on cluster (jobid: 3, external: Your job 4091539 ("snakejob.merge_fields.3.sh") has been submitted, jobscript: /sandbox/shares/nextcloud/mguillout/files/Application/pipeline/APHP/.snakemake/tmp.coeviugz/snakejob.merge_fields.3.sh). For error details see the cluster log and the log files of the involved rule(s).
+[Mon Aug 24 14:45:20 2020]
+Finished job 43.
+2 of 11 steps (18%) done
+[Mon Aug 24 14:45:20 2020]
+Finished job 45.
+3 of 11 steps (27%) done

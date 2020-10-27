@@ -1,0 +1,2 @@
+SyntaxError in line 851 of /sandbox/shares/nextcloud/mguillout/files/Application/pipeline/Snakefile:
+Unexpected keyword txt in rule definition (Snakefile, line 851)

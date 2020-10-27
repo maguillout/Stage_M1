@@ -1,0 +1,48 @@
+Building DAG of jobs...
+Using shell: /usr/bin/bash
+Provided cluster nodes: 12
+Job counts:
+	count	jobs
+	1	annotANNOVAR
+	1	annotINTERVAR
+	1	annotVEP
+	1	baseRecalibration
+	3	bgzip
+	1	combineGVCF
+	1	combineVCF
+	1	createBaseRecalibrationTable
+	1	createGVCFList
+	3	depthOfCoverage
+	1	extractGNOMAD
+	1	extractGNOMADVEP
+	1	filterIndels
+	1	filterSNVs
+	1	filtrationVEP
+	1	freqGNOMAD
+	1	genotypeGVCF
+	1	gunzipCADD
+	1	haplotypeCaller
+	1	indelRealign
+	1	markDuplicates
+	1	picardMetrics
+	1	realignTargetCreator
+	1	scoreCADD
+	1	selectIndels
+	1	selectSNVs
+	3	tabix
+	1	target
+	34
+
+[Thu Aug 20 13:19:32 2020]
+rule markDuplicates:
+    input: Samples/Sample1/BAM/Sample1.merged.bam, Samples/Sample1/BAM/Sample1.merged.bai
+    output: Samples/Sample1/BAM/Sample1.markdup.bam, Samples/Sample1/BAM/Sample1.markdup.bai, Samples/Sample1/QC/Sample1.markdup.metrics
+    jobid: 35
+    reason: Missing output files: Samples/Sample1/BAM/Sample1.markdup.bai, Samples/Sample1/BAM/Sample1.markdup.bam
+    wildcards: sample=Sample1
+
+picard MarkDuplicates -Xmx5g TMP_DIR=Samples/Sample1/BAM MAX_RECORDS_IN_RAM=1000000 COMPRESSION_LEVEL=9 AS=true PG=PMD  VALIDATION_STRINGENCY=SILENT CREATE_INDEX=true O=Samples/Sample1/BAM/Sample1.markdup.bam I=Samples/Sample1/BAM/Sample1.merged.bam M=Samples/Sample1/QC/Sample1.markdup.metrics
+Submitted job 35 with external jobid 'Your job 4087462 ("snakejob.markDuplicates.35.sh") has been submitted'.
+Terminating processes on user request, this might take some time.
+Will exit after finishing currently running jobs.
+Cancelling snakemake on user request.

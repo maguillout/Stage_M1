@@ -1,0 +1,3 @@
+KeyError in line 75 of /sandbox/shares/nextcloud/mguillout/files/Application/pipeline/Snakefile:
+'annovar_db'
+  File "/sandbox/shares/nextcloud/mguillout/files/Application/pipeline/Snakefile", line 75, in <module>

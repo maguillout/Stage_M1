@@ -1,0 +1,3 @@
+KeyError in line 85 of /sandbox/shares/nextcloud/mguillout/files/Application/pipeline/Snakefile:
+'params'
+  File "/sandbox/shares/nextcloud/mguillout/files/Application/pipeline/Snakefile", line 85, in <module>

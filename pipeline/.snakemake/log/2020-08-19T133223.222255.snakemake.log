@@ -1,0 +1,31 @@
+Building DAG of jobs...
+Using shell: /usr/bin/bash
+Provided cluster nodes: 12
+Job counts:
+	count	jobs
+	1	gunzipCADD
+	1	target
+	2
+
+[Wed Aug 19 13:32:24 2020]
+rule gunzipCADD:
+    input: CSV/cadd.tsv.gz
+    output: CSV/cadd.tsv
+    jobid: 5
+    reason: Missing output files: CSV/cadd.tsv
+
+gunzip CSV/cadd.tsv.gz |  sed 1d CSV/cadd.tsv.tsv -i
+Submitted job 5 with external jobid 'Your job 4082180 ("snakejob.gunzipCADD.5.sh") has been submitted'.
+[Wed Aug 19 13:32:34 2020]
+Error in rule gunzipCADD:
+    jobid: 5
+    output: CSV/cadd.tsv
+    shell:
+        gunzip CSV/cadd.tsv.gz |  sed 1d CSV/cadd.tsv.tsv -i
+        (one of the commands exited with non-zero exit code; note that snakemake uses bash strict mode!)
+    cluster_jobid: Your job 4082180 ("snakejob.gunzipCADD.5.sh") has been submitted
+
+Error executing rule gunzipCADD on cluster (jobid: 5, external: Your job 4082180 ("snakejob.gunzipCADD.5.sh") has been submitted, jobscript: /sandbox/shares/nextcloud/mguillout/files/Application/pipeline/testPipeline4/.snakemake/tmp.ogbxis7o/snakejob.gunzipCADD.5.sh). For error details see the cluster log and the log files of the involved rule(s).
+Shutting down, this might take some time.
+Exiting because a job execution failed. Look above for error message
+Complete log: /sandbox/shares/nextcloud/mguillout/files/Application/pipeline/.snakemake/log/2020-08-19T133223.222255.snakemake.log
