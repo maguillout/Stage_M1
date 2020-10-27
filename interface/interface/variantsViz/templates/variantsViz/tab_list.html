@@ -1,0 +1,19 @@
+{% extends 'variantsViz/base.html' %}
+
+{% block content %}
+		<div class="content container">
+		    <div class="row">
+		        <div class="col-md-8">
+			    	{% for t in tabs %}
+		        	<div class="post">	            
+		           	 <h3><a href="">{{ t.sample_id }}</a></h3>
+		          	  <div class="date">
+		          	      <p>importé: {{ t.created_date }}</p>
+		         	   </div>
+		          	  <p>{{ t.tab|linebreaksbr }}</p>
+	       			 </div>
+	  				{% endfor %}		            
+		        </div>
+		    </div>
+		</div>
+{% endblock %}
