@@ -1,0 +1,386 @@
+Building DAG of jobs...
+Using shell: /usr/bin/bash
+Provided cluster nodes: 12
+Job counts:
+	count	jobs
+	1	align
+	1	annotANNOVAR
+	1	annotINTERVAR
+	1	annotVEP
+	1	baseRecalibration
+	1	bedToPicardInterval
+	3	bgzip
+	1	combineGVCF
+	1	combineVCF
+	2	concatFastq
+	1	copyBed
+	1	createBaseRecalibrationTable
+	1	createGVCFList
+	3	depthOfCoverage
+	1	downloadGATK
+	1	extendBed
+	1	extractGNOMAD
+	1	extractGNOMADVEP
+	2	fastQC
+	1	filterIndels
+	1	filterSNVs
+	1	filtration_freq_and_genes
+	1	freqGNOMAD
+	1	genotypeGVCF
+	1	gunzipCADD
+	1	haplotypeCaller
+	1	indelRealign
+	1	makeAutosomesBed
+	1	makeChrXBed
+	1	makeChrYBed
+	1	markDuplicates
+	1	merge
+	1	merge_fields
+	1	picardMetrics
+	1	realignTargetCreator
+	1	scoreCADD
+	1	selectIndels
+	1	selectSNVs
+	1	sort
+	3	tabix
+	1	target
+	49
+
+[Wed Sep 16 18:32:19 2020]
+rule concatFastq:
+    input: /sandbox/users/mguillout/fastQ-APHP/P10-BL_S10_L001_R2_001.fastq.gz
+    output: Samples/Sample1/QC/Sample1.fastqc.reverse.gz
+    jobid: 22
+    reason: Missing output files: Samples/Sample1/QC/Sample1.fastqc.reverse.gz
+    wildcards: sample=Sample1, strand=reverse
+
+cat /sandbox/users/mguillout/fastQ-APHP/P10-BL_S10_L001_R2_001.fastq.gz > Samples/Sample1/QC/Sample1.fastqc.reverse.gz
+Submitted job 22 with external jobid 'Your job 4150289 ("snakejob.concatFastq.22.sh") has been submitted'.
+
+[Wed Sep 16 18:32:19 2020]
+rule copyBed:
+    input: /sandbox/users/mguillout/pipeline/REFERENCES/Broad.human.exome.b37.bed, /sandbox/users/mguillout/pipeline/REFERENCES/human_g1k_v37.fasta.fai
+    output: BED/capture.bed
+    jobid: 30
+    reason: Missing output files: BED/capture.bed
+
+tr -d '\r' < /sandbox/users/mguillout/pipeline/REFERENCES/Broad.human.exome.b37.bed | grep -v '^browser'  | grep -v '^track' | cut -f1,2,3 | sed 's/^chr//' | LC_ALL=C sort -t '	' -k1,1 -k2,2n -k3,3n | bedtools merge | bedtools sort -faidx /sandbox/users/mguillout/pipeline/REFERENCES/human_g1k_v37.fasta.fai > BED/capture.bed
+Submitted job 30 with external jobid 'Your job 4150290 ("snakejob.copyBed.30.sh") has been submitted'.
+
+[Wed Sep 16 18:32:19 2020]
+rule downloadGATK:
+    output: gatkPresent.txt
+    jobid: 17
+    reason: Missing output files: gatkPresent.txt
+
+Submitted job 17 with external jobid 'Your job 4150291 ("snakejob.downloadGATK.17.sh") has been submitted'.
+
+[Wed Sep 16 18:32:19 2020]
+rule concatFastq:
+    input: /sandbox/users/mguillout/fastQ-APHP/P10-BL_S10_L001_R1_001.fastq.gz
+    output: Samples/Sample1/QC/Sample1.fastqc.forward.gz
+    jobid: 21
+    reason: Missing output files: Samples/Sample1/QC/Sample1.fastqc.forward.gz
+    wildcards: sample=Sample1, strand=forward
+
+cat /sandbox/users/mguillout/fastQ-APHP/P10-BL_S10_L001_R1_001.fastq.gz > Samples/Sample1/QC/Sample1.fastqc.forward.gz
+Submitted job 21 with external jobid 'Your job 4150292 ("snakejob.concatFastq.21.sh") has been submitted'.
+
+[Wed Sep 16 18:32:19 2020]
+rule align:
+    input: /sandbox/users/mguillout/pipeline/REFERENCES/human_g1k_v37.fasta, /sandbox/users/mguillout/fastQ-APHP/P10-BL_S10_L001_R1_001.fastq.gz, /sandbox/users/mguillout/fastQ-APHP/P10-BL_S10_L001_R2_001.fastq.gz, /sandbox/users/mguillout/pipeline/REFERENCES/human_g1k_v37.fasta.bwt
+    output: Samples/Sample1/BAM/Sample1.p1.sam
+    jobid: 42
+    reason: Missing output files: Samples/Sample1/BAM/Sample1.p1.sam
+    wildcards: sample=Sample1, pairID=p1
+
+bwa mem -t 1 -M 		-H '@CO\tProject:pipelineTest Sample:Sample1 Date:2020-09-16 CWD:/sandbox/users/mguillout/externalshares/Application/pipeline/testVB_10 Capture:{ name : captureName , description : exome capture 1 , path : /sandbox/users/mguillout/pipeline/REFERENCES/Broad.human.exome.b37.bed}' 		-R '@RG\tID:Sample1\tLB:Sample1\tSM:Sample1\tPL:Illumina\tCN:CENTER' 		/sandbox/users/mguillout/pipeline/REFERENCES/human_g1k_v37.fasta /sandbox/users/mguillout/fastQ-APHP/P10-BL_S10_L001_R1_001.fastq.gz /sandbox/users/mguillout/fastQ-APHP/P10-BL_S10_L001_R2_001.fastq.gz > Samples/Sample1/BAM/Sample1.p1.sam
+Submitted job 42 with external jobid 'Your job 4150293 ("snakejob.align.42.sh") has been submitted'.
+[Wed Sep 16 18:32:39 2020]
+Finished job 22.
+1 of 49 steps (2%) done
+
+[Wed Sep 16 18:32:39 2020]
+rule fastQC:
+    input: Samples/Sample1/QC/Sample1.fastqc.reverse.gz
+    output: Samples/Sample1/QC/Sample1.fastqc.reverse_fastqc.zip
+    jobid: 9
+    reason: Missing output files: Samples/Sample1/QC/Sample1.fastqc.reverse_fastqc.zip; Input files updated by another job: Samples/Sample1/QC/Sample1.fastqc.reverse.gz
+    wildcards: sample=Sample1, strand=reverse
+
+fastqc -o Samples/Sample1/QC --format fastq --noextract Samples/Sample1/QC/Sample1.fastqc.reverse.gz
+[Wed Sep 16 18:32:39 2020]
+Finished job 30.
+2 of 49 steps (4%) done
+[Wed Sep 16 18:32:39 2020]
+Finished job 17.
+3 of 49 steps (6%) done
+[Wed Sep 16 18:32:39 2020]
+Finished job 21.
+4 of 49 steps (8%) done
+Submitted job 9 with external jobid 'Your job 4150294 ("snakejob.fastQC.9.sh") has been submitted'.
+
+[Wed Sep 16 18:32:39 2020]
+rule makeAutosomesBed:
+    input: BED/capture.bed
+    output: BED/autosomes.bed
+    jobid: 15
+    reason: Missing output files: BED/autosomes.bed; Input files updated by another job: BED/capture.bed
+
+awk -F '	' '(int($1)>0)' BED/capture.bed > BED/autosomes.bed
+Submitted job 15 with external jobid 'Your job 4150295 ("snakejob.makeAutosomesBed.15.sh") has been submitted'.
+
+[Wed Sep 16 18:32:39 2020]
+rule makeChrXBed:
+    input: BED/capture.bed
+    output: BED/chrX.bed
+    jobid: 18
+    reason: Missing output files: BED/chrX.bed; Input files updated by another job: BED/capture.bed
+
+awk -F '	' '($1=="X")' BED/capture.bed > BED/chrX.bed
+Submitted job 18 with external jobid 'Your job 4150296 ("snakejob.makeChrXBed.18.sh") has been submitted'.
+
+[Wed Sep 16 18:32:39 2020]
+rule makeChrYBed:
+    input: BED/capture.bed
+    output: BED/chrY.bed
+    jobid: 19
+    reason: Missing output files: BED/chrY.bed; Input files updated by another job: BED/capture.bed
+
+awk -F '	' '($1=="Y")' BED/capture.bed > BED/chrY.bed
+Submitted job 19 with external jobid 'Your job 4150297 ("snakejob.makeChrYBed.19.sh") has been submitted'.
+
+[Wed Sep 16 18:32:39 2020]
+rule bedToPicardInterval:
+    input: BED/capture.bed, /sandbox/users/mguillout/pipeline/REFERENCES/human_g1k_v37.dict
+    output: BED/capture.interval_list
+    jobid: 20
+    reason: Missing output files: BED/capture.interval_list; Input files updated by another job: BED/capture.bed
+    wildcards: base=BED/capture
+
+picard BedToIntervalList I=BED/capture.bed O=BED/capture.interval_list SD=/sandbox/users/mguillout/pipeline/REFERENCES/human_g1k_v37.dict
+Submitted job 20 with external jobid 'Your job 4150298 ("snakejob.bedToPicardInterval.20.sh") has been submitted'.
+
+[Wed Sep 16 18:32:39 2020]
+rule extendBed:
+    input: BED/capture.bed, /sandbox/users/mguillout/pipeline/REFERENCES/human_g1k_v37.fasta.fai
+    output: BED/capture.extended1000.bed
+    jobid: 32
+    reason: Missing output files: BED/capture.extended1000.bed; Input files updated by another job: BED/capture.bed
+
+bedtools slop -b 1000 -g /sandbox/users/mguillout/pipeline/REFERENCES/human_g1k_v37.fasta.fai -i BED/capture.bed | LC_ALL=C sort -t '	' -k1,1 -k2,2n -k3,3n | bedtools merge -d 1000 | bedtools sort -faidx /sandbox/users/mguillout/pipeline/REFERENCES/human_g1k_v37.fasta.fai > BED/capture.extended1000.bed
+Submitted job 32 with external jobid 'Your job 4150299 ("snakejob.extendBed.32.sh") has been submitted'.
+
+[Wed Sep 16 18:32:40 2020]
+rule fastQC:
+    input: Samples/Sample1/QC/Sample1.fastqc.forward.gz
+    output: Samples/Sample1/QC/Sample1.fastqc.forward_fastqc.zip
+    jobid: 8
+    reason: Missing output files: Samples/Sample1/QC/Sample1.fastqc.forward_fastqc.zip; Input files updated by another job: Samples/Sample1/QC/Sample1.fastqc.forward.gz
+    wildcards: sample=Sample1, strand=forward
+
+fastqc -o Samples/Sample1/QC --format fastq --noextract Samples/Sample1/QC/Sample1.fastqc.forward.gz
+Submitted job 8 with external jobid 'Your job 4150300 ("snakejob.fastQC.8.sh") has been submitted'.
+[Wed Sep 16 18:32:49 2020]
+Finished job 15.
+5 of 49 steps (10%) done
+[Wed Sep 16 18:32:49 2020]
+Finished job 18.
+6 of 49 steps (12%) done
+[Wed Sep 16 18:32:49 2020]
+Finished job 19.
+7 of 49 steps (14%) done
+[Wed Sep 16 18:32:49 2020]
+Finished job 32.
+8 of 49 steps (16%) done
+[Wed Sep 16 18:32:59 2020]
+Finished job 20.
+9 of 49 steps (18%) done
+[Wed Sep 16 18:33:09 2020]
+Finished job 9.
+10 of 49 steps (20%) done
+[Wed Sep 16 18:33:09 2020]
+Finished job 8.
+11 of 49 steps (22%) done
+[Wed Sep 16 18:36:40 2020]
+Finished job 42.
+12 of 49 steps (24%) done
+
+[Wed Sep 16 18:36:40 2020]
+rule sort:
+    input: /sandbox/users/mguillout/pipeline/REFERENCES/human_g1k_v37.fasta, Samples/Sample1/BAM/Sample1.p1.sam, /sandbox/users/mguillout/pipeline/REFERENCES/human_g1k_v37.fasta.fai
+    output: Samples/Sample1/BAM/Sample1.p1.sorted.bam
+    jobid: 39
+    reason: Missing output files: Samples/Sample1/BAM/Sample1.p1.sorted.bam; Input files updated by another job: Samples/Sample1/BAM/Sample1.p1.sam
+    wildcards: sample=Sample1, pairID=p1
+
+samtools sort --reference /sandbox/users/mguillout/pipeline/REFERENCES/human_g1k_v37.fasta -l 9 -@ 1 -O bam -o Samples/Sample1/BAM/Sample1.p1.sorted.bam -T Samples/Sample1/BAM/Sample1.p1.sorted.bam.tmp Samples/Sample1/BAM/Sample1.p1.sam
+Submitted job 39 with external jobid 'Your job 4150301 ("snakejob.sort.39.sh") has been submitted'.
+Removing temporary output file Samples/Sample1/BAM/Sample1.p1.sam.
+[Wed Sep 16 18:37:30 2020]
+Finished job 39.
+13 of 49 steps (27%) done
+
+[Wed Sep 16 18:37:30 2020]
+rule merge:
+    input: Samples/Sample1/BAM/Sample1.p1.sorted.bam
+    output: Samples/Sample1/BAM/Sample1.merged.bam, Samples/Sample1/BAM/Sample1.merged.bai
+    jobid: 37
+    reason: Missing output files: Samples/Sample1/BAM/Sample1.merged.bam, Samples/Sample1/BAM/Sample1.merged.bai; Input files updated by another job: Samples/Sample1/BAM/Sample1.p1.sorted.bam
+    wildcards: sample=Sample1
+
+Submitted job 37 with external jobid 'Your job 4150302 ("snakejob.merge.37.sh") has been submitted'.
+Removing temporary output file Samples/Sample1/BAM/Sample1.p1.sorted.bam.
+[Wed Sep 16 18:39:00 2020]
+Finished job 37.
+14 of 49 steps (29%) done
+
+[Wed Sep 16 18:39:00 2020]
+rule markDuplicates:
+    input: Samples/Sample1/BAM/Sample1.merged.bam, Samples/Sample1/BAM/Sample1.merged.bai
+    output: Samples/Sample1/BAM/Sample1.markdup.bam, Samples/Sample1/BAM/Sample1.markdup.bai, Samples/Sample1/QC/Sample1.markdup.metrics
+    jobid: 34
+    reason: Missing output files: Samples/Sample1/BAM/Sample1.markdup.bai, Samples/Sample1/BAM/Sample1.markdup.bam; Input files updated by another job: Samples/Sample1/BAM/Sample1.merged.bam, Samples/Sample1/BAM/Sample1.merged.bai
+    wildcards: sample=Sample1
+
+picard MarkDuplicates -Xmx5g TMP_DIR=Samples/Sample1/BAM MAX_RECORDS_IN_RAM=1000000 COMPRESSION_LEVEL=9 AS=true PG=PMD  VALIDATION_STRINGENCY=SILENT CREATE_INDEX=true O=Samples/Sample1/BAM/Sample1.markdup.bam I=Samples/Sample1/BAM/Sample1.merged.bam M=Samples/Sample1/QC/Sample1.markdup.metrics
+Submitted job 34 with external jobid 'Your job 4150303 ("snakejob.markDuplicates.34.sh") has been submitted'.
+Removing temporary output file Samples/Sample1/BAM/Sample1.merged.bam.
+Removing temporary output file Samples/Sample1/BAM/Sample1.merged.bai.
+[Wed Sep 16 18:41:41 2020]
+Finished job 34.
+15 of 49 steps (31%) done
+
+[Wed Sep 16 18:41:41 2020]
+rule realignTargetCreator:
+    input: Samples/Sample1/BAM/Sample1.markdup.bam, Samples/Sample1/BAM/Sample1.markdup.bai, BED/capture.extended1000.bed, /sandbox/users/mguillout/pipeline/REFERENCES/human_g1k_v37.fasta, /sandbox/users/mguillout/pipeline/REFERENCES/1000G_phase1.indels.b37.vcf.gz, /sandbox/users/mguillout/pipeline/REFERENCES/Mills_and_1000G_gold_standard.indels.b37.vcf.gz, /sandbox/users/mguillout/pipeline/REFERENCES/human_g1k_v37.dict, gatkPresent.txt
+    output: Samples/Sample1/BAM/Sample1.realign.intervals
+    jobid: 33
+    reason: Missing output files: Samples/Sample1/BAM/Sample1.realign.intervals; Input files updated by another job: gatkPresent.txt, Samples/Sample1/BAM/Sample1.markdup.bai, Samples/Sample1/BAM/Sample1.markdup.bam, BED/capture.extended1000.bed
+    wildcards: sample=Sample1
+    threads: 8
+
+gatk -Djava.io.tmpdir=Samples/Sample1/BAM -Xmx5g -T RealignerTargetCreator 		-nt 8 		-R /sandbox/users/mguillout/pipeline/REFERENCES/human_g1k_v37.fasta 		-L:capture,BED BED/capture.extended1000.bed 		-I Samples/Sample1/BAM/Sample1.markdup.bam 		-o Samples/Sample1/BAM/Sample1.realign.intervals 		--known:onekindels,VCF /sandbox/users/mguillout/pipeline/REFERENCES/1000G_phase1.indels.b37.vcf.gz 		--known:millsindels,VCF /sandbox/users/mguillout/pipeline/REFERENCES/Mills_and_1000G_gold_standard.indels.b37.vcf.gz 		-S SILENT
+Submitted job 33 with external jobid 'Your job 4150304 ("snakejob.realignTargetCreator.33.sh") has been submitted'.
+[Wed Sep 16 18:42:41 2020]
+Finished job 33.
+16 of 49 steps (33%) done
+
+[Wed Sep 16 18:42:41 2020]
+rule indelRealign:
+    input: Samples/Sample1/BAM/Sample1.realign.intervals, /sandbox/users/mguillout/pipeline/REFERENCES/human_g1k_v37.fasta, Samples/Sample1/BAM/Sample1.markdup.bam, Samples/Sample1/BAM/Sample1.markdup.bai, /sandbox/users/mguillout/pipeline/REFERENCES/1000G_phase1.indels.b37.vcf.gz, /sandbox/users/mguillout/pipeline/REFERENCES/Mills_and_1000G_gold_standard.indels.b37.vcf.gz, /sandbox/users/mguillout/pipeline/REFERENCES/human_g1k_v37.dict, gatkPresent.txt
+    output: Samples/Sample1/BAM/Sample1.realign.bam, Samples/Sample1/BAM/Sample1.realign.bai
+    jobid: 28
+    reason: Missing output files: Samples/Sample1/BAM/Sample1.realign.bai, Samples/Sample1/BAM/Sample1.realign.bam; Input files updated by another job: Samples/Sample1/BAM/Sample1.realign.intervals, gatkPresent.txt, Samples/Sample1/BAM/Sample1.markdup.bai, Samples/Sample1/BAM/Sample1.markdup.bam
+    wildcards: sample=Sample1
+
+gatk -Djava.io.tmpdir=Samples/Sample1/BAM -XX:ParallelGCThreads=5 -Xmx2g -T IndelRealigner 		-R /sandbox/users/mguillout/pipeline/REFERENCES/human_g1k_v37.fasta 		--bam_compression 9 		-I Samples/Sample1/BAM/Sample1.markdup.bam 		-o Samples/Sample1/BAM/Sample1.realign.bam 		-targetIntervals Samples/Sample1/BAM/Sample1.realign.intervals 		-known:onekindels,VCF /sandbox/users/mguillout/pipeline/REFERENCES/1000G_phase1.indels.b37.vcf.gz 		-known:millsindels,VCF /sandbox/users/mguillout/pipeline/REFERENCES/Mills_and_1000G_gold_standard.indels.b37.vcf.gz 		-S SILENT
+Submitted job 28 with external jobid 'Your job 4150305 ("snakejob.indelRealign.28.sh") has been submitted'.
+Removing temporary output file Samples/Sample1/BAM/Sample1.realign.intervals.
+Removing temporary output file Samples/Sample1/BAM/Sample1.markdup.bai.
+Removing temporary output file Samples/Sample1/BAM/Sample1.markdup.bam.
+[Wed Sep 16 18:48:41 2020]
+Finished job 28.
+17 of 49 steps (35%) done
+
+[Wed Sep 16 18:48:41 2020]
+rule createBaseRecalibrationTable:
+    input: /sandbox/users/mguillout/pipeline/REFERENCES/human_g1k_v37.fasta, Samples/Sample1/BAM/Sample1.realign.bam, Samples/Sample1/BAM/Sample1.realign.bai, /sandbox/users/mguillout/pipeline/REFERENCES/dbsnp_138.b37.vcf.gz, BED/capture.extended1000.bed, /sandbox/users/mguillout/pipeline/REFERENCES/human_g1k_v37.dict, gatkPresent.txt
+    output: Samples/Sample1/BAM/Sample1.recal.table
+    jobid: 27
+    reason: Missing output files: Samples/Sample1/BAM/Sample1.recal.table; Input files updated by another job: Samples/Sample1/BAM/Sample1.realign.bai, Samples/Sample1/BAM/Sample1.realign.bam, gatkPresent.txt, BED/capture.extended1000.bed
+    wildcards: sample=Sample1
+    threads: 8
+
+gatk -Djava.io.tmpdir=Samples/Sample1/BAM -XX:ParallelGCThreads=5 -Xmx2g -T BaseRecalibrator 		-nct 8 		-R /sandbox/users/mguillout/pipeline/REFERENCES/human_g1k_v37.fasta 		--validation_strictness LENIENT 		-I Samples/Sample1/BAM/Sample1.realign.bam 		-l INFO 		-o Samples/Sample1/BAM/Sample1.recal.table 		-knownSites:dbsnp,VCF /sandbox/users/mguillout/pipeline/REFERENCES/dbsnp_138.b37.vcf.gz 		-L:capture,BED BED/capture.extended1000.bed 		-cov QualityScoreCovariate 		-cov CycleCovariate 		-cov ContextCovariate
+Submitted job 27 with external jobid 'Your job 4150306 ("snakejob.createBaseRecalibrationTable.27.sh") has been submitted'.
+[Wed Sep 16 19:02:24 2020]
+Finished job 27.
+18 of 49 steps (37%) done
+
+[Wed Sep 16 19:02:24 2020]
+rule baseRecalibration:
+    input: Samples/Sample1/BAM/Sample1.recal.table, /sandbox/users/mguillout/pipeline/REFERENCES/human_g1k_v37.fasta, Samples/Sample1/BAM/Sample1.realign.bam, Samples/Sample1/BAM/Sample1.realign.bai, /sandbox/users/mguillout/pipeline/REFERENCES/human_g1k_v37.dict, gatkPresent.txt
+    output: Samples/Sample1/BAM/Sample1.final.bam, Samples/Sample1/BAM/Sample1.final.bai
+    jobid: 14
+    reason: Missing output files: Samples/Sample1/BAM/Sample1.final.bai, Samples/Sample1/BAM/Sample1.final.bam; Input files updated by another job: Samples/Sample1/BAM/Sample1.realign.bai, Samples/Sample1/BAM/Sample1.recal.table, gatkPresent.txt, Samples/Sample1/BAM/Sample1.realign.bam
+    wildcards: sample=Sample1
+    threads: 8
+
+gatk -Djava.io.tmpdir=Samples/Sample1/BAM -XX:ParallelGCThreads=5 -Xmx4g -T PrintReads 		-nct 8 		-R /sandbox/users/mguillout/pipeline/REFERENCES/human_g1k_v37.fasta 		--bam_compression 9 		-BQSR Samples/Sample1/BAM/Sample1.recal.table 		--disable_indel_quals 		-I Samples/Sample1/BAM/Sample1.realign.bam 		-o Samples/Sample1/BAM/Sample1.final.bam 		--validation_strictness LENIENT 		-l INFO
+Submitted job 14 with external jobid 'Your job 4150307 ("snakejob.baseRecalibration.14.sh") has been submitted'.
+Write-protecting output file Samples/Sample1/BAM/Sample1.final.bam.
+Write-protecting output file Samples/Sample1/BAM/Sample1.final.bai.
+Removing temporary output file Samples/Sample1/BAM/Sample1.recal.table.
+Removing temporary output file Samples/Sample1/BAM/Sample1.realign.bai.
+Removing temporary output file Samples/Sample1/BAM/Sample1.realign.bam.
+[Wed Sep 16 19:04:04 2020]
+Finished job 14.
+19 of 49 steps (39%) done
+
+[Wed Sep 16 19:04:04 2020]
+rule haplotypeCaller:
+    input: /sandbox/users/mguillout/pipeline/REFERENCES/human_g1k_v37.fasta, BED/capture.extended1000.bed, Samples/Sample1/BAM/Sample1.final.bam, Samples/Sample1/BAM/Sample1.final.bai, /sandbox/users/mguillout/pipeline/REFERENCES/dbsnp_138.b37.vcf.gz, /sandbox/users/mguillout/pipeline/REFERENCES/human_g1k_v37.dict, gatkPresent.txt
+    output: Samples/Sample1/VCF/Sample1.hapcaller.g.vcf, Samples/Sample1/VCF/Sample1.hapcaller.g.vcf.idx
+    jobid: 53
+    reason: Missing output files: Samples/Sample1/VCF/Sample1.hapcaller.g.vcf; Input files updated by another job: Samples/Sample1/BAM/Sample1.final.bai, gatkPresent.txt, Samples/Sample1/BAM/Sample1.final.bam, BED/capture.extended1000.bed
+    wildcards: sample=Sample1
+
+gatk -Djava.io.tmpdir=Samples/Sample1/VCF -XX:ParallelGCThreads=5 -Xmx3g -T HaplotypeCaller 		-R /sandbox/users/mguillout/pipeline/REFERENCES/human_g1k_v37.fasta 		--emitRefConfidence GVCF 		-variant_index_type LINEAR 		-variant_index_parameter 128000 		-stand_call_conf 30.0 		-nct 1 		-rf ReadLength 		-minRead 0 		-maxRead 10000 		-S SILENT 		-L:capture,BED BED/capture.extended1000.bed 		-I Samples/Sample1/BAM/Sample1.final.bam 		--dbsnp:dbsnp,VCF /sandbox/users/mguillout/pipeline/REFERENCES/dbsnp_138.b37.vcf.gz 		-o Samples/Sample1/VCF/Sample1.hapcaller.g.vcf
+Submitted job 53 with external jobid 'Your job 4150308 ("snakejob.haplotypeCaller.53.sh") has been submitted'.
+
+[Wed Sep 16 19:04:05 2020]
+rule picardMetrics:
+    input: Samples/Sample1/BAM/Sample1.final.bam, Samples/Sample1/BAM/Sample1.final.bai, BED/capture.interval_list, /sandbox/users/mguillout/pipeline/REFERENCES/human_g1k_v37.fasta
+    output: Samples/Sample1/QC/Sample1.picard_metrics.alignment_summary_metrics, Samples/Sample1/QC/Sample1.picard_metrics.base_distribution_by_cycle_metrics, Samples/Sample1/QC/Sample1.picard_metrics.base_distribution_by_cycle.pdf, Samples/Sample1/QC/Sample1.picard_metrics.insert_size_histogram.pdf, Samples/Sample1/QC/Sample1.picard_metrics.insert_size_metrics, Samples/Sample1/QC/Sample1.picard_metrics.quality_by_cycle_metrics, Samples/Sample1/QC/Sample1.picard_metrics.quality_by_cycle.pdf, Samples/Sample1/QC/Sample1.picard_metrics.quality_distribution_metrics, Samples/Sample1/QC/Sample1.picard_metrics.quality_distribution.pdf
+    jobid: 7
+    reason: Missing output files: Samples/Sample1/QC/Sample1.picard_metrics.base_distribution_by_cycle.pdf, Samples/Sample1/QC/Sample1.picard_metrics.quality_by_cycle_metrics, Samples/Sample1/QC/Sample1.picard_metrics.insert_size_histogram.pdf, Samples/Sample1/QC/Sample1.picard_metrics.quality_by_cycle.pdf, Samples/Sample1/QC/Sample1.picard_metrics.quality_distribution_metrics, Samples/Sample1/QC/Sample1.picard_metrics.quality_distribution.pdf, Samples/Sample1/QC/Sample1.picard_metrics.base_distribution_by_cycle_metrics, Samples/Sample1/QC/Sample1.picard_metrics.alignment_summary_metrics, Samples/Sample1/QC/Sample1.picard_metrics.insert_size_metrics; Input files updated by another job: BED/capture.interval_list, Samples/Sample1/BAM/Sample1.final.bai, Samples/Sample1/BAM/Sample1.final.bam
+    wildcards: sample=Sample1
+
+picard -Xmx2g CollectMultipleMetrics 		I=Samples/Sample1/BAM/Sample1.final.bam 		O=Samples/Sample1/QC/Sample1.picard_metrics 		R=/sandbox/users/mguillout/pipeline/REFERENCES/human_g1k_v37.fasta 		INTERVALS=BED/capture.interval_list
+Submitted job 7 with external jobid 'Your job 4150309 ("snakejob.picardMetrics.7.sh") has been submitted'.
+
+[Wed Sep 16 19:04:05 2020]
+rule depthOfCoverage:
+    input: /sandbox/users/mguillout/pipeline/REFERENCES/human_g1k_v37.fasta, Samples/Sample1/BAM/Sample1.final.bam, Samples/Sample1/BAM/Sample1.final.bai, BED/chrY.bed, /sandbox/users/mguillout/pipeline/REFERENCES/human_g1k_v37.fasta.fai, gatkPresent.txt
+    output: Samples/Sample1/QC/Sample1.gatk_doc.chrY.sample_cumulative_coverage_counts, Samples/Sample1/QC/Sample1.gatk_doc.chrY.sample_cumulative_coverage_proportions, Samples/Sample1/QC/Sample1.gatk_doc.chrY.sample_statistics, Samples/Sample1/QC/Sample1.gatk_doc.chrY.sample_summary
+    jobid: 6
+    reason: Missing output files: Samples/Sample1/QC/Sample1.gatk_doc.chrY.sample_cumulative_coverage_counts, Samples/Sample1/QC/Sample1.gatk_doc.chrY.sample_statistics, Samples/Sample1/QC/Sample1.gatk_doc.chrY.sample_cumulative_coverage_proportions, Samples/Sample1/QC/Sample1.gatk_doc.chrY.sample_summary; Input files updated by another job: BED/chrY.bed, Samples/Sample1/BAM/Sample1.final.bai, gatkPresent.txt, Samples/Sample1/BAM/Sample1.final.bam
+    wildcards: sample=Sample1, capture=chrY
+
+gatk -Djava.io.tmpdir=Samples/Sample1/QC -XX:ParallelGCThreads=3 -Xmx5g -T DepthOfCoverage 		-R /sandbox/users/mguillout/pipeline/REFERENCES/human_g1k_v37.fasta 		--validation_strictness LENIENT 		-L:capture,BED BED/chrY.bed 		--minMappingQuality 30 		-ct 1 -ct 5 -ct 10 -ct 15 -ct 20 -ct 25 -ct 30 		-I Samples/Sample1/BAM/Sample1.final.bam 		-o Samples/Sample1/QC/Sample1.gatk_doc.chrY 		-omitIntervals 		-omitBaseOutput
+Submitted job 6 with external jobid 'Your job 4150310 ("snakejob.depthOfCoverage.6.sh") has been submitted'.
+
+[Wed Sep 16 19:04:05 2020]
+rule depthOfCoverage:
+    input: /sandbox/users/mguillout/pipeline/REFERENCES/human_g1k_v37.fasta, Samples/Sample1/BAM/Sample1.final.bam, Samples/Sample1/BAM/Sample1.final.bai, BED/autosomes.bed, /sandbox/users/mguillout/pipeline/REFERENCES/human_g1k_v37.fasta.fai, gatkPresent.txt
+    output: Samples/Sample1/QC/Sample1.gatk_doc.autosomes.sample_cumulative_coverage_counts, Samples/Sample1/QC/Sample1.gatk_doc.autosomes.sample_cumulative_coverage_proportions, Samples/Sample1/QC/Sample1.gatk_doc.autosomes.sample_statistics, Samples/Sample1/QC/Sample1.gatk_doc.autosomes.sample_summary
+    jobid: 4
+    reason: Missing output files: Samples/Sample1/QC/Sample1.gatk_doc.autosomes.sample_cumulative_coverage_counts, Samples/Sample1/QC/Sample1.gatk_doc.autosomes.sample_cumulative_coverage_proportions, Samples/Sample1/QC/Sample1.gatk_doc.autosomes.sample_statistics, Samples/Sample1/QC/Sample1.gatk_doc.autosomes.sample_summary; Input files updated by another job: BED/autosomes.bed, Samples/Sample1/BAM/Sample1.final.bai, gatkPresent.txt, Samples/Sample1/BAM/Sample1.final.bam
+    wildcards: sample=Sample1, capture=autosomes
+
+gatk -Djava.io.tmpdir=Samples/Sample1/QC -XX:ParallelGCThreads=3 -Xmx5g -T DepthOfCoverage 		-R /sandbox/users/mguillout/pipeline/REFERENCES/human_g1k_v37.fasta 		--validation_strictness LENIENT 		-L:capture,BED BED/autosomes.bed 		--minMappingQuality 30 		-ct 1 -ct 5 -ct 10 -ct 15 -ct 20 -ct 25 -ct 30 		-I Samples/Sample1/BAM/Sample1.final.bam 		-o Samples/Sample1/QC/Sample1.gatk_doc.autosomes 		-omitIntervals 		-omitBaseOutput
+Submitted job 4 with external jobid 'Your job 4150311 ("snakejob.depthOfCoverage.4.sh") has been submitted'.
+
+[Wed Sep 16 19:04:05 2020]
+rule depthOfCoverage:
+    input: /sandbox/users/mguillout/pipeline/REFERENCES/human_g1k_v37.fasta, Samples/Sample1/BAM/Sample1.final.bam, Samples/Sample1/BAM/Sample1.final.bai, BED/chrX.bed, /sandbox/users/mguillout/pipeline/REFERENCES/human_g1k_v37.fasta.fai, gatkPresent.txt
+    output: Samples/Sample1/QC/Sample1.gatk_doc.chrX.sample_cumulative_coverage_counts, Samples/Sample1/QC/Sample1.gatk_doc.chrX.sample_cumulative_coverage_proportions, Samples/Sample1/QC/Sample1.gatk_doc.chrX.sample_statistics, Samples/Sample1/QC/Sample1.gatk_doc.chrX.sample_summary
+    jobid: 5
+    reason: Missing output files: Samples/Sample1/QC/Sample1.gatk_doc.chrX.sample_cumulative_coverage_proportions, Samples/Sample1/QC/Sample1.gatk_doc.chrX.sample_statistics, Samples/Sample1/QC/Sample1.gatk_doc.chrX.sample_summary, Samples/Sample1/QC/Sample1.gatk_doc.chrX.sample_cumulative_coverage_counts; Input files updated by another job: Samples/Sample1/BAM/Sample1.final.bai, gatkPresent.txt, Samples/Sample1/BAM/Sample1.final.bam, BED/chrX.bed
+    wildcards: sample=Sample1, capture=chrX
+
+gatk -Djava.io.tmpdir=Samples/Sample1/QC -XX:ParallelGCThreads=3 -Xmx5g -T DepthOfCoverage 		-R /sandbox/users/mguillout/pipeline/REFERENCES/human_g1k_v37.fasta 		--validation_strictness LENIENT 		-L:capture,BED BED/chrX.bed 		--minMappingQuality 30 		-ct 1 -ct 5 -ct 10 -ct 15 -ct 20 -ct 25 -ct 30 		-I Samples/Sample1/BAM/Sample1.final.bam 		-o Samples/Sample1/QC/Sample1.gatk_doc.chrX 		-omitIntervals 		-omitBaseOutput
+Submitted job 5 with external jobid 'Your job 4150312 ("snakejob.depthOfCoverage.5.sh") has been submitted'.
+[Wed Sep 16 19:04:24 2020]
+Finished job 6.
+20 of 49 steps (41%) done
+[Wed Sep 16 19:04:34 2020]
+Finished job 5.
+21 of 49 steps (43%) done
+[Wed Sep 16 19:05:25 2020]
+Finished job 7.
+22 of 49 steps (45%) done
+[Wed Sep 16 19:08:25 2020]
+Finished job 4.
+23 of 49 steps (47%) done

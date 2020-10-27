@@ -1,0 +1,5 @@
+Building DAG of jobs...
+MissingInputException in line 189 of /sandbox/shares/nextcloud/mguillout/files/Application/pipeline/Snakefile:
+Missing input files for rule align:
+/sandbox/users/mguillout/fastQ-APHP/P33-KMKN_S33_L001_R2_00.fastq.gz
+/sandbox/users/mguillout/fastQ-APHP/P33-KMKN_S33_L001_R1_00.fastq.gz

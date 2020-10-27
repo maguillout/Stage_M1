@@ -1,0 +1,52 @@
+Building DAG of jobs...
+Using shell: /usr/bin/bash
+Provided cluster nodes: 12
+Job counts:
+	count	jobs
+	1	annotANNOVAR
+	1	annotINTERVAR
+	1	annotVEP
+	3	bgzip
+	1	combineGVCF
+	1	combineVCF
+	1	createGVCFList
+	1	extractGNOMAD
+	1	extractGNOMADVEP
+	1	filterIndels
+	1	filterSNVs
+	1	filtration_freq_and_genes
+	1	freqGNOMAD
+	1	genotypeGVCF
+	1	gunzipCADD
+	1	merge_fields
+	1	scoreCADD
+	1	selectIndels
+	1	selectSNVs
+	3	tabix
+	1	target
+	25
+
+[Tue Oct 27 21:56:02 2020]
+rule createGVCFList:
+    input: Samples/Sample1/VCF/Sample1.hapcaller.g.vcf
+    output: VCF/gvcf.list
+    jobid: 52
+    reason: Missing output files: VCF/gvcf.list
+
+Submitted job 52 with external jobid 'Your job 4305777 ("snakejob.createGVCFList.52.sh") has been submitted'.
+[Tue Oct 27 21:56:22 2020]
+Finished job 52.
+1 of 25 steps (4%) done
+
+[Tue Oct 27 21:56:22 2020]
+rule combineGVCF:
+    input: /sandbox/users/mguillout/pipeline/REFERENCES/human_g1k_v37.fasta, VCF/gvcf.list, /sandbox/users/mguillout/pipeline/REFERENCES/human_g1k_v37.dict, gatkPresent.txt
+    output: VCF/hapcaller.combined.g.vcf.gz, VCF/hapcaller.combined.g.vcf.gz.tbi
+    jobid: 51
+    reason: Missing output files: VCF/hapcaller.combined.g.vcf.gz.tbi, VCF/hapcaller.combined.g.vcf.gz; Input files updated by another job: VCF/gvcf.list
+
+gatk -Djava.io.tmpdir=VCF -XX:ParallelGCThreads=3 -Xmx10g -T CombineGVCFs 		-R /sandbox/users/mguillout/pipeline/REFERENCES/human_g1k_v37.fasta 		--variant VCF/gvcf.list 		-S SILENT 		-o VCF/hapcaller.combined.g.vcf.gz
+Submitted job 51 with external jobid 'Your job 4305778 ("snakejob.combineGVCF.51.sh") has been submitted'.
+Terminating processes on user request, this might take some time.
+Will exit after finishing currently running jobs.
+Cancelling snakemake on user request.

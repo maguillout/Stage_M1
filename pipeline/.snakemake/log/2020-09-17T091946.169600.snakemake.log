@@ -1,0 +1,34 @@
+Building DAG of jobs...
+Using shell: /usr/bin/bash
+Provided cluster nodes: 12
+Job counts:
+	count	jobs
+	1	annotANNOVAR
+	1	annotINTERVAR
+	1	annotVEP
+	3	bgzip
+	1	combineVCF
+	1	extractGNOMAD
+	1	extractGNOMADVEP
+	1	filterIndels
+	1	filtration_freq_and_genes
+	1	freqGNOMAD
+	1	gunzipCADD
+	1	merge_fields
+	1	scoreCADD
+	1	selectIndels
+	3	tabix
+	1	target
+	20
+
+[Thu Sep 17 09:19:46 2020]
+rule selectIndels:
+    input: /sandbox/users/mguillout/pipeline/REFERENCES/human_g1k_v37.fasta, VCF/hapcaller.genotyped.vcf.gz, VCF/hapcaller.genotyped.vcf.gz.tbi, /sandbox/users/mguillout/pipeline/REFERENCES/human_g1k_v37.dict, gatkPresent.txt
+    output: VCF/hapcaller.indel.recal.select.vcf.gz, VCF/hapcaller.indel.recal.select.vcf.gz.tbi
+    jobid: 49
+    reason: Missing output files: VCF/hapcaller.indel.recal.select.vcf.gz, VCF/hapcaller.indel.recal.select.vcf.gz.tbi
+
+gatk -Djava.io.tmpdir=VCF -XX:ParallelGCThreads=3 -Xmx3g -T SelectVariants 		-R /sandbox/users/mguillout/pipeline/REFERENCES/human_g1k_v37.fasta 		--logging_level FATAL 		-selectType INDEL 		--variant VCF/hapcaller.genotyped.vcf.gz 		-o VCF/hapcaller.indel.recal.select.vcf.gz
+Submitted job 49 with external jobid 'Your job 4150360 ("snakejob.selectIndels.49.sh") has been submitted'.
+Terminating processes on user request, this might take some time.
+Will exit after finishing currently running jobs.

@@ -1,0 +1,34 @@
+Building DAG of jobs...
+Using shell: /usr/bin/bash
+Provided cluster nodes: 12
+Job counts:
+	count	jobs
+	1	annotINTERVAR
+	1	gunzipCADD
+	1	merge_fields
+	1	scoreCADD
+	1	target
+	5
+
+[Fri Aug 21 18:00:48 2020]
+rule scoreCADD:
+    input: VCF/hapcaller.recal.combined.annot.gnomad.vep.filtered.vcf.gz
+    output: CSV/cadd.tsv.gz
+    jobid: 26
+    reason: Missing output files: CSV/cadd.tsv.gz
+
+/sandbox/users/mguillout/tools/CADD-scripts/CADD.sh 		-o CSV/cadd.tsv.gz 		-a 		-g GRCh37 		-v v1.6 VCF/hapcaller.recal.combined.annot.gnomad.vep.filtered.vcf.gz
+Submitted job 26 with external jobid 'Your job 4089846 ("snakejob.scoreCADD.26.sh") has been submitted'.
+
+[Fri Aug 21 18:00:48 2020]
+rule annotINTERVAR:
+    input: VCF/hapcaller.recal.combined.annot.gnomad.vep.filtered.annovar.vcf.avinput, /sandbox/users/mguillout/tools/annovar/humandb/, /sandbox/users/mguillout/tools/InterVar-master
+    output: CSV/res_intervar.hg19_multianno.txt.intervar
+    jobid: 11
+    reason: Missing output files: CSV/res_intervar.hg19_multianno.txt.intervar
+
+python /sandbox/users/mguillout/tools/InterVar-master/Intervar.py  		-i VCF/hapcaller.recal.combined.annot.gnomad.vep.filtered.annovar.vcf.avinput 		-o CSV/res_intervar 		--buildver hg19 		--input_type AVinput 		--database_intervar /sandbox/users/mguillout/tools/InterVar-master/intervardb 		--config=/sandbox/users/mguillout/tools/InterVar-master/config.ini 		--convert2annovar /sandbox/users/mguillout/tools/InterVar-master/convert2annovar.pl 		--table_annovar /sandbox/users/mguillout/tools/InterVar-master/table_annovar.pl 		--annotate_variation /sandbox/users/mguillout/tools/InterVar-master/annotate_variation.pl 		--database_locat /sandbox/users/mguillout/tools/annovar/humandb/
+Submitted job 11 with external jobid 'Your job 4089847 ("snakejob.annotINTERVAR.11.sh") has been submitted'.
+Terminating processes on user request, this might take some time.
+Will exit after finishing currently running jobs.
+Cancelling snakemake on user request.

@@ -1,0 +1,3 @@
+WorkflowError in line 12 of /sandbox/shares/nextcloud/mguillout/files/Application/pipeline/Snakefile:
+Config file project_PKD_2.json not found.
+  File "/sandbox/shares/nextcloud/mguillout/files/Application/pipeline/Snakefile", line 12, in <module>

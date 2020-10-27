@@ -1,0 +1,130 @@
+Building DAG of jobs...
+Using shell: /usr/bin/bash
+Provided cluster nodes: 12
+Job counts:
+	count	jobs
+	1	align
+	1	annotANNOVAR
+	1	annotINTERVAR
+	1	annotVEP
+	1	baseRecalibration
+	1	bedToPicardInterval
+	3	bgzip
+	1	combineGVCF
+	1	combineVCF
+	1	createBaseRecalibrationTable
+	1	createGVCFList
+	3	depthOfCoverage
+	1	extendBed
+	1	extractGNOMAD
+	1	extractGNOMADVEP
+	2	fastQC
+	1	filterIndels
+	1	filterSNVs
+	1	filtrationVEP
+	1	freqGNOMAD
+	1	genotypeGVCF
+	1	gunzipCADD
+	1	haplotypeCaller
+	1	indelRealign
+	1	makeAutosomesBed
+	1	makeChrXBed
+	1	makeChrYBed
+	1	markDuplicates
+	1	merge
+	1	picardMetrics
+	1	realignTargetCreator
+	1	scoreCADD
+	1	selectIndels
+	1	selectSNVs
+	1	sort
+	3	tabix
+	1	target
+	44
+
+[Thu Aug 20 13:01:43 2020]
+rule bedToPicardInterval:
+    input: BED/capture.bed, /sandbox/users/mguillout/pipeline/REFERENCES/human_g1k_v37.dict
+    output: BED/capture.interval_list
+    jobid: 22
+    reason: Missing output files: BED/capture.interval_list
+    wildcards: base=BED/capture
+
+picard BedToIntervalList I=BED/capture.bed O=BED/capture.interval_list SD=/sandbox/users/mguillout/pipeline/REFERENCES/human_g1k_v37.dict
+Submitted job 22 with external jobid 'Your job 4087445 ("snakejob.bedToPicardInterval.22.sh") has been submitted'.
+
+[Thu Aug 20 13:01:43 2020]
+rule fastQC:
+    input: Samples/Sample1/QC/Sample1.fastqc.forward.gz
+    output: Samples/Sample1/QC/Sample1.fastqc.forward_fastqc.zip
+    jobid: 10
+    reason: Missing output files: Samples/Sample1/QC/Sample1.fastqc.forward_fastqc.zip
+    wildcards: sample=Sample1, strand=forward
+
+fastqc -o Samples/Sample1/QC --format fastq --noextract Samples/Sample1/QC/Sample1.fastqc.forward.gz
+Submitted job 10 with external jobid 'Your job 4087446 ("snakejob.fastQC.10.sh") has been submitted'.
+
+[Thu Aug 20 13:01:43 2020]
+rule fastQC:
+    input: Samples/Sample1/QC/Sample1.fastqc.reverse.gz
+    output: Samples/Sample1/QC/Sample1.fastqc.reverse_fastqc.zip
+    jobid: 11
+    reason: Missing output files: Samples/Sample1/QC/Sample1.fastqc.reverse_fastqc.zip
+    wildcards: sample=Sample1, strand=reverse
+
+fastqc -o Samples/Sample1/QC --format fastq --noextract Samples/Sample1/QC/Sample1.fastqc.reverse.gz
+Submitted job 11 with external jobid 'Your job 4087447 ("snakejob.fastQC.11.sh") has been submitted'.
+
+[Thu Aug 20 13:01:43 2020]
+rule makeAutosomesBed:
+    input: BED/capture.bed
+    output: BED/autosomes.bed
+    jobid: 17
+    reason: Missing output files: BED/autosomes.bed
+
+awk -F '	' '(int($1)>0)' BED/capture.bed > BED/autosomes.bed
+Submitted job 17 with external jobid 'Your job 4087448 ("snakejob.makeAutosomesBed.17.sh") has been submitted'.
+
+[Thu Aug 20 13:01:43 2020]
+rule makeChrXBed:
+    input: BED/capture.bed
+    output: BED/chrX.bed
+    jobid: 20
+    reason: Missing output files: BED/chrX.bed
+
+awk -F '	' '($1=="X")' BED/capture.bed > BED/chrX.bed
+Submitted job 20 with external jobid 'Your job 4087449 ("snakejob.makeChrXBed.20.sh") has been submitted'.
+
+[Thu Aug 20 13:01:43 2020]
+rule extendBed:
+    input: BED/capture.bed, /sandbox/users/mguillout/pipeline/REFERENCES/human_g1k_v37.fasta.fai
+    output: BED/capture.extended1000.bed
+    jobid: 33
+    reason: Missing output files: BED/capture.extended1000.bed
+
+bedtools slop -b 1000 -g /sandbox/users/mguillout/pipeline/REFERENCES/human_g1k_v37.fasta.fai -i BED/capture.bed | LC_ALL=C sort -t '	' -k1,1 -k2,2n -k3,3n | bedtools merge -d 1000 | bedtools sort -faidx /sandbox/users/mguillout/pipeline/REFERENCES/human_g1k_v37.fasta.fai > BED/capture.extended1000.bed
+Submitted job 33 with external jobid 'Your job 4087450 ("snakejob.extendBed.33.sh") has been submitted'.
+
+[Thu Aug 20 13:01:43 2020]
+rule makeChrYBed:
+    input: BED/capture.bed
+    output: BED/chrY.bed
+    jobid: 21
+    reason: Missing output files: BED/chrY.bed
+
+awk -F '	' '($1=="Y")' BED/capture.bed > BED/chrY.bed
+Submitted job 21 with external jobid 'Your job 4087451 ("snakejob.makeChrYBed.21.sh") has been submitted'.
+
+[Thu Aug 20 13:01:43 2020]
+rule align:
+    input: /sandbox/users/mguillout/pipeline/REFERENCES/human_g1k_v37.fasta, /sandbox/users/mguillout/fastQ-APHP/P10-BL_S10_L001_R1_001.fastq.gz, /sandbox/users/mguillout/fastQ-APHP/P10-BL_S10_L001_R2_001.fastq.gz, /sandbox/users/mguillout/pipeline/REFERENCES/human_g1k_v37.fasta.bwt
+    output: Samples/Sample1/BAM/Sample1.p1.sam
+    jobid: 43
+    reason: Forced execution
+    wildcards: sample=Sample1, pairID=p1
+
+bwa mem -t 1 -M 		-H '@CO\tProject:pipelineTest Sample:Sample1 Date:2020-08-20 CWD:/sandbox/users/mguillout/externalshares/Application/pipeline/testPipeline4 Capture:{ name : captureName , description : exome capture 1 , path : /sandbox/users/mguillout/pipeline/REFERENCES/Broad.human.exome.b37.bed}' 		-R '@RG\tID:Sample1\tLB:Sample1\tSM:Sample1\tPL:Illumina\tCN:CENTER' 		/sandbox/users/mguillout/pipeline/REFERENCES/human_g1k_v37.fasta /sandbox/users/mguillout/fastQ-APHP/P10-BL_S10_L001_R1_001.fastq.gz /sandbox/users/mguillout/fastQ-APHP/P10-BL_S10_L001_R2_001.fastq.gz > Samples/Sample1/BAM/Sample1.p1.sam
+Submitted job 43 with external jobid 'Your job 4087452 ("snakejob.align.43.sh") has been submitted'.
+Terminating processes on user request, this might take some time.
+Will exit after finishing currently running jobs.
+Cancelling snakemake on user request.

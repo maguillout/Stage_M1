@@ -1,0 +1,51 @@
+Building DAG of jobs...
+Using shell: /usr/bin/bash
+Provided cluster nodes: 12
+Job counts:
+	count	jobs
+	1	annotANNOVAR
+	1	annotINTERVAR
+	1	annotVEP
+	3	bgzip
+	1	combineVCF
+	1	extractGNOMAD
+	1	extractGNOMADVEP
+	1	filterIndels
+	1	filterSNVs
+	1	filtration_freq_and_genes
+	1	freqGNOMAD
+	1	gunzipCADD
+	1	merge_fields
+	1	scoreCADD
+	1	selectIndels
+	3	tabix
+	1	target
+	21
+
+[Thu Sep 17 09:15:33 2020]
+rule selectIndels:
+    input: /sandbox/users/mguillout/pipeline/REFERENCES/human_g1k_v37.fasta, VCF/hapcaller.genotyped.vcf.gz, VCF/hapcaller.genotyped.vcf.gz.tbi, /sandbox/users/mguillout/pipeline/REFERENCES/human_g1k_v37.dict, gatkPresent.txt
+    output: VCF/hapcaller.indel.recal.select.vcf.gz, VCF/hapcaller.indel.recal.select.vcf.gz.tbi
+    jobid: 49
+    reason: Missing output files: VCF/hapcaller.indel.recal.select.vcf.gz, VCF/hapcaller.indel.recal.select.vcf.gz.tbi
+
+gatk -Djava.io.tmpdir=VCF -XX:ParallelGCThreads=3 -Xmx3g -T SelectVariants 		-R /sandbox/users/mguillout/pipeline/REFERENCES/human_g1k_v37.fasta 		--logging_level FATAL 		-selectType INDEL 		--variant VCF/hapcaller.genotyped.vcf.gz 		-o VCF/hapcaller.indel.recal.select.vcf.gz
+Submitted job 49 with external jobid 'Your job 4150355 ("snakejob.selectIndels.49.sh") has been submitted'.
+
+[Thu Sep 17 09:15:33 2020]
+rule filterSNVs:
+    input: /sandbox/users/mguillout/pipeline/REFERENCES/human_g1k_v37.fasta, VCF/hapcaller.snv.recal.select.vcf.gz, VCF/hapcaller.snv.recal.select.vcf.gz.tbi, /sandbox/users/mguillout/pipeline/REFERENCES/human_g1k_v37.dict, gatkPresent.txt
+    output: VCF/hapcaller.snv.recal.filter.vcf.gz, VCF/hapcaller.snv.recal.filter.vcf.gz.tbi
+    jobid: 46
+    reason: Missing output files: VCF/hapcaller.snv.recal.filter.vcf.gz.tbi, VCF/hapcaller.snv.recal.filter.vcf.gz
+
+gatk -Djava.io.tmpdir=VCF -XX:ParallelGCThreads=3 -Xmx3g -T VariantFiltration 		-R /sandbox/users/mguillout/pipeline/REFERENCES/human_g1k_v37.fasta 		--logging_level FATAL  		--filterExpression 'QD < 2.0' --filterName 'FAILS_HARD_FILTER_SNP_QD' 		--filterExpression 'FS > 60.0' --filterName 'FAILS_HARD_FILTER_SNP_FS' 		--filterExpression 'MQ < 30.0' --filterName 'FAILS_HARD_FILTER_SNP_MQ' 		--filterExpression 'MQRankSum < -12.5' --filterName 'FAILS_HARD_FILTER_SNP_MQRankSum' 		--filterExpression 'ReadPosRankSum < -8.0' --filterName 'FAILS_HARD_FILTER_SNP_ReadPosRankSum' 		--variant VCF/hapcaller.snv.recal.select.vcf.gz 		-o VCF/hapcaller.snv.recal.filter.vcf.gz
+Submitted job 46 with external jobid 'Your job 4150356 ("snakejob.filterSNVs.46.sh") has been submitted'.
+Removing temporary output file VCF/hapcaller.snv.recal.select.vcf.gz.
+Removing temporary output file VCF/hapcaller.snv.recal.select.vcf.gz.tbi.
+[Thu Sep 17 09:15:53 2020]
+Finished job 46.
+1 of 21 steps (5%) done
+Terminating processes on user request, this might take some time.
+Will exit after finishing currently running jobs.
+Complete log: /sandbox/shares/nextcloud/mguillout/files/Application/pipeline/.snakemake/log/2020-09-17T091531.507308.snakemake.log

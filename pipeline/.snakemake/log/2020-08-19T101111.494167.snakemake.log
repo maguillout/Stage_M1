@@ -1,0 +1,4 @@
+Building DAG of jobs...
+MissingInputException in line 813 of /sandbox/shares/nextcloud/mguillout/files/Application/pipeline/Snakefile:
+Missing input files for rule unzipGenome:
+/sandbox/users/mguillout/pipeline/REFERENCES.fasta.gz

@@ -1,0 +1,34 @@
+Building DAG of jobs...
+Using shell: /usr/bin/bash
+Provided cluster nodes: 12
+Job counts:
+	count	jobs
+	1	annotANNOVAR
+	1	annotINTERVAR
+	1	annotVEP
+	3	bgzip
+	1	combineVCF
+	1	extractGNOMAD
+	1	extractGNOMADVEP
+	1	filterIndels
+	1	filtration_freq_and_genes
+	1	freqGNOMAD
+	1	gunzipCADD
+	1	merge_fields
+	1	scoreCADD
+	3	tabix
+	1	target
+	19
+
+[Thu Sep 17 08:04:26 2020]
+rule filterIndels:
+    input: /sandbox/users/mguillout/pipeline/REFERENCES/human_g1k_v37.fasta, VCF/hapcaller.indel.recal.select.vcf.gz, VCF/hapcaller.indel.recal.select.vcf.gz.tbi, /sandbox/users/mguillout/pipeline/REFERENCES/human_g1k_v37.dict, gatkPresent.txt
+    output: VCF/hapcaller.indel.recal.filter.vcf.gz, VCF/hapcaller.indel.recal.filter.vcf.gz.tbi
+    jobid: 47
+    reason: Missing output files: VCF/hapcaller.indel.recal.filter.vcf.gz, VCF/hapcaller.indel.recal.filter.vcf.gz.tbi
+
+gatk -Djava.io.tmpdir=VCF -XX:ParallelGCThreads=3 -Xmx3g -T VariantFiltration 		-R /sandbox/users/mguillout/pipeline/REFERENCES/human_g1k_v37.fasta 		--logging_level FATAL  		--filterExpression 'QD < 2.0' --filterName 'FAILS_HARD_FILTER_INDEL_QD' 		--filterExpression 'FS > 200.0' --filterName 'FAILS_HARD_FILTER_INDEL_FS' 		--filterExpression 'ReadPosRankSum < -20.0' --filterName 'FAILS_HARD_FILTER_INDEL_ReadPosRankSum' 		--filterExpression 'SOR > 10.0' --filterName 'FAILS_HARD_FILTER_INDEL_SOR' 		--variant VCF/hapcaller.indel.recal.select.vcf.gz 		-o VCF/hapcaller.indel.recal.filter.vcf.gz
+Submitted job 47 with external jobid 'Your job 4150326 ("snakejob.filterIndels.47.sh") has been submitted'.
+Terminating processes on user request, this might take some time.
+Will exit after finishing currently running jobs.
+Cancelling snakemake on user request.

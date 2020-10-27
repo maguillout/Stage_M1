@@ -1,0 +1,31 @@
+Building DAG of jobs...
+Using shell: /usr/bin/bash
+Provided cluster nodes: 12
+Job counts:
+	count	jobs
+	1	annotANNOVAR
+	1	annotINTERVAR
+	1	annotVEP
+	3	bgzip
+	1	extractGNOMAD
+	1	extractGNOMADVEP
+	1	filtration_freq_and_genes
+	1	gunzipCADD
+	1	merge_fields
+	1	scoreCADD
+	3	tabix
+	1	target
+	16
+
+[Thu Sep 17 11:13:49 2020]
+rule annotVEP:
+    input: /sandbox/users/mguillout/pipeline/REFERENCES/human_g1k_v37.fasta, VCF/hapcaller.recal.combined.annot.gnomad.vcf.gz, VCF/hapcaller.recal.combined.annot.gnomad.vcf.gz.tbi, /sandbox/users/mguillout/pipeline/REFERENCES/VEP/CACHE/homo_sapiens_merged_86_GRCh37_cache.done
+    output: VCF/hapcaller.recal.combined.annot.gnomad.vep.vcf
+    jobid: 38
+    reason: Forced execution
+
+variant_effect_predictor.pl 		--pick_order=canonical 		--cache --dir /sandbox/users/mguillout/pipeline/REFERENCES/VEP/CACHE 		--dir_plugins /sandbox/users/mguillout/tools/VEP_plugins 		--species homo_sapiens_merged 		--assembly GRCh37 		--db_version 86 		--fasta /sandbox/users/mguillout/pipeline/REFERENCES/human_g1k_v37.fasta 		--offline 		--symbol 		--format vcf 		--force_overwrite 		--sift=b 		--polyphen=b 		--xref_refseq 		-i VCF/hapcaller.recal.combined.annot.gnomad.vcf.gz 		-o VCF/hapcaller.recal.combined.annot.gnomad.vep.vcf 		--quiet 		--vcf 		--gmaf 		--ccds 		--canonical 		--maf_1kg 		--pubmed 		--hgvs 		--no_stats
+Submitted job 38 with external jobid 'Your job 4150458 ("snakejob.annotVEP.38.sh") has been submitted'.
+Terminating processes on user request, this might take some time.
+Will exit after finishing currently running jobs.
+Cancelling snakemake on user request.

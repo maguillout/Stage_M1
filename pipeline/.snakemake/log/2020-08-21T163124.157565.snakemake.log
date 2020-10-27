@@ -1,0 +1,2 @@
+SyntaxError in line 695 of /sandbox/shares/nextcloud/mguillout/files/Application/pipeline/Snakefile:
+Colon expected after keyword output. (Snakefile, line 695)

@@ -1,0 +1,39 @@
+Building DAG of jobs...
+Using shell: /usr/bin/bash
+Provided cluster nodes: 12
+Job counts:
+	count	jobs
+	1	annotANNOVAR
+	1	annotINTERVAR
+	2	bgzip
+	1	extractGNOMAD
+	1	extractGNOMADVEP
+	1	filtration_freq_and_genes
+	1	gunzipCADD
+	1	scoreCADD
+	2	tabix
+	1	target
+	12
+
+[Fri Aug 21 11:09:29 2020]
+rule filtration_freq_and_genes:
+    input: VCF/hapcaller.recal.combined.annot.gnomad.vep.vcf.gz, VCF/hapcaller.recal.combined.annot.gnomad.vep.vcf.gz.tbi
+    output: VCF/hapcaller.recal.combined.annot.gnomad.vep.filtered.vcf
+    jobid: 26
+    reason: Missing output files: VCF/hapcaller.recal.combined.annot.gnomad.vep.filtered.vcf
+
+filter_vep.pl 			-i VCF/hapcaller.recal.combined.annot.gnomad.vep.vcf.gz 			-o VCF/hapcaller.recal.combined.annot.gnomad.vep.filtered.vcf 			-filter '(Gene in ) and (GMAF < 0.05 or not GMAF)'
+Submitted job 26 with external jobid 'Your job 4088486 ("snakejob.filtration_freq_and_genes.26.sh") has been submitted'.
+[Fri Aug 21 11:09:39 2020]
+Error in rule filtration_freq_and_genes:
+    jobid: 26
+    output: VCF/hapcaller.recal.combined.annot.gnomad.vep.filtered.vcf
+    shell:
+        filter_vep.pl 			-i VCF/hapcaller.recal.combined.annot.gnomad.vep.vcf.gz 			-o VCF/hapcaller.recal.combined.annot.gnomad.vep.filtered.vcf 			-filter '(Gene in ) and (GMAF < 0.05 or not GMAF)'
+        (one of the commands exited with non-zero exit code; note that snakemake uses bash strict mode!)
+    cluster_jobid: Your job 4088486 ("snakejob.filtration_freq_and_genes.26.sh") has been submitted
+
+Error executing rule filtration_freq_and_genes on cluster (jobid: 26, external: Your job 4088486 ("snakejob.filtration_freq_and_genes.26.sh") has been submitted, jobscript: /sandbox/shares/nextcloud/mguillout/files/Application/pipeline/testPipeline2/.snakemake/tmp.2r1m1dhi/snakejob.filtration_freq_and_genes.26.sh). For error details see the cluster log and the log files of the involved rule(s).
+Shutting down, this might take some time.
+Exiting because a job execution failed. Look above for error message
+Complete log: /sandbox/shares/nextcloud/mguillout/files/Application/pipeline/.snakemake/log/2020-08-21T110928.698968.snakemake.log

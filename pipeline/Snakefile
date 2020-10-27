@@ -1,0 +1,921 @@
+import sys
+import datetime
+import json
+import os
+import shutil
+
+SNAKEFILEDIR = workflow.basedir
+
+
+if(not "par" in config):
+	sys.exit("No params.yml specified !")
+else:
+	configfile: config["par"]
+
+if(not "pro" in config):
+	sys.exit("No project.json specified !")
+else:
+	configfile: config["pro"]
+
+if(not "ref" in config):
+	sys.exit("No references.json specified !")
+else:
+	configfile: config["ref"]
+
+## DEFINE GLOBAL VARIABLES
+## have default values but can be modified in references.json file
+## for example, ANNOVAR scripts will be downloaded with git project, but it's possible to use its own annovar databases directories (humandb) if ANNOVAR is already present
+
+PROJECTNAME = config["projectName"]
+DATE = str(datetime.date.today())
+WORKDIR = os.path.abspath(config["outputDir"])
+if(not WORKDIR):
+	sys.exit("You must specify an output directory in the project configuration file !!")
+
+##COPY SGE.SH AND CREATE LOGS DIRECTORY IN WORKDIR
+if(not os.path.exists(os.path.join(WORKDIR,"logs"))):
+	os.makedirs(os.path.join(WORKDIR,"logs"))
+	shutil.copy(os.path.join(SNAKEFILEDIR,"sge.sh"),WORKDIR)
+
+CAPTURENAME = config["capture"]
+if(not CAPTURENAME or not config["captures"][config["capture"]]["path"]):
+	CAPTURENAME = "Broad.human.exome.b37"
+	CAPTUREDESC = "Broad interval list b37 converted to bed"
+	CAPTUREPATH = "REFERENCES/Broad.human.exome.b37.bed"
+else:
+	CAPTUREDESC = config["captures"][config["capture"]]["description"]
+	CAPTUREPATH = config["captures"][config["capture"]]["path"]
+
+#REFNAME = config["reference"]
+if(not config["reference"] or not config["references"][config["reference"]]["path"]):
+	REFPATH = "REFERENCES/human_g1k_v37.fasta"
+	REFDICT = "REFERENCES/human_g1k_v37.dict"
+	REFFAI = "REFERENCES/human_g1k_v37.fasta.fai"
+else:
+	REFPATH = config["references"][config["reference"]]["path"]
+	REFDICT = os.path.splitext(config["references"][config["reference"]]["path"])[0]+".dict"
+	REFFAI = config["references"][config["reference"]]["path"]+".fai"
+
+if(not config["onekindels"] or not config["databases"]["onekindels"][config["onekindels"]]):
+	ONEKINDELS = "REFERENCES/1000G_phase1.indels.b37.vcf.gz"
+else:
+	ONEKINDELS = config["databases"]["onekindels"][config["onekindels"]]
+
+if(not config["millsindels"] or not config["databases"]["millsindels"][config["millsindels"]]):
+	MILLSINDELS = "REFERENCES/Mills_and_1000G_gold_standard.indels.b37.vcf.gz"
+else:
+	MILLSINDELS = config["databases"]["millsindels"][config["millsindels"]]
+
+if(not config["dbsnp"] or not config["databases"]["dbsnp"][config["dbsnp"]]):
+	DBSNP = "REFERENCES/dbsnp_138.b37.vcf.gz"
+else:
+	DBSNP = config["databases"]["dbsnp"][config["dbsnp"]]
+
+if(not config["gnomad"] or not config["databases"]["gnomad"][config["gnomad"]]):
+	GNOMAD = "REFERENCES/gnomad.exomes.r2.0.1.sites.vcf.gz"
+else:
+	GNOMAD = config["databases"]["gnomad"][config["gnomad"]]
+
+if(not config["annovar"] or not config["tools"]["annovar"][config["annovar"]]):
+        ANNOVAR = "../TOOLS/annovar"
+else:
+        ANNOVAR = config["tools"]["annovar"][config["annovar"]]
+
+if(not config["annovar_db"] or not config["tools"]["annovar_db"][config["annovar_db"]]):
+        ANNOVAR_DATABASES = "../TOOLS/annovar/humandb"
+else:
+        ANNOVAR_DATABASES = config["tools"]["annovar_db"][config["annovar_db"]]
+
+if(not config["cadd"] or not config["tools"]["cadd"][config["cadd"]]):
+        CADD = "../TOOLS/CADD-scripts/CADD.sh"
+else:
+        CADD = config["tools"]["cadd"][config["cadd"]]
+
+if(not config["intervar"] or not config["tools"]["intervar"][config["intervar"]]):
+        INTERVAR = "../TOOLS/InterVar-master"
+else:
+        INTERVAR = config["tools"]["intervar"][config["intervar"]]
+
+
+
+VEPCACHE = config["databases"]["vep"]["cache"]
+if(not VEPCACHE):
+	VEPCACHE = "REFERENCES/VEP"
+VEPSPECIES = config["vepspecies"]
+if(not VEPSPECIES):
+	VEPSPECIES = "homo_sapiens_merged"
+VEPASSEMBLY = config["vepassembly"]
+if(not VEPASSEMBLY):
+	VEPASSEMBLY = "GRCh37"
+VEPDBVERSION = config["vepdbversion"]
+if(not VEPDBVERSION):
+	VEPDBVERSION = "86"
+
+workdir: config["outputDir"]
+
+### FUNCTIONS
+def getFastPair(wildcards):
+	for s in config["samples"]:
+		if(s["sample"] == wildcards.sample):
+			for p in s["files"]:
+				if(p["id"] == wildcards.pairID):
+					return [p["forward"]["path"],p["reverse"]["path"]]
+
+def getAlignedPairs(wildcards):
+	for s in config["samples"]:
+		if(s["sample"] == wildcards.sample):
+			sams = list()
+			for p in s["files"]:
+				sams.append("Samples/"+wildcards.sample+"/BAM/"+wildcards.sample+"."+p["id"]+".sorted.bam")
+			return sams
+
+def getForRFastq(wildcards):
+	for s in config["samples"]:
+		if(s["sample"] == wildcards.sample):
+			fastqs = list()
+			for p in s["files"]:
+				fastqs.append(p[wildcards.strand]["path"])
+			return fastqs
+
+
+# List samples to trigger the target rule to create
+sampleList = list()
+
+for s in config["samples"]:
+	sampleList.append(s["sample"])
+
+# Depth of coverage suffixes
+docSuffixList = ["sample_cumulative_coverage_counts","sample_cumulative_coverage_proportions","sample_statistics","sample_summary"]
+
+# Picard metrics suffixes
+picardMetricsList =	["alignment_summary_metrics","base_distribution_by_cycle_metrics", 				"base_distribution_by_cycle.pdf","insert_size_histogram.pdf","insert_size_metrics", 				"quality_by_cycle_metrics","quality_by_cycle.pdf","quality_distribution_metrics","quality_distribution.pdf"]
+
+# Bed list
+bedList = ["autosomes","chrX","chrY"]
+
+# Strand List
+strandList = ["forward","reverse"]
+
+### TARGETS
+rule target:
+	input:	
+		"VCF/hapcaller.recal.combined.annot.gnomad.vep.filtered.annovar.vcf.hg19_multianno.vcf.gz",
+		"VCF/hapcaller.recal.combined.annot.gnomad.vep.filtered.annovar.vcf.hg19_multianno.vcf.gz.tbi",
+		expand("CSV/individual_results.tsv", sample=sampleList ),
+		expand("Samples/{sample}/QC/{sample}.gatk_doc.{capture}.{suf}", sample=sampleList, capture=bedList, suf=docSuffixList),
+		expand("Samples/{sample}/QC/{sample}.picard_metrics.{suf}", sample=sampleList, suf=picardMetricsList),
+		expand("Samples/{sample}/QC/{sample}.fastqc.{strand}_fastqc.zip", sample=sampleList, strand=strandList)
+
+### TESTS
+rule testPipeline:
+	input:
+		"VCF/hapcaller.recal.combined.annot.gnomad.vcf.gz",
+		"VCF/hapcaller.recal.combined.annot.gnomad.vcf.gz.tbi"
+
+### CONCAT FASTQ FILES BEFORE FASTQC
+rule concatFastq:
+	input:	getForRFastq
+	output:	"Samples/{sample}/QC/{sample}.fastqc.{strand}.gz"
+	shell:	"cat {input} > {output}"
+
+### FASTQC
+rule fastQC:
+	input:	"Samples/{sample}/QC/{sample}.fastqc.{strand}.gz"
+	output:	"Samples/{sample}/QC/{sample}.fastqc.{strand}_fastqc.zip"
+	params:	outdir = "Samples/{sample}/QC"
+	shell:	"fastqc -o {params.outdir} --format fastq --noextract {input}"
+
+### ALIGN EACH PAIR OF FASTQ FILES
+rule align:
+	input:	ref = REFPATH,
+		pair = getFastPair,
+		index = REFPATH+".bwt"
+	output:	temp("Samples/{sample}/BAM/{sample}.{pairID}.sam")
+	shell:	"bwa mem -t 1 -M \
+		-H '@CO\\tProject:{PROJECTNAME} Sample:{wildcards.sample} Date:{DATE} CWD:{WORKDIR} Capture:{{ name : {CAPTURENAME} , description : {CAPTUREDESC} , path : {CAPTUREPATH}}}' \
+		-R '@RG\\tID:{wildcards.sample}\\tLB:{wildcards.sample}\\tSM:{wildcards.sample}\\tPL:Illumina\\tCN:CENTER' \
+		{input.ref} {input.pair} > {output}"
+
+### SORT EACH ALIGNED PAIRS
+rule sort:
+	input:	ref = REFPATH,
+		sam = "Samples/{sample}/BAM/{sample}.{pairID}.sam",
+		fai = REFFAI
+	output:	temp("Samples/{sample}/BAM/{sample}.{pairID}.sorted.bam")
+	shell:	"samtools sort --reference {input.ref} -l 9 -@ 1 -O bam -o {output} -T {output}.tmp {input.sam}"
+
+### MERGE ALIGNED PAIRS
+rule merge:
+	input:	sams = getAlignedPairs
+	output:	bam = temp("Samples/{sample}/BAM/{sample}.merged.bam"),
+		bai = temp("Samples/{sample}/BAM/{sample}.merged.bai")
+	params: tmpdir = "Samples/{sample}/BAM"
+	run:	
+		fragments = "I="+ " I=".join(input.sams)
+		shell("""
+		picard MergeSamFiles TMP_DIR={params.tmpdir} SO=coordinate AS=true CREATE_INDEX=true MAX_RECORDS_IN_RAM=1000000 COMPRESSION_LEVEL=9 VALIDATION_STRINGENCY=SILENT USE_THREADING=true VERBOSITY=INFO COMMENT="'Merge of all aligned pairs'" O={output.bam} {fragments}
+		""")
+
+### MARK DUPLICATES
+rule markDuplicates:
+	input:	bam = "Samples/{sample}/BAM/{sample}.merged.bam",
+		bai = "Samples/{sample}/BAM/{sample}.merged.bai"
+	output:	bam = temp("Samples/{sample}/BAM/{sample}.markdup.bam"),
+		bai = temp("Samples/{sample}/BAM/{sample}.markdup.bai"),
+		metrics = "Samples/{sample}/QC/{sample}.markdup.metrics"
+	params: tmpdir = "Samples/{sample}/BAM"
+	shell:	"picard MarkDuplicates -Xmx5g TMP_DIR={params.tmpdir} MAX_RECORDS_IN_RAM=1000000 COMPRESSION_LEVEL=9 AS=true PG=PMD  VALIDATION_STRINGENCY=SILENT CREATE_INDEX=true O={output.bam} I={input.bam} M={output.metrics}"
+
+### SANITIZE AND COPY BED TO WORKING DIRECTORY
+rule copyBed:
+	input:	cap = CAPTUREPATH,
+		reffai = REFFAI
+	output:	"BED/capture.bed"
+	shell:	"tr -d '\\r' < {input.cap} | grep -v '^browser'  | grep -v '^track' | cut -f1,2,3 | sed 's/^chr//' | LC_ALL=C sort -t '	' -k1,1 -k2,2n -k3,3n | bedtools merge | bedtools sort -faidx {input.reffai} > {output}"
+
+### EXTEND CAPTURE BY 1000 BASES
+rule extendBed:
+	input:	bed = "BED/capture.bed",
+		reffai = REFFAI
+	output:	"BED/capture.extended1000.bed"
+	shell:	"bedtools slop -b 1000 -g {input.reffai} -i {input.bed} | LC_ALL=C sort -t '	' -k1,1 -k2,2n -k3,3n | bedtools merge -d 1000 | bedtools sort -faidx {input.reffai} > {output}"
+
+### DETERMINE INTERVALS LIKELY IN NEED OF REALIGNMENT
+rule realignTargetCreator:
+	input:	bam = "Samples/{sample}/BAM/{sample}.markdup.bam",
+		bai = "Samples/{sample}/BAM/{sample}.markdup.bai",
+		bed = "BED/capture.extended1000.bed",
+		ref = REFPATH,
+		onekindels = ONEKINDELS,
+		millsindels = MILLSINDELS,
+		dict = REFDICT,
+		gatk = "gatkPresent.txt"
+	output:	temp("Samples/{sample}/BAM/{sample}.realign.intervals")
+	threads:	8
+	params: tmpdir = "Samples/{sample}/BAM"
+	shell:	"gatk -Djava.io.tmpdir={params.tmpdir} -Xmx5g -T RealignerTargetCreator \
+		-nt {threads} \
+		-R {input.ref} \
+		-L:capture,BED {input.bed} \
+		-I {input.bam} \
+		-o {output} \
+		--known:onekindels,VCF {input.onekindels} \
+		--known:millsindels,VCF {input.millsindels} \
+		-S SILENT"
+
+### REALIGN INDELS
+rule indelRealign:
+	input:	intervals = "Samples/{sample}/BAM/{sample}.realign.intervals",
+		ref = REFPATH,
+		bam = "Samples/{sample}/BAM/{sample}.markdup.bam",
+		bai = "Samples/{sample}/BAM/{sample}.markdup.bai",
+		onekindels = ONEKINDELS,
+		millsindels = MILLSINDELS,
+		dict = REFDICT,
+		gatk = "gatkPresent.txt"
+	output: bam = temp("Samples/{sample}/BAM/{sample}.realign.bam"),
+		bai = temp("Samples/{sample}/BAM/{sample}.realign.bai")
+	params: tmpdir = "Samples/{sample}/BAM"
+	shell:	"gatk -Djava.io.tmpdir={params.tmpdir} -XX:ParallelGCThreads=5 -Xmx2g -T IndelRealigner \
+		-R {input.ref} \
+		--bam_compression 9 \
+		-I {input.bam} \
+		-o {output.bam} \
+		-targetIntervals {input.intervals} \
+		-known:onekindels,VCF {input.onekindels} \
+		-known:millsindels,VCF {input.millsindels} \
+		-S SILENT"
+
+### BASE RECALIBRATION TABLE
+rule createBaseRecalibrationTable:
+	input:	ref = REFPATH,
+		bam = "Samples/{sample}/BAM/{sample}.realign.bam",
+		bai = "Samples/{sample}/BAM/{sample}.realign.bai",
+		dbsnp = DBSNP,
+		bed = "BED/capture.extended1000.bed",
+		dict = REFDICT,
+		gatk = "gatkPresent.txt"
+	output:	temp("Samples/{sample}/BAM/{sample}.recal.table")
+	threads:	8
+	params:	tmpdir = "Samples/{sample}/BAM"
+	shell:	"gatk -Djava.io.tmpdir={params.tmpdir} -XX:ParallelGCThreads=5 -Xmx2g -T BaseRecalibrator \
+		-nct {threads} \
+		-R {input.ref} \
+		--validation_strictness LENIENT \
+		-I {input.bam} \
+		-l INFO \
+		-o {output} \
+		-knownSites:dbsnp,VCF {input.dbsnp} \
+		-L:capture,BED {input.bed} \
+		-cov QualityScoreCovariate \
+		-cov CycleCovariate \
+		-cov ContextCovariate"
+
+### BASE RECALIBRATION
+rule baseRecalibration:
+	input:	recaltable = "Samples/{sample}/BAM/{sample}.recal.table",
+		ref = REFPATH,
+		bam = "Samples/{sample}/BAM/{sample}.realign.bam",
+		bai = "Samples/{sample}/BAM/{sample}.realign.bai",
+		dict = REFDICT,
+		gatk = "gatkPresent.txt"
+	output:	bam = protected("Samples/{sample}/BAM/{sample}.final.bam"),
+		bai = protected("Samples/{sample}/BAM/{sample}.final.bai")
+	params:	tmpdir = "Samples/{sample}/BAM"
+	threads:	8
+	shell:	"gatk -Djava.io.tmpdir={params.tmpdir} -XX:ParallelGCThreads=5 -Xmx4g -T PrintReads \
+		-nct {threads} \
+		-R {input.ref} \
+		--bam_compression 9 \
+		-BQSR {input.recaltable} \
+		--disable_indel_quals \
+		-I {input.bam} \
+		-o {output.bam} \
+		--validation_strictness LENIENT \
+		-l INFO"
+
+### VARIANT CALLING WITH HAPCALLER
+rule haplotypeCaller:
+	input:	ref = REFPATH,
+		bed = "BED/capture.extended1000.bed",
+		bam = "Samples/{sample}/BAM/{sample}.final.bam",
+		bai = "Samples/{sample}/BAM/{sample}.final.bai",
+		dbsnp = DBSNP,
+		dict = REFDICT,
+		gatk = "gatkPresent.txt"
+	output:	vcf = protected("Samples/{sample}/VCF/{sample}.hapcaller.g.vcf"),
+		index = protected("Samples/{sample}/VCF/{sample}.hapcaller.g.vcf.idx")
+	params:	tmpdir = "Samples/{sample}/VCF"
+	shell:	"gatk -Djava.io.tmpdir={params.tmpdir} -XX:ParallelGCThreads=5 -Xmx3g -T HaplotypeCaller \
+		-R {input.ref} \
+		--emitRefConfidence GVCF \
+		-variant_index_type LINEAR \
+		-variant_index_parameter 128000 \
+		-stand_call_conf 30.0 \
+		-nct 1 \
+		-rf ReadLength \
+		-minRead 0 \
+		-maxRead 10000 \
+		-S SILENT \
+		-L:capture,BED {input.bed} \
+		-I {input.bam} \
+		--dbsnp:dbsnp,VCF {input.dbsnp} \
+		-o {output.vcf}"
+
+### CREATE VCF LIST
+rule createGVCFList:
+	input:	expand("Samples/{sample}/VCF/{sample}.hapcaller.g.vcf", sample=sampleList)
+	output:	temp("VCF/gvcf.list")
+	run:	
+		with open(output[0], "w") as out:
+			for v in input:
+				out.write(str(v)+"\n")
+
+### COMBINE VCF
+rule combineGVCF:
+	input:	ref = REFPATH,
+		vcflist = "VCF/gvcf.list",
+		dict = REFDICT,
+		gatk = "gatkPresent.txt"
+	output:	vcf = temp("VCF/hapcaller.combined.g.vcf.gz"),
+		index = temp("VCF/hapcaller.combined.g.vcf.gz.tbi")
+	params:	tmpdir = "VCF"
+	shell:	"gatk -Djava.io.tmpdir={params.tmpdir} -XX:ParallelGCThreads=3 -Xmx10g -T CombineGVCFs \
+		-R {input.ref} \
+		--variant {input.vcflist} \
+		-S SILENT \
+		-o {output.vcf}"
+
+### GENOTYPE VCF
+rule genotypeGVCF:
+	input:	ref = REFPATH,
+		vcf = "VCF/hapcaller.combined.g.vcf.gz",
+		index = "VCF/hapcaller.combined.g.vcf.gz.tbi",
+		dict = REFDICT,
+		gatk = "gatkPresent.txt"
+	output: vcf = temp("VCF/hapcaller.genotyped.vcf.gz"),
+		index = temp("VCF/hapcaller.genotyped.vcf.gz.tbi")
+	params:	tmpdir = "VCF"	
+	shell:	"gatk -Djava.io.tmpdir={params.tmpdir} -XX:ParallelGCThreads=3 -Xmx3g -T GenotypeGVCFs \
+		-R {input.ref} \
+		--variant {input.vcf} \
+		-S SILENT \
+		-o {output.vcf}"
+
+### SELECT SNPS FROM MAIN VCF BEFORE FILTERING
+rule selectSNVs:
+	input:	ref = REFPATH,
+		vcf = "VCF/hapcaller.genotyped.vcf.gz",
+		index = "VCF/hapcaller.genotyped.vcf.gz.tbi",
+		dict = REFDICT,
+		gatk = "gatkPresent.txt"
+	output:	vcf = temp("VCF/hapcaller.snv.recal.select.vcf.gz"),
+		index = temp("VCF/hapcaller.snv.recal.select.vcf.gz.tbi")
+	params:	tmpdir = "VCF"
+	shell:	"gatk -Djava.io.tmpdir={params.tmpdir} -XX:ParallelGCThreads=3 -Xmx3g -T SelectVariants \
+		-R {input.ref} \
+		--logging_level FATAL \
+		-selectType SNP \
+		--variant {input.vcf} \
+		-o {output.vcf}"
+
+### FILTER SNVS
+rule filterSNVs:
+	input:	ref = REFPATH,
+		vcf = "VCF/hapcaller.snv.recal.select.vcf.gz",
+		index = "VCF/hapcaller.snv.recal.select.vcf.gz.tbi",
+		dict = REFDICT,
+		gatk = "gatkPresent.txt"
+	output:	vcf = temp("VCF/hapcaller.snv.recal.filter.vcf.gz"),
+		index = temp("VCF/hapcaller.snv.recal.filter.vcf.gz.tbi")
+	params:	tmpdir = "VCF"
+	shell:	"gatk -Djava.io.tmpdir={params.tmpdir} -XX:ParallelGCThreads=3 -Xmx3g -T VariantFiltration \
+		-R {input.ref} \
+		--logging_level FATAL  \
+		--filterExpression 'QD < 2.0' --filterName 'FAILS_HARD_FILTER_SNP_QD' \
+		--filterExpression 'FS > 60.0' --filterName 'FAILS_HARD_FILTER_SNP_FS' \
+		--filterExpression 'MQ < 30.0' --filterName 'FAILS_HARD_FILTER_SNP_MQ' \
+		--filterExpression 'MQRankSum < -12.5' --filterName 'FAILS_HARD_FILTER_SNP_MQRankSum' \
+		--filterExpression 'ReadPosRankSum < -8.0' --filterName 'FAILS_HARD_FILTER_SNP_ReadPosRankSum' \
+		--variant {input.vcf} \
+		-o {output.vcf}"
+
+### SELECT INDELS FROM MAIN VCF BEFORE FILTERING
+rule selectIndels:
+	input:	ref = REFPATH,
+		vcf = "VCF/hapcaller.genotyped.vcf.gz",
+		index = "VCF/hapcaller.genotyped.vcf.gz.tbi",
+		dict = REFDICT,
+		gatk = "gatkPresent.txt"
+	output:	vcf = temp("VCF/hapcaller.indel.recal.select.vcf.gz"),
+		index = temp("VCF/hapcaller.indel.recal.select.vcf.gz.tbi")
+	params:	tmpdir = "VCF"
+	shell:	"gatk -Djava.io.tmpdir={params.tmpdir} -XX:ParallelGCThreads=3 -Xmx3g -T SelectVariants \
+		-R {input.ref} \
+		--logging_level FATAL \
+		-selectType INDEL \
+		--variant {input.vcf} \
+		-o {output.vcf}"
+
+### FILTER INDELS
+rule filterIndels:
+	input:	ref = REFPATH,
+		vcf = "VCF/hapcaller.indel.recal.select.vcf.gz",
+		index = "VCF/hapcaller.indel.recal.select.vcf.gz.tbi",
+		dict = REFDICT,
+		gatk = "gatkPresent.txt"
+	output:	vcf = temp("VCF/hapcaller.indel.recal.filter.vcf.gz"),
+		index = temp("VCF/hapcaller.indel.recal.filter.vcf.gz.tbi")
+	params:	tmpdir = "VCF"
+	shell:	"gatk -Djava.io.tmpdir={params.tmpdir} -XX:ParallelGCThreads=3 -Xmx3g -T VariantFiltration \
+		-R {input.ref} \
+		--logging_level FATAL  \
+		--filterExpression 'QD < 2.0' --filterName 'FAILS_HARD_FILTER_INDEL_QD' \
+		--filterExpression 'FS > 200.0' --filterName 'FAILS_HARD_FILTER_INDEL_FS' \
+		--filterExpression 'ReadPosRankSum < -20.0' --filterName 'FAILS_HARD_FILTER_INDEL_ReadPosRankSum' \
+		--filterExpression 'SOR > 10.0' --filterName 'FAILS_HARD_FILTER_INDEL_SOR' \
+		--variant {input.vcf} \
+		-o {output.vcf}"
+
+### COMBINE FILTERERD VCF
+rule combineVCF:
+	input:	ref = REFPATH,
+		vcfsnp = "VCF/hapcaller.snv.recal.filter.vcf.gz",
+		indexsnp = "VCF/hapcaller.snv.recal.filter.vcf.gz.tbi",
+		vcfindel = "VCF/hapcaller.indel.recal.filter.vcf.gz",
+		indexindel = "VCF/hapcaller.indel.recal.filter.vcf.gz.tbi",
+		dict = REFDICT,
+		gatk = "gatkPresent.txt"
+	output:	vcf = temp("VCF/hapcaller.recal.combined.vcf.gz"),
+		index = temp("VCF/hapcaller.recal.combined.vcf.gz.tbi")
+	params:	tmpdir = "VCF"
+	shell:	"gatk -Djava.io.tmpdir={params.tmpdir} -XX:ParallelGCThreads=3 -Xmx3g -T CombineVariants \
+		-R {input.ref} \
+		--genotypemergeoption PRIORITIZE \
+		--rod_priority_list SNP,INDEL \
+		--variant:SNP {input.vcfsnp} \
+		--variant:INDEL {input.vcfindel} \
+		-o {output.vcf}"
+
+### ANNOTATION WITH GNOMAD FREQUENCIES AND DBSNP RS IDS
+rule freqGNOMAD:
+	input:	ref = REFPATH,
+		vcf = "VCF/hapcaller.recal.combined.vcf.gz",
+		index = "VCF/hapcaller.recal.combined.vcf.gz.tbi",
+		gnomad = GNOMAD,
+		dbsnp = DBSNP,
+		dict = REFDICT,
+		gatk = "gatkPresent.txt"
+	output:	vcf = "VCF/hapcaller.recal.combined.annot.gnomad.vcf.gz",
+		index = "VCF/hapcaller.recal.combined.annot.gnomad.vcf.gz.tbi"
+	params:	tmpdir = "VCF"
+	shell:	"gatk -Djava.io.tmpdir={params.tmpdir}\
+		-XX:ParallelGCThreads=3 \
+		-Xmx3g \
+		-T VariantAnnotator \
+		-R {input.ref} \
+		--variant {input.vcf} \
+		-L {input.vcf} \
+		--resource:gnomad {input.gnomad} \
+		--resourceAlleleConcordance \
+		-E gnomad.AF_AFR \
+		-E gnomad.AF_ASJ \
+		-E gnomad.AF_AMR \
+		-E gnomad.AF_EAS \
+		-E gnomad.AF_FIN \
+		-E gnomad.AF_NFE \
+		-E gnomad.AF_OTH \
+		-E gnomad.AF_SAS \
+		--dbsnp {input.dbsnp} \
+		-o {output.vcf}"
+
+### ANNOTATION WITH VEP
+rule annotVEP:
+	input:	ref = REFPATH,
+		vcf = "VCF/hapcaller.recal.combined.annot.gnomad.vcf.gz",
+		index = "VCF/hapcaller.recal.combined.annot.gnomad.vcf.gz.tbi",
+		vep = VEPCACHE+"/"+VEPSPECIES+"_"+VEPDBVERSION+"_"+VEPASSEMBLY+"_cache.done"
+	output:	vcf = protected("VCF/hapcaller.recal.combined.annot.gnomad.vep.vcf")
+	params:	
+	shell:	"variant_effect_predictor.pl \
+		--pick_order=canonical \
+		--cache --dir {VEPCACHE} \
+		--dir_plugins /sandbox/users/mguillout/tools/VEP_plugins \
+		--species {VEPSPECIES} \
+		--assembly {VEPASSEMBLY} \
+		--db_version {VEPDBVERSION} \
+		--fasta {input.ref} \
+		--offline \
+		--symbol \
+		--format vcf \
+		--force_overwrite \
+		--sift=b \
+		--polyphen=b \
+		--xref_refseq \
+		-i {input.vcf} \
+		-o {output.vcf} \
+		--quiet \
+		--vcf \
+		--gmaf \
+		--ccds \
+		--canonical \
+		--maf_1kg \
+		--pubmed \
+		--hgvs \
+		--no_stats"
+
+
+if config["genes_list"] != "" :
+
+	### FILTRATION: filter variants from a list of ENSEMBL_id and by Global Allele Frequency
+	rule filtration_freq_and_genes:
+		input:	vcf = "VCF/hapcaller.recal.combined.annot.gnomad.vep.vcf.gz",
+			index = "VCF/hapcaller.recal.combined.annot.gnomad.vep.vcf.gz.tbi",
+		params: thresold = config["seuil_freq"],
+				genes = config["genes_list"],
+				population = config["population"],
+		output:	vcf = protected("VCF/hapcaller.recal.combined.annot.gnomad.vep.filtered.vcf")
+		params:	
+		shell:	"filter_vep.pl \
+			-i {input.vcf} \
+			-o {output.vcf} \
+			-filter '(Gene in {params.genes}) and ({params.population} < {params.thresold} or not {params.population})'"
+else:
+
+	### FILTRATION: filter variants by Global Allele Frequency
+	rule filtration_freq_and_genes:
+		input:	vcf = "VCF/hapcaller.recal.combined.annot.gnomad.vep.vcf.gz",
+			index = "VCF/hapcaller.recal.combined.annot.gnomad.vep.vcf.gz.tbi",
+		params: thresold = config["seuil_freq"],
+			population = config["population"],
+		output:	vcf = protected("VCF/hapcaller.recal.combined.annot.gnomad.vep.filtered.vcf")
+		params:	
+		shell:	"filter_vep.pl \
+			-i {input.vcf} \
+			-o {output.vcf} \
+			-filter '{params.population} < {params.thresold} or not {params.population}'"
+
+
+
+### EXTRACTION: extraction of gnomadFrequencies
+rule extractGNOMAD:
+	input:	ref = REFPATH,
+			vcf = "VCF/hapcaller.recal.combined.annot.gnomad.vep.filtered.vcf.gz",
+	output:	tsv = protected("CSV/gnomad_freq.tsv")
+	params:	
+	shell:	"gatk -T VariantsToTable \
+		-R {input.ref} \
+		-V {input.vcf} \
+		-o {output.tsv} \
+		-F CHROM \
+		-F POS \
+		-F REF \
+		-F ALT \
+		-F ID \
+		-GF GT \
+		--allowMissingData \
+		-F gnomad.AF_AFR \
+		-F gnomad.AF_ASJ \
+		-F gnomad.AF_AMR \
+		-F gnomad.AF_EAS \
+		-F gnomad.AF_FIN \
+		-F gnomad.AF_NFE \
+		-F gnomad.AF_OTH \
+		-F gnomad.AF_SAS "
+
+### EXTRACTION: extraction of VEP fields
+rule extractGNOMADVEP:
+	input:	vcf = "VCF/hapcaller.recal.combined.annot.gnomad.vep.filtered.vcf.gz",
+			tsv = "CSV/gnomad_freq.tsv",
+	output:	tsv = "CSV/gnomad_vep.tsv"
+	params:	
+	shell:	"vep-annotation-reporter  {input.vcf} 	Feature HGVSc HGVSp Protein_position Amino_acids Codons CLIN_SIG PUBMED \
+		-t {input.tsv} \
+		-o {output.tsv} \
+		"
+
+	
+### CADD Scores
+rule scoreCADD:
+	input:	vcf = "VCF/hapcaller.recal.combined.annot.gnomad.vep.filtered.vcf.gz",
+			cadd_script = CADD,
+	output:	cadd = "CSV/cadd.tsv.gz"
+	params:	
+	shell:	" {input.cadd_script} \
+		-o {output.cadd} \
+		-a \
+		-g GRCh37 \
+		-v v1.6 {input.vcf}"
+
+### CADD Scores: extract tsv file and delete the first line 
+rule gunzipCADD:
+	input:	gz = "CSV/cadd.tsv.gz",
+	output:	tsv = "CSV/cadd.tsv",
+	params:	
+	shell:	"gunzip {input.gz} ;  sed 1d {output.tsv} -i"
+
+### ANNOTATION AVEC ANNOVAR
+rule annotANNOVAR:
+	input:	vcf = "VCF/hapcaller.recal.combined.annot.gnomad.vep.filtered.vcf.gz",
+		index = "VCF/hapcaller.recal.combined.annot.gnomad.vep.filtered.vcf.gz.tbi",
+		annovar = ANNOVAR,
+		annovar_db = ANNOVAR_DATABASES,
+	output:	vcf = protected("VCF/hapcaller.recal.combined.annot.gnomad.vep.filtered.annovar.vcf.hg19_multianno.vcf"),
+		avinput = "VCF/hapcaller.recal.combined.annot.gnomad.vep.filtered.annovar.vcf.avinput",
+		txt = "VCF/hapcaller.recal.combined.annot.gnomad.vep.filtered.annovar.vcf.hg19_multianno.txt",
+	params:
+	shell: "perl {input.annovar}/table_annovar.pl {input.vcf}  \
+		{input.annovar_db}\
+		-buildver hg19 \
+		-out VCF/hapcaller.recal.combined.annot.gnomad.vep.filtered.annovar.vcf \
+		-remove \
+		-protocol refGene,knownGene,dgvMerged,gwasCatalog,dbnsfp35a,clinvar_20190305 \
+		-operation gx,g,r,r,f,f \
+		-nastring . \
+		-polish \
+		-otherinfo \
+		-xref {input.annovar_db}/hg19_refGene.txt \
+		-vcfinput"
+
+### VARIANTS INTERPRETATION WITH INTERVAR
+rule annotINTERVAR:
+	input:	avinput = "VCF/hapcaller.recal.combined.annot.gnomad.vep.filtered.annovar.vcf.avinput",
+		annovar = ANNOVAR,
+		annovar_db = ANNOVAR_DATABASES,
+		intervar_path= INTERVAR,
+	output:	vcf = "CSV/res_intervar.hg19_multianno.txt.intervar"
+	params:
+	shell: "python {input.intervar_path}/Intervar.py \
+		-i {input.avinput} \
+		-o CSV/res_intervar \
+		--buildver hg19 \
+		--input_type avinput \
+		--database_intervar {input.intervar_path}/intervardb \
+		--config={input.intervar_path}/config.ini \
+		--convert2annovar {input.annovar}/convert2annovar.pl \
+		--table_annovar {input.annovar}/table_annovar.pl \
+		--annotate_variation {input.annovar}/annotate_variation.pl \
+		--database_locat {input.annovar_db}"
+
+
+# ### VARIANTS INTERPRETATION WITH INTERVAR
+# ### creates an intervar file for each sample
+# ### but problems with merge_fields rule : (for using {sample} in "merging_tsv_files.py")
+# rule annotINTERVAR:
+# 	input:	avinput = "VCF/hapcaller.recal.combined.annot.gnomad.vep.filtered.annovar.vcf.hg19_multianno.vcf.gz",
+# 		annovar = ANNOVAR,
+# 		annovar_db = ANNOVAR_DATABASES,
+# 		intervar_path= INTERVAR,
+# 	output:	intervar = "CSV/res_intervar.hg19_multianno_{Sample}.txt.intervar"
+# 	params:
+# 	shell: "python {input.intervar_path}/Intervar.py \
+# 		-i {input.avinput} \
+# 		-o CSV/res_intervar\
+# 		--buildver hg19 \
+# 		--input_type VCF_m \
+# 		--database_intervar {input.intervar_path}/intervardb \
+# 		--config={input.intervar_path}/config.ini \
+# 		--convert2annovar {input.annovar}/convert2annovar.pl \
+# 		--table_annovar {input.annovar}/table_annovar.pl \
+# 		--annotate_variation {input.annovar}/annotate_variation.pl \
+# 		--database_locat {input.annovar_db}"
+
+### Merge of the four csv/tsv files
+rule merge_fields:
+        input :
+                annovar = "VCF/hapcaller.recal.combined.annot.gnomad.vep.filtered.annovar.vcf.hg19_multianno.txt",
+                intervar = "CSV/res_intervar.hg19_multianno.txt.intervar",
+                gnomad_vep = "CSV/gnomad_vep.tsv",
+                cadd = "CSV/cadd.tsv",
+        params : genes = config["genes_list"],
+        output : main_results = "CSV/individual_results.tsv"
+        script:
+                "merging_tsv_files.py"
+
+
+### DEPTH OF COVERAGE
+rule depthOfCoverage:
+	input:	ref = REFPATH,
+		bam = "Samples/{sample}/BAM/{sample}.final.bam",
+		bai = "Samples/{sample}/BAM/{sample}.final.bai",
+		bed = "BED/{capture}.bed",
+		reffai = REFFAI,
+		gatk = "gatkPresent.txt"
+	output:	expand("Samples/{{sample}}/QC/{{sample}}.gatk_doc.{{capture}}.{suf}", suf=docSuffixList)
+	params: base = "Samples/{sample}/QC/{sample}.gatk_doc.{capture}",
+		tmpdir = "Samples/{sample}/QC"
+	shell:	"gatk -Djava.io.tmpdir={params.tmpdir} -XX:ParallelGCThreads=3 -Xmx5g -T DepthOfCoverage \
+		-R {input.ref} \
+		--validation_strictness LENIENT \
+		-L:capture,BED {input.bed} \
+		--minMappingQuality 30 \
+		-ct 1 -ct 5 -ct 10 -ct 15 -ct 20 -ct 25 -ct 30 \
+		-I {input.bam} \
+		-o {params.base} \
+		-omitIntervals \
+		-omitBaseOutput"
+
+### PICARD METRICS
+rule picardMetrics:
+	input:	bam = "Samples/{sample}/BAM/{sample}.final.bam",
+		bai = "Samples/{sample}/BAM/{sample}.final.bai",
+		interval = "BED/capture.interval_list",
+		ref = REFPATH
+	output:	expand("Samples/{{sample}}/QC/{{sample}}.picard_metrics.{suf}", suf=picardMetricsList)
+	params: base = "Samples/{sample}/QC/{sample}.picard_metrics"
+	shell:	"picard -Xmx2g CollectMultipleMetrics \
+		I={input.bam} \
+		O={params.base} \
+		R={input.ref} \
+		INTERVALS={input.interval}"
+
+### BED TO PICARD INTERVAL LIST
+rule bedToPicardInterval:
+	input:	bed = "{base}.bed",
+		dict = REFDICT
+	output:	"{base}.interval_list"
+	shell:	"picard BedToIntervalList I={input.bed} O={output} SD={input.dict}"
+
+### MAKE CHR Y BED
+rule makeChrYBed:
+	input:	"BED/capture.bed"
+	output:	"BED/chrY.bed"
+	shell:	"awk -F '	' '($1==\"Y\")' {input} > {output}"
+
+### MAKE CHR X BED
+rule makeChrXBed:
+	input:	"BED/capture.bed"
+	output:	"BED/chrX.bed"
+	shell:	"awk -F '	' '($1==\"X\")' {input} > {output}"
+
+### MAKE AUTOSOMES BED
+rule makeAutosomesBed:
+	input:	"BED/capture.bed"
+	output:	"BED/autosomes.bed"
+	shell:	"awk -F '	' '(int($1)>0)' {input} > {output}"
+
+### DOWNLOAD DBSNP IF NOT SPECIFIED
+rule downloadDBSNP:
+	output:	vcf = "REFERENCES/dbsnp_138.b37.vcf.gz",
+		tbi = "REFERENCES/dbsnp_138.b37.vcf.gz.tbi"
+	shell:	"""
+		wget -q --retry-connrefused --user=gsapubftp-anonymous "ftp://gsapubftp-anonymous@ftp.broadinstitute.org/bundle/b37/dbsnp_138.b37.vcf.gz" -O - | gunzip -c | bgzip > {output.vcf}
+		tabix -f -p vcf {output.vcf}
+		"""
+
+### DOWNLOAD MILLS INDELS IF NOT SPECIFIED
+rule downloadMillsIndels:
+	output:	vcf = "REFERENCES/Mills_and_1000G_gold_standard.indels.b37.vcf.gz",
+		tbi = "REFERENCES/Mills_and_1000G_gold_standard.indels.b37.vcf.gz.tbi"
+	shell:	"""
+		wget -q --retry-connrefused --user=gsapubftp-anonymous "ftp://gsapubftp-anonymous@ftp.broadinstitute.org/bundle/b37/Mills_and_1000G_gold_standard.indels.b37.vcf.gz" -O - | gunzip -c | bgzip > {output.vcf}
+		tabix -f -p vcf {output.vcf}
+		"""
+
+### DOWNLOAD 1K INDELS IF NOT SPECIFIED
+rule downloadOneKIndels:
+	output:	vcf = "REFERENCES/1000G_phase1.indels.b37.vcf.gz",
+		tbi = "REFERENCES/1000G_phase1.indels.b37.vcf.gz.tbi"
+	shell:	"""
+		wget -q --retry-connrefused --user=gsapubftp-anonymous "ftp://gsapubftp-anonymous@ftp.broadinstitute.org/bundle/b37/1000G_phase1.indels.b37.vcf.gz" -O - | gunzip -c | bgzip > {output.vcf}
+		tabix -f -p vcf {output.vcf}
+		"""
+
+### DOWNLOAD GNOMAD IF NOT SPECIFIED
+rule downloadGnomAD:
+	output:	vcf = "REFERENCES/gnomad.exomes.r2.0.1.sites.vcf.gz",
+		tbi = "REFERENCES/gnomad.exomes.r2.0.1.sites.vcf.gz.tbi"
+	shell:	"""
+		wget -q --retry-connrefused "https://storage.googleapis.com/gnomad-public/release/2.0.1/vcf/exomes/gnomad.exomes.r2.0.1.sites.vcf.gz" -O {output.vcf}
+		tabix -f -p vcf {output.vcf}
+		"""
+
+### DOWNLOAD CAPTURE IF NOT SPECIFIED
+rule downloadExomeBed:
+	output:	bed = "REFERENCES/Broad.human.exome.b37.bed"
+	params: interval = "REFERENCES/Broad.human.exome.b37.interval_list.gz"
+	shell:	"""
+		wget -q --retry-connrefused --user=gsapubftp-anonymous "ftp://gsapubftp-anonymous@ftp.broadinstitute.org/bundle/b37/Broad.human.exome.b37.interval_list.gz" -O {params.interval}
+		gunzip -c {params.interval} | grep -v "^@" | cut -f1-3 | awk '{{print $1"\t"$2-1"\t"$3}}' > {output.bed}
+		"""
+
+### DOWNLOAD VEP TARBALL
+rule downloadVEPcache:
+	output:	VEPCACHE+"/"+VEPSPECIES+"_"+VEPDBVERSION+"_"+VEPASSEMBLY+".tar.gz"
+	shell:	"curl --create-dirs 'http://ftp.ensembl.org/pub/release-{VEPDBVERSION}/variation/VEP/{VEPSPECIES}_vep_{VEPDBVERSION}_{VEPASSEMBLY}.tar.gz' -o {output}"
+
+### UNZIP VEP TARBALL AND INSTALL CACHE
+rule convertVEPcache:
+	input:	VEPCACHE+"/"+VEPSPECIES+"_"+VEPDBVERSION+"_"+VEPASSEMBLY+".tar.gz"
+	output:	touch(VEPCACHE+"/"+VEPSPECIES+"_"+VEPDBVERSION+"_"+VEPASSEMBLY+"_cache.done")
+	shell:	"""
+		tar -xzf {input} -C {VEPCACHE}
+		vep_convert_cache.pl --force_overwrite -species {VEPSPECIES} -version {VEPDBVERSION}_{VEPASSEMBLY} -d {VEPCACHE}
+		"""
+
+### DOWNLOAD GENOME IF NOT SPECIFIED
+rule downloadGenome:
+	output:	fasta = "REFERENCES/human_g1k_v37.fasta.gz"
+	shell:	"""
+		wget -q --retry-connrefused --user=gsapubftp-anonymous "ftp://gsapubftp-anonymous@ftp.broadinstitute.org/bundle/b37/human_g1k_v37.fasta.gz" -O {output.fasta}
+		"""
+
+### DOWNLOAS GATK IF NOT PRESENT IN ENVIRONMENT
+rule downloadGATK:
+	output:	temp(touch("gatkPresent.txt"))
+	run:
+		shell("gatk &> gatk.err || true")
+		with open("gatk.err",'rt') as g:
+			first_line = g.readline()
+			if(first_line.startswith("GATK jar file not found")):
+				shell("wget --quiet \"https://storage.googleapis.com/gatk-software/package-archive/gatk/GenomeAnalysisTK-3.7-0-gcfedb67.tar.bz2\" -O GenomeAnalysisTK-3.7.tar.bz2")
+				shell("gatk-register GenomeAnalysisTK-3.7.tar.bz2")
+				shell("rm GenomeAnalysisTK-3.7.tar.bz2")
+		shell("rm gatk.err")
+
+
+
+
+
+
+### HELPER RULES
+rule tabix:
+	input:	"{base}"
+	output:	"{base}.tbi"
+	wildcard_constraints:	genome=".+\.vcf\.gz$"
+	shell:	"tabix -f -p vcf {input}"
+
+rule bgzip:
+	input:	"{base}.vcf"
+	output:	"{base}.vcf.gz"
+	shell:	"bgzip -f {input}"
+
+rule bwaIndex:
+	input:	"{genome}"
+	output:	"{genome}.bwt"
+#	wildcard_constraints:	genome="(.+\.fasta$)|(.+\.fa$)"
+	shell:	"bwa index {input}"
+
+rule genomeDictionary:
+	input:	"{genome}.fasta"
+	output:	"{genome}.dict"
+	shell:	"picard CreateSequenceDictionary REFERENCE={input} OUTPUT={output}"
+
+rule genomeIndex:
+	input:	"{genome}"
+	output:	"{genome}.fai"
+#	wildcard_constraints:	genome="(.+\.fasta$)|(.+\.fa$)"
+	shell:	"samtools faidx {input}"
+	
+rule unzipGenome:
+	input:	"{genome}.gz"
+	output:	"{genome}"
+	wildcard_constraints:	genome="(.+\.fasta$)|(.+\.fa$)"
+	shell:	"gunzip {input}"
+
+
+
+
+
+
+

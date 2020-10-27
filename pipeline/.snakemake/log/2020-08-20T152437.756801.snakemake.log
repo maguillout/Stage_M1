@@ -1,0 +1,21 @@
+Building DAG of jobs...
+Using shell: /usr/bin/bash
+Provided cluster nodes: 12
+Job counts:
+	count	jobs
+	1	annotANNOVAR
+	1	annotINTERVAR
+	1	bgzip
+	1	tabix
+	1	target
+	5
+
+[Thu Aug 20 15:24:38 2020]
+rule annotANNOVAR:
+    input: VCF/hapcaller.recal.combined.annot.gnomad.vep.filtered.vcf.gz, VCF/hapcaller.recal.combined.annot.gnomad.vep.filtered.vcf.gz.tbi, /sandbox/users/mguillout/tools/annovar/humandb/, /sandbox/users/mguillout/tools/annovar/table_annovar.pl
+    output: VCF/hapcaller.recal.combined.annot.gnomad.vep.filtered.annovar.vcf.hg19_multianno.vcf, VCF/hapcaller.recal.combined.annot.gnomad.vep.filtered.annovar.vcf.avinput
+    jobid: 12
+    reason: Missing output files: VCF/hapcaller.recal.combined.annot.gnomad.vep.filtered.annovar.vcf.hg19_multianno.vcf, VCF/hapcaller.recal.combined.annot.gnomad.vep.filtered.annovar.vcf.avinput
+
+RuleException in line 624 of /sandbox/shares/nextcloud/mguillout/files/Application/pipeline/Snakefile:
+'OutputFiles' object has no attribute 'annovar'

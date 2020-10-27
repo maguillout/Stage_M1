@@ -1,0 +1,34 @@
+Building DAG of jobs...
+Using shell: /usr/bin/bash
+Provided cluster nodes: 12
+Job counts:
+	count	jobs
+	1	annotANNOVAR
+	1	annotINTERVAR
+	1	bgzip
+	1	tabix
+	1	target
+	5
+
+[Thu Aug 20 15:21:56 2020]
+rule annotANNOVAR:
+    input: VCF/hapcaller.recal.combined.annot.gnomad.vep.filtered.vcf.gz, VCF/hapcaller.recal.combined.annot.gnomad.vep.filtered.vcf.gz.tbi, /sandbox/users/mguillout/tools/annovar/humandb/, /sandbox/users/mguillout/tools/annovar/table_annovar.pl
+    output: VCF/hapcaller.recal.combined.annot.gnomad.vep.filtered.annovar.vcf.hg19_multianno.vcf, VCF/hapcaller.recal.combined.annot.gnomad.vep.filtered.annovar.vcf.avinput
+    jobid: 12
+    reason: Missing output files: VCF/hapcaller.recal.combined.annot.gnomad.vep.filtered.annovar.vcf.avinput, VCF/hapcaller.recal.combined.annot.gnomad.vep.filtered.annovar.vcf.hg19_multianno.vcf
+
+perl annovar VCF/hapcaller.recal.combined.annot.gnomad.vep.filtered.vcf.gz  		/sandbox/users/mguillout/tools/annovar/humandb/ 		-buildver hg19 		-out VCF/hapcaller.recal.combined.annot.gnomad.vep.filtered.annovar.vcf 		-remove 		-protocol refGene,knownGene,cytoBand,dgvMerged,gwasCatalog,dbnsfp35a,gnomad211_exome,clinvar_20190305 		-operation gx,g,r,r,r,f,f,f 		-nastring . 		-polish 		-otherinfo 		-xref /sandbox/users/mguillout/tools/annovar/humandb/hg19_refGene.txt 		-vcfinput
+Submitted job 12 with external jobid 'Your job 4087570 ("snakejob.annotANNOVAR.12.sh") has been submitted'.
+[Thu Aug 20 15:22:16 2020]
+Error in rule annotANNOVAR:
+    jobid: 12
+    output: VCF/hapcaller.recal.combined.annot.gnomad.vep.filtered.annovar.vcf.hg19_multianno.vcf, VCF/hapcaller.recal.combined.annot.gnomad.vep.filtered.annovar.vcf.avinput
+    shell:
+        perl annovar VCF/hapcaller.recal.combined.annot.gnomad.vep.filtered.vcf.gz  		/sandbox/users/mguillout/tools/annovar/humandb/ 		-buildver hg19 		-out VCF/hapcaller.recal.combined.annot.gnomad.vep.filtered.annovar.vcf 		-remove 		-protocol refGene,knownGene,cytoBand,dgvMerged,gwasCatalog,dbnsfp35a,gnomad211_exome,clinvar_20190305 		-operation gx,g,r,r,r,f,f,f 		-nastring . 		-polish 		-otherinfo 		-xref /sandbox/users/mguillout/tools/annovar/humandb/hg19_refGene.txt 		-vcfinput
+        (one of the commands exited with non-zero exit code; note that snakemake uses bash strict mode!)
+    cluster_jobid: Your job 4087570 ("snakejob.annotANNOVAR.12.sh") has been submitted
+
+Error executing rule annotANNOVAR on cluster (jobid: 12, external: Your job 4087570 ("snakejob.annotANNOVAR.12.sh") has been submitted, jobscript: /sandbox/shares/nextcloud/mguillout/files/Application/pipeline/testPipeline2/.snakemake/tmp.a5t_1n_3/snakejob.annotANNOVAR.12.sh). For error details see the cluster log and the log files of the involved rule(s).
+Shutting down, this might take some time.
+Exiting because a job execution failed. Look above for error message
+Complete log: /sandbox/shares/nextcloud/mguillout/files/Application/pipeline/.snakemake/log/2020-08-20T152155.819552.snakemake.log

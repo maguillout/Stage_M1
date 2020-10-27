@@ -1,0 +1,26 @@
+Building DAG of jobs...
+Using shell: /usr/bin/bash
+Provided cluster nodes: 12
+Job counts:
+	count	jobs
+	1	annotANNOVAR
+	1	annotINTERVAR
+	2	bgzip
+	1	extractGNOMAD
+	1	extractGNOMADVEP
+	1	filtration_freq_and_genes
+	1	gunzipCADD
+	1	scoreCADD
+	2	tabix
+	1	target
+	12
+
+[Fri Aug 21 10:59:39 2020]
+rule filtration_freq_and_genes:
+    input: VCF/hapcaller.recal.combined.annot.gnomad.vep.vcf.gz, VCF/hapcaller.recal.combined.annot.gnomad.vep.vcf.gz.tbi
+    output: VCF/hapcaller.recal.combined.annot.gnomad.vep.filtered.vcf
+    jobid: 26
+    reason: Missing output files: VCF/hapcaller.recal.combined.annot.gnomad.vep.filtered.vcf
+
+RuleException in line 562 of /sandbox/shares/nextcloud/mguillout/files/Application/pipeline/Snakefile:
+'InputFiles' object has no attribute 'genes'

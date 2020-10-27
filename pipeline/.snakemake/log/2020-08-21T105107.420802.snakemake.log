@@ -1,0 +1,4 @@
+Building DAG of jobs...
+MissingInputException in line 577 of /sandbox/shares/nextcloud/mguillout/files/Application/pipeline/Snakefile:
+Missing input files for rule filtration_freq:
+0.05

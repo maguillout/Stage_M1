@@ -1,0 +1,5 @@
+FileNotFoundError in line 29 of /sandbox/shares/nextcloud/mguillout/files/Application/pipeline/Snakefile:
+[Errno 2] No such file or directory: '/sandbox/shares/nextcloud/mguillout/files/Application/pipeline/sge.sh'
+  File "/sandbox/shares/nextcloud/mguillout/files/Application/pipeline/Snakefile", line 29, in <module>
+  File "/sandbox/users/mguillout/miniconda3/envs/exome-base2/lib/python3.6/shutil.py", line 245, in copy
+  File "/sandbox/users/mguillout/miniconda3/envs/exome-base2/lib/python3.6/shutil.py", line 120, in copyfile

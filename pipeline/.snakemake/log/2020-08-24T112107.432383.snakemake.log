@@ -1,0 +1,61 @@
+Building DAG of jobs...
+Using shell: /usr/bin/bash
+Provided cluster nodes: 12
+Job counts:
+	count	jobs
+	5	merge_fields
+	1	target
+	6
+
+[Mon Aug 24 11:21:08 2020]
+rule merge_fields:
+    input: VCF/hapcaller.recal.combined.annot.gnomad.vep.filtered.annovar.vcf.hg19_multianno.txt, CSV/res_intervar.Sample32.hg19_multianno.txt.intervar, CSV/gnomad_vep.tsv, CSV/cadd.tsv
+    output: CSV/individual_results_Sample32.tsv
+    jobid: 6
+    reason: Missing output files: CSV/individual_results_Sample32.tsv
+    wildcards: sample=Sample32
+
+Submitted job 6 with external jobid 'Your job 4091514 ("snakejob.merge_fields.6.sh") has been submitted'.
+
+[Mon Aug 24 11:21:08 2020]
+rule merge_fields:
+    input: VCF/hapcaller.recal.combined.annot.gnomad.vep.filtered.annovar.vcf.hg19_multianno.txt, CSV/res_intervar.Sample1.hg19_multianno.txt.intervar, CSV/gnomad_vep.tsv, CSV/cadd.tsv
+    output: CSV/individual_results_Sample1.tsv
+    jobid: 5
+    reason: Missing output files: CSV/individual_results_Sample1.tsv
+    wildcards: sample=Sample1
+
+Submitted job 5 with external jobid 'Your job 4091515 ("snakejob.merge_fields.5.sh") has been submitted'.
+
+[Mon Aug 24 11:21:08 2020]
+rule merge_fields:
+    input: VCF/hapcaller.recal.combined.annot.gnomad.vep.filtered.annovar.vcf.hg19_multianno.txt, CSV/res_intervar.Sample33.hg19_multianno.txt.intervar, CSV/gnomad_vep.tsv, CSV/cadd.tsv
+    output: CSV/individual_results_Sample33.tsv
+    jobid: 7
+    reason: Missing output files: CSV/individual_results_Sample33.tsv
+    wildcards: sample=Sample33
+
+Submitted job 7 with external jobid 'Your job 4091516 ("snakejob.merge_fields.7.sh") has been submitted'.
+
+[Mon Aug 24 11:21:08 2020]
+rule merge_fields:
+    input: VCF/hapcaller.recal.combined.annot.gnomad.vep.filtered.annovar.vcf.hg19_multianno.txt, CSV/res_intervar.Sample29.hg19_multianno.txt.intervar, CSV/gnomad_vep.tsv, CSV/cadd.tsv
+    output: CSV/individual_results_Sample29.tsv
+    jobid: 4
+    reason: Missing output files: CSV/individual_results_Sample29.tsv
+    wildcards: sample=Sample29
+
+Submitted job 4 with external jobid 'Your job 4091517 ("snakejob.merge_fields.4.sh") has been submitted'.
+
+[Mon Aug 24 11:21:08 2020]
+rule merge_fields:
+    input: VCF/hapcaller.recal.combined.annot.gnomad.vep.filtered.annovar.vcf.hg19_multianno.txt, CSV/res_intervar.Sample10.hg19_multianno.txt.intervar, CSV/gnomad_vep.tsv, CSV/cadd.tsv
+    output: CSV/individual_results_Sample10.tsv
+    jobid: 3
+    reason: Missing output files: CSV/individual_results_Sample10.tsv
+    wildcards: sample=Sample10
+
+Submitted job 3 with external jobid 'Your job 4091518 ("snakejob.merge_fields.3.sh") has been submitted'.
+Terminating processes on user request, this might take some time.
+Will exit after finishing currently running jobs.
+Cancelling snakemake on user request.

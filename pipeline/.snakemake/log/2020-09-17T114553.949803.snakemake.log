@@ -1,0 +1,49 @@
+Building DAG of jobs...
+Using shell: /usr/bin/bash
+Provided cluster nodes: 12
+Job counts:
+	count	jobs
+	1	align
+	1	annotANNOVAR
+	1	annotINTERVAR
+	1	annotVEP
+	1	baseRecalibration
+	3	bgzip
+	1	combineGVCF
+	1	combineVCF
+	1	createBaseRecalibrationTable
+	1	createGVCFList
+	3	depthOfCoverage
+	1	extractGNOMAD
+	1	extractGNOMADVEP
+	1	filterIndels
+	1	filterSNVs
+	1	filtration_freq_and_genes
+	1	freqGNOMAD
+	1	genotypeGVCF
+	1	gunzipCADD
+	1	haplotypeCaller
+	1	indelRealign
+	1	markDuplicates
+	1	merge
+	1	merge_fields
+	1	picardMetrics
+	1	realignTargetCreator
+	1	scoreCADD
+	1	selectIndels
+	1	selectSNVs
+	1	sort
+	3	tabix
+	1	target
+	38
+
+[Thu Sep 17 11:45:54 2020]
+rule align:
+    input: /sandbox/users/mguillout/pipeline/REFERENCES/human_g1k_v37.fasta, /sandbox/users/mguillout/fastQ-APHP/P10-BL_S10_L001_R1_001.fastq.gz, /sandbox/users/mguillout/fastQ-APHP/P10-BL_S10_L001_R2_001.fastq.gz, /sandbox/users/mguillout/pipeline/REFERENCES/human_g1k_v37.fasta.bwt
+    output: Samples/Sample1/BAM/Sample1.p1.sam
+    jobid: 42
+    reason: Missing output files: Samples/Sample1/BAM/Sample1.p1.sam
+    wildcards: sample=Sample1, pairID=p1
+
+bwa mem -t 1 -M 		-H '@CO\tProject:pipelineTest Sample:Sample1 Date:2020-09-17 CWD:/sandbox/users/mguillout/externalshares/Application/pipeline/testVB_10 Capture:{ name : captureName , description : exome capture 1 , path : /sandbox/users/mguillout/pipeline/REFERENCES/Broad.human.exome.b37.bed}' 		-R '@RG\tID:Sample1\tLB:Sample1\tSM:Sample1\tPL:Illumina\tCN:CENTER' 		/sandbox/users/mguillout/pipeline/REFERENCES/human_g1k_v37.fasta /sandbox/users/mguillout/fastQ-APHP/P10-BL_S10_L001_R1_001.fastq.gz /sandbox/users/mguillout/fastQ-APHP/P10-BL_S10_L001_R2_001.fastq.gz > Samples/Sample1/BAM/Sample1.p1.sam
+Submitted job 42 with external jobid 'Your job 4150472 ("snakejob.align.42.sh") has been submitted'.

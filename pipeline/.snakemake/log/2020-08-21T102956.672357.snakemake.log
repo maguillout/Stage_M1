@@ -1,0 +1,3 @@
+WorkflowError in line 9 of /sandbox/shares/nextcloud/mguillout/files/Application/pipeline/Snakefile:
+Config file params.yaml not found.
+  File "/sandbox/shares/nextcloud/mguillout/files/Application/pipeline/Snakefile", line 9, in <module>

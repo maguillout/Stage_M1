@@ -1,0 +1,47 @@
+name: exome-analysis
+channels:
+- bioconda
+- conda-forge
+- ostrokach
+- defaults
+- r
+dependencies:
+- bedtools
+- bwa
+- fastqc
+- gatk=3.7
+- htslib
+- java-jdk=8
+- multiqc
+- picard=2.9.2
+- samtools
+- snakemake-minimal
+- urllib3
+- variant-effect-predictor
+- pcre
+- perl
+- bzip2
+- curl
+- gzip
+- wget
+- curl
+- r-base=3.6
+- r-xml
+- r-curl
+- r-rcpp
+- r-openssl
+- pandas
+- ensembl-vep
+- scikit-learn=0.20.4
+- pysam
+- pyvcf
+- pandas
+- configargparse
+- pip
+
+- pip:
+    - gtfparse==1.2.1
+    - testfixtures==6.14.1
+    - vatools==4.1.0
+    - vcfpy==0.13.0
+

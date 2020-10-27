@@ -1,0 +1,41 @@
+Building DAG of jobs...
+Using shell: /usr/bin/bash
+Provided cluster nodes: 12
+Job counts:
+	count	jobs
+	1	annotINTERVAR
+	1	merge_fields
+	1	target
+	3
+
+[Mon Aug 24 10:33:22 2020]
+rule annotINTERVAR:
+    input: VCF/hapcaller.recal.combined.annot.gnomad.vep.filtered.annovar.vcf.hg19_multianno.vcf.gz, /sandbox/users/mguillout/tools/annovar, /sandbox/users/mguillout/tools/annovar/humandb, /sandbox/users/mguillout/tools/InterVar-master
+    output: CSV/res_intervar.hg19_multianno.txt.intervar
+    jobid: 35
+    reason: Missing output files: CSV/res_intervar.hg19_multianno.txt.intervar
+
+python /sandbox/users/mguillout/tools/InterVar-master/Intervar.py 		-i VCF/hapcaller.recal.combined.annot.gnomad.vep.filtered.annovar.vcf.hg19_multianno.vcf.gz 		-o CSV/res_intervar 		--buildver hg19 		--input_type VCF_m 		--database_intervar /sandbox/users/mguillout/tools/InterVar-master/intervardb 		--config=/sandbox/users/mguillout/tools/InterVar-master/config.ini 		--convert2annovar /sandbox/users/mguillout/tools/annovar/convert2annovar.pl 		--table_annovar /sandbox/users/mguillout/tools/annovar/table_annovar.pl 		--annotate_variation /sandbox/users/mguillout/tools/annovar/annotate_variation.pl 		--database_locat /sandbox/users/mguillout/tools/annovar/humandb
+Submitted job 35 with external jobid 'Your job 4091512 ("snakejob.annotINTERVAR.35.sh") has been submitted'.
+[Mon Aug 24 11:05:45 2020]
+Finished job 35.
+1 of 3 steps (33%) done
+
+[Mon Aug 24 11:05:45 2020]
+rule merge_fields:
+    input: VCF/hapcaller.recal.combined.annot.gnomad.vep.filtered.annovar.vcf.hg19_multianno.txt, CSV/res_intervar.hg19_multianno.txt.intervar, CSV/gnomad_vep.tsv, CSV/cadd.tsv
+    output: CSV/main_results.tsv
+    jobid: 3
+    reason: Missing output files: CSV/main_results.tsv; Input files updated by another job: CSV/res_intervar.hg19_multianno.txt.intervar
+
+Submitted job 3 with external jobid 'Your job 4091513 ("snakejob.merge_fields.3.sh") has been submitted'.
+[Mon Aug 24 11:06:05 2020]
+Error in rule merge_fields:
+    jobid: 3
+    output: CSV/main_results.tsv
+    cluster_jobid: Your job 4091513 ("snakejob.merge_fields.3.sh") has been submitted
+
+Error executing rule merge_fields on cluster (jobid: 3, external: Your job 4091513 ("snakejob.merge_fields.3.sh") has been submitted, jobscript: /sandbox/shares/nextcloud/mguillout/files/Application/pipeline/APHP/.snakemake/tmp.fbscjxj7/snakejob.merge_fields.3.sh). For error details see the cluster log and the log files of the involved rule(s).
+Shutting down, this might take some time.
+Exiting because a job execution failed. Look above for error message
+Complete log: /sandbox/shares/nextcloud/mguillout/files/Application/pipeline/.snakemake/log/2020-08-24T103321.695502.snakemake.log

@@ -1,0 +1,49 @@
+Building DAG of jobs...
+Using shell: /usr/bin/bash
+Provided cluster nodes: 12
+Job counts:
+	count	jobs
+	1	annotANNOVAR
+	1	annotINTERVAR
+	1	annotVEP
+	1	baseRecalibration
+	3	bgzip
+	1	combineGVCF
+	1	combineVCF
+	1	createBaseRecalibrationTable
+	1	createGVCFList
+	3	depthOfCoverage
+	1	extractGNOMAD
+	1	extractGNOMADVEP
+	1	filterIndels
+	1	filterSNVs
+	1	filtrationVEP
+	1	freqGNOMAD
+	1	genotypeGVCF
+	1	gunzipCADD
+	1	haplotypeCaller
+	1	indelRealign
+	1	markDuplicates
+	1	merge
+	1	picardMetrics
+	1	realignTargetCreator
+	1	scoreCADD
+	1	selectIndels
+	1	selectSNVs
+	1	sort
+	3	tabix
+	1	target
+	36
+
+[Thu Aug 20 13:06:00 2020]
+rule sort:
+    input: /sandbox/users/mguillout/pipeline/REFERENCES/human_g1k_v37.fasta, Samples/Sample1/BAM/Sample1.p1.sam, /sandbox/users/mguillout/pipeline/REFERENCES/human_g1k_v37.fasta.fai
+    output: Samples/Sample1/BAM/Sample1.p1.sorted.bam
+    jobid: 40
+    reason: Missing output files: Samples/Sample1/BAM/Sample1.p1.sorted.bam
+    wildcards: sample=Sample1, pairID=p1
+
+samtools sort --reference /sandbox/users/mguillout/pipeline/REFERENCES/human_g1k_v37.fasta -l 9 -@ 1 -O bam -o Samples/Sample1/BAM/Sample1.p1.sorted.bam -T Samples/Sample1/BAM/Sample1.p1.sorted.bam.tmp Samples/Sample1/BAM/Sample1.p1.sam
+Terminating processes on user request, this might take some time.
+Will exit after finishing currently running jobs.
+Cancelling snakemake on user request.

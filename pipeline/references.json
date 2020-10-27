@@ -1,0 +1,44 @@
+{
+        "references":{
+                "refName":{
+                        "path":"/sandbox/users/mguillout/pipeline/REFERENCES/human_g1k_v37.fasta"
+                }
+        },
+        "databases":{
+                "dbsnp":{
+                                "dbsnpName":"/sandbox/users/mguillout/pipeline/REFERENCES/dbsnp_138.b37.vcf.gz"
+                        },
+                "onekindels":{
+                                "onekindelsName":"/sandbox/users/mguillout/pipeline/REFERENCES/1000G_phase1.indels.b37.vcf.gz"
+                        },
+                "millsindels":{
+                                "millsindesName":"/sandbox/users/mguillout/pipeline/REFERENCES/Mills_and_1000G_gold_standard.indels.b37.vcf.gz"
+                        },
+                "gnomad":{
+                                "gnomadName":"/sandbox/users/mguillout/pipeline/REFERENCES/gnomad.exomes.r2.0.1.sites.vcf.gz"
+                        },
+                "vep":{
+                                "cache":"/sandbox/users/mguillout/pipeline/REFERENCES/VEP/CACHE"
+                        }
+        },
+        "captures": {
+                "captureName":{
+                                "description":"exome capture 1",
+                                "path":"/sandbox/users/mguillout/pipeline/REFERENCES/Broad.human.exome.b37.bed"
+                }
+        },
+        "tools":{
+                "annovar":{
+                                "annovarName":"/sandbox/users/mguillout/tools/annovar"
+                        },
+                "annovar_db":{
+                                "annovar_db_path":"/sandbox/users/mguillout/tools/annovar/humandb"
+                        },
+                "cadd":{
+                                "caddName":"/sandbox/users/mguillout/tools/CADD-scripts/CADD.sh"
+                        },
+                "intervar":{
+                                "intervarName":"/sandbox/users/mguillout/tools/InterVar-master"
+                        }
+        } 
+}

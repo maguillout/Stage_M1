@@ -1,0 +1,9 @@
+#Seuls les variants ayant une GMAF au dessus de ce seuil seront conservés
+#Entrer un nombre entre 0 et 1
+#Pour conserver tous les variants: seuil_freq : "1"
+population : "gnomad.AF_NFE"
+seuil_freq : "0.45"
+#Identifiants Ensembl des genes a conserver
+#Pour garder tous les genes: genes_list : ""
+#Separer les identifiants par une virgule
+genes_list : "ENSG00000205403,ENSG00000000971,ENSG00000117335,ENSG00000134389,ENSG00000243649"

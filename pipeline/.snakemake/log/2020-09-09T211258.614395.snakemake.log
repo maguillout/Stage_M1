@@ -1,0 +1,503 @@
+Building DAG of jobs...
+Using shell: /usr/bin/bash
+Provided cluster nodes: 12
+Job counts:
+	count	jobs
+	5	align
+	1	annotANNOVAR
+	5	annotINTERVAR
+	1	annotVEP
+	5	baseRecalibration
+	1	bedToPicardInterval
+	3	bgzip
+	1	combineGVCF
+	1	combineVCF
+	10	concatFastq
+	1	copyBed
+	5	createBaseRecalibrationTable
+	1	createGVCFList
+	15	depthOfCoverage
+	1	downloadGATK
+	1	extendBed
+	1	extractGNOMAD
+	1	extractGNOMADVEP
+	10	fastQC
+	1	filterIndels
+	1	filterSNVs
+	1	filtration_freq_and_genes
+	1	freqGNOMAD
+	1	genotypeGVCF
+	1	gunzipCADD
+	5	haplotypeCaller
+	5	indelRealign
+	1	makeAutosomesBed
+	1	makeChrXBed
+	1	makeChrYBed
+	5	markDuplicates
+	5	merge
+	5	merge_fields
+	5	picardMetrics
+	5	realignTargetCreator
+	1	scoreCADD
+	1	selectIndels
+	1	selectSNVs
+	5	sort
+	3	tabix
+	1	target
+	125
+
+[Wed Sep  9 21:13:00 2020]
+rule concatFastq:
+    input: /sandbox/users/mguillout/fastQ-APHP/P33-KMKN_S33_L001_R2_001.fastq.gz
+    output: Samples/Sample33/QC/Sample33.fastqc.reverse.gz
+    jobid: 66
+    reason: Missing output files: Samples/Sample33/QC/Sample33.fastqc.reverse.gz
+    wildcards: sample=Sample33, strand=reverse
+
+cat /sandbox/users/mguillout/fastQ-APHP/P33-KMKN_S33_L001_R2_001.fastq.gz > Samples/Sample33/QC/Sample33.fastqc.reverse.gz
+Submitted job 66 with external jobid 'Your job 4143510 ("snakejob.concatFastq.66.sh") has been submitted'.
+
+[Wed Sep  9 21:13:00 2020]
+rule concatFastq:
+    input: /sandbox/users/mguillout/fastQ-APHP/P01-AW_S1_L001_R2_001.fastq.gz
+    output: Samples/Sample1/QC/Sample1.fastqc.reverse.gz
+    jobid: 62
+    reason: Missing output files: Samples/Sample1/QC/Sample1.fastqc.reverse.gz
+    wildcards: sample=Sample1, strand=reverse
+
+cat /sandbox/users/mguillout/fastQ-APHP/P01-AW_S1_L001_R2_001.fastq.gz > Samples/Sample1/QC/Sample1.fastqc.reverse.gz
+Submitted job 62 with external jobid 'Your job 4143511 ("snakejob.concatFastq.62.sh") has been submitted'.
+
+[Wed Sep  9 21:13:00 2020]
+rule concatFastq:
+    input: /sandbox/users/mguillout/fastQ-APHP/P10-BL_S10_L001_R1_001.fastq.gz
+    output: Samples/Sample10/QC/Sample10.fastqc.forward.gz
+    jobid: 57
+    reason: Missing output files: Samples/Sample10/QC/Sample10.fastqc.forward.gz
+    wildcards: sample=Sample10, strand=forward
+
+cat /sandbox/users/mguillout/fastQ-APHP/P10-BL_S10_L001_R1_001.fastq.gz > Samples/Sample10/QC/Sample10.fastqc.forward.gz
+Submitted job 57 with external jobid 'Your job 4143512 ("snakejob.concatFastq.57.sh") has been submitted'.
+
+[Wed Sep  9 21:13:00 2020]
+rule align:
+    input: /sandbox/users/mguillout/pipeline/REFERENCES/human_g1k_v37.fasta, /sandbox/users/mguillout/fastQ-APHP/P01-AW_S1_L001_R1_001.fastq.gz, /sandbox/users/mguillout/fastQ-APHP/P01-AW_S1_L001_R2_001.fastq.gz, /sandbox/users/mguillout/pipeline/REFERENCES/human_g1k_v37.fasta.bwt
+    output: Samples/Sample1/BAM/Sample1.p1.sam
+    jobid: 112
+    reason: Missing output files: Samples/Sample1/BAM/Sample1.p1.sam
+    wildcards: sample=Sample1, pairID=p1
+
+bwa mem -t 1 -M 		-H '@CO\tProject:pipelineTest Sample:Sample1 Date:2020-09-09 CWD:/sandbox/users/mguillout/externalshares/Application/pipeline/APHP Capture:{ name : captureName , description : exome capture 1 , path : /sandbox/users/mguillout/pipeline/REFERENCES/Broad.human.exome.b37.bed}' 		-R '@RG\tID:Sample1\tLB:Sample1\tSM:Sample1\tPL:Illumina\tCN:CENTER' 		/sandbox/users/mguillout/pipeline/REFERENCES/human_g1k_v37.fasta /sandbox/users/mguillout/fastQ-APHP/P01-AW_S1_L001_R1_001.fastq.gz /sandbox/users/mguillout/fastQ-APHP/P01-AW_S1_L001_R2_001.fastq.gz > Samples/Sample1/BAM/Sample1.p1.sam
+Submitted job 112 with external jobid 'Your job 4143513 ("snakejob.align.112.sh") has been submitted'.
+
+[Wed Sep  9 21:13:00 2020]
+rule align:
+    input: /sandbox/users/mguillout/pipeline/REFERENCES/human_g1k_v37.fasta, /sandbox/users/mguillout/fastQ-APHP/P33-KMKN_S33_L001_R1_001.fastq.gz, /sandbox/users/mguillout/fastQ-APHP/P33-KMKN_S33_L001_R2_001.fastq.gz, /sandbox/users/mguillout/pipeline/REFERENCES/human_g1k_v37.fasta.bwt
+    output: Samples/Sample33/BAM/Sample33.p1.sam
+    jobid: 114
+    reason: Missing output files: Samples/Sample33/BAM/Sample33.p1.sam
+    wildcards: sample=Sample33, pairID=p1
+
+bwa mem -t 1 -M 		-H '@CO\tProject:pipelineTest Sample:Sample33 Date:2020-09-09 CWD:/sandbox/users/mguillout/externalshares/Application/pipeline/APHP Capture:{ name : captureName , description : exome capture 1 , path : /sandbox/users/mguillout/pipeline/REFERENCES/Broad.human.exome.b37.bed}' 		-R '@RG\tID:Sample33\tLB:Sample33\tSM:Sample33\tPL:Illumina\tCN:CENTER' 		/sandbox/users/mguillout/pipeline/REFERENCES/human_g1k_v37.fasta /sandbox/users/mguillout/fastQ-APHP/P33-KMKN_S33_L001_R1_001.fastq.gz /sandbox/users/mguillout/fastQ-APHP/P33-KMKN_S33_L001_R2_001.fastq.gz > Samples/Sample33/BAM/Sample33.p1.sam
+Submitted job 114 with external jobid 'Your job 4143514 ("snakejob.align.114.sh") has been submitted'.
+
+[Wed Sep  9 21:13:00 2020]
+rule align:
+    input: /sandbox/users/mguillout/pipeline/REFERENCES/human_g1k_v37.fasta, /sandbox/users/mguillout/fastQ-APHP/P32-ISH_S32_L001_R1_001.fastq.gz, /sandbox/users/mguillout/fastQ-APHP/P32-ISH_S32_L001_R2_001.fastq.gz, /sandbox/users/mguillout/pipeline/REFERENCES/human_g1k_v37.fasta.bwt
+    output: Samples/Sample32/BAM/Sample32.p1.sam
+    jobid: 113
+    reason: Missing output files: Samples/Sample32/BAM/Sample32.p1.sam
+    wildcards: sample=Sample32, pairID=p1
+
+bwa mem -t 1 -M 		-H '@CO\tProject:pipelineTest Sample:Sample32 Date:2020-09-09 CWD:/sandbox/users/mguillout/externalshares/Application/pipeline/APHP Capture:{ name : captureName , description : exome capture 1 , path : /sandbox/users/mguillout/pipeline/REFERENCES/Broad.human.exome.b37.bed}' 		-R '@RG\tID:Sample32\tLB:Sample32\tSM:Sample32\tPL:Illumina\tCN:CENTER' 		/sandbox/users/mguillout/pipeline/REFERENCES/human_g1k_v37.fasta /sandbox/users/mguillout/fastQ-APHP/P32-ISH_S32_L001_R1_001.fastq.gz /sandbox/users/mguillout/fastQ-APHP/P32-ISH_S32_L001_R2_001.fastq.gz > Samples/Sample32/BAM/Sample32.p1.sam
+Submitted job 113 with external jobid 'Your job 4143515 ("snakejob.align.113.sh") has been submitted'.
+
+[Wed Sep  9 21:13:00 2020]
+rule concatFastq:
+    input: /sandbox/users/mguillout/fastQ-APHP/P32-ISH_S32_L001_R2_001.fastq.gz
+    output: Samples/Sample32/QC/Sample32.fastqc.reverse.gz
+    jobid: 64
+    reason: Missing output files: Samples/Sample32/QC/Sample32.fastqc.reverse.gz
+    wildcards: sample=Sample32, strand=reverse
+
+cat /sandbox/users/mguillout/fastQ-APHP/P32-ISH_S32_L001_R2_001.fastq.gz > Samples/Sample32/QC/Sample32.fastqc.reverse.gz
+Submitted job 64 with external jobid 'Your job 4143516 ("snakejob.concatFastq.64.sh") has been submitted'.
+
+[Wed Sep  9 21:13:00 2020]
+rule align:
+    input: /sandbox/users/mguillout/pipeline/REFERENCES/human_g1k_v37.fasta, /sandbox/users/mguillout/fastQ-APHP/P10-BL_S10_L001_R1_001.fastq.gz, /sandbox/users/mguillout/fastQ-APHP/P10-BL_S10_L001_R2_001.fastq.gz, /sandbox/users/mguillout/pipeline/REFERENCES/human_g1k_v37.fasta.bwt
+    output: Samples/Sample10/BAM/Sample10.p1.sam
+    jobid: 110
+    reason: Missing output files: Samples/Sample10/BAM/Sample10.p1.sam
+    wildcards: sample=Sample10, pairID=p1
+
+bwa mem -t 1 -M 		-H '@CO\tProject:pipelineTest Sample:Sample10 Date:2020-09-09 CWD:/sandbox/users/mguillout/externalshares/Application/pipeline/APHP Capture:{ name : captureName , description : exome capture 1 , path : /sandbox/users/mguillout/pipeline/REFERENCES/Broad.human.exome.b37.bed}' 		-R '@RG\tID:Sample10\tLB:Sample10\tSM:Sample10\tPL:Illumina\tCN:CENTER' 		/sandbox/users/mguillout/pipeline/REFERENCES/human_g1k_v37.fasta /sandbox/users/mguillout/fastQ-APHP/P10-BL_S10_L001_R1_001.fastq.gz /sandbox/users/mguillout/fastQ-APHP/P10-BL_S10_L001_R2_001.fastq.gz > Samples/Sample10/BAM/Sample10.p1.sam
+Submitted job 110 with external jobid 'Your job 4143517 ("snakejob.align.110.sh") has been submitted'.
+
+[Wed Sep  9 21:13:00 2020]
+rule align:
+    input: /sandbox/users/mguillout/pipeline/REFERENCES/human_g1k_v37.fasta, /sandbox/users/mguillout/fastQ-APHP/P29-HC_S29_L001_R1_001.fastq.gz, /sandbox/users/mguillout/fastQ-APHP/P29-HC_S29_L001_R2_001.fastq.gz, /sandbox/users/mguillout/pipeline/REFERENCES/human_g1k_v37.fasta.bwt
+    output: Samples/Sample29/BAM/Sample29.p1.sam
+    jobid: 111
+    reason: Missing output files: Samples/Sample29/BAM/Sample29.p1.sam
+    wildcards: sample=Sample29, pairID=p1
+
+bwa mem -t 1 -M 		-H '@CO\tProject:pipelineTest Sample:Sample29 Date:2020-09-09 CWD:/sandbox/users/mguillout/externalshares/Application/pipeline/APHP Capture:{ name : captureName , description : exome capture 1 , path : /sandbox/users/mguillout/pipeline/REFERENCES/Broad.human.exome.b37.bed}' 		-R '@RG\tID:Sample29\tLB:Sample29\tSM:Sample29\tPL:Illumina\tCN:CENTER' 		/sandbox/users/mguillout/pipeline/REFERENCES/human_g1k_v37.fasta /sandbox/users/mguillout/fastQ-APHP/P29-HC_S29_L001_R1_001.fastq.gz /sandbox/users/mguillout/fastQ-APHP/P29-HC_S29_L001_R2_001.fastq.gz > Samples/Sample29/BAM/Sample29.p1.sam
+Submitted job 111 with external jobid 'Your job 4143518 ("snakejob.align.111.sh") has been submitted'.
+
+[Wed Sep  9 21:13:00 2020]
+rule concatFastq:
+    input: /sandbox/users/mguillout/fastQ-APHP/P32-ISH_S32_L001_R1_001.fastq.gz
+    output: Samples/Sample32/QC/Sample32.fastqc.forward.gz
+    jobid: 63
+    reason: Missing output files: Samples/Sample32/QC/Sample32.fastqc.forward.gz
+    wildcards: sample=Sample32, strand=forward
+
+cat /sandbox/users/mguillout/fastQ-APHP/P32-ISH_S32_L001_R1_001.fastq.gz > Samples/Sample32/QC/Sample32.fastqc.forward.gz
+Submitted job 63 with external jobid 'Your job 4143519 ("snakejob.concatFastq.63.sh") has been submitted'.
+
+[Wed Sep  9 21:13:01 2020]
+rule concatFastq:
+    input: /sandbox/users/mguillout/fastQ-APHP/P10-BL_S10_L001_R2_001.fastq.gz
+    output: Samples/Sample10/QC/Sample10.fastqc.reverse.gz
+    jobid: 58
+    reason: Missing output files: Samples/Sample10/QC/Sample10.fastqc.reverse.gz
+    wildcards: sample=Sample10, strand=reverse
+
+cat /sandbox/users/mguillout/fastQ-APHP/P10-BL_S10_L001_R2_001.fastq.gz > Samples/Sample10/QC/Sample10.fastqc.reverse.gz
+Submitted job 58 with external jobid 'Your job 4143520 ("snakejob.concatFastq.58.sh") has been submitted'.
+
+[Wed Sep  9 21:13:01 2020]
+rule concatFastq:
+    input: /sandbox/users/mguillout/fastQ-APHP/P33-KMKN_S33_L001_R1_001.fastq.gz
+    output: Samples/Sample33/QC/Sample33.fastqc.forward.gz
+    jobid: 65
+    reason: Missing output files: Samples/Sample33/QC/Sample33.fastqc.forward.gz
+    wildcards: sample=Sample33, strand=forward
+
+cat /sandbox/users/mguillout/fastQ-APHP/P33-KMKN_S33_L001_R1_001.fastq.gz > Samples/Sample33/QC/Sample33.fastqc.forward.gz
+Submitted job 65 with external jobid 'Your job 4143521 ("snakejob.concatFastq.65.sh") has been submitted'.
+[Wed Sep  9 21:13:21 2020]
+Finished job 66.
+1 of 125 steps (0.80%) done
+
+[Wed Sep  9 21:13:21 2020]
+rule fastQC:
+    input: Samples/Sample33/QC/Sample33.fastqc.reverse.gz
+    output: Samples/Sample33/QC/Sample33.fastqc.reverse_fastqc.zip
+    jobid: 37
+    reason: Missing output files: Samples/Sample33/QC/Sample33.fastqc.reverse_fastqc.zip; Input files updated by another job: Samples/Sample33/QC/Sample33.fastqc.reverse.gz
+    wildcards: sample=Sample33, strand=reverse
+
+fastqc -o Samples/Sample33/QC --format fastq --noextract Samples/Sample33/QC/Sample33.fastqc.reverse.gz
+[Wed Sep  9 21:13:21 2020]
+Finished job 62.
+2 of 125 steps (2%) done
+[Wed Sep  9 21:13:21 2020]
+Finished job 57.
+3 of 125 steps (2%) done
+[Wed Sep  9 21:13:21 2020]
+Finished job 64.
+4 of 125 steps (3%) done
+[Wed Sep  9 21:13:21 2020]
+Finished job 63.
+5 of 125 steps (4%) done
+Submitted job 37 with external jobid 'Your job 4143522 ("snakejob.fastQC.37.sh") has been submitted'.
+
+[Wed Sep  9 21:13:21 2020]
+rule fastQC:
+    input: Samples/Sample32/QC/Sample32.fastqc.forward.gz
+    output: Samples/Sample32/QC/Sample32.fastqc.forward_fastqc.zip
+    jobid: 34
+    reason: Missing output files: Samples/Sample32/QC/Sample32.fastqc.forward_fastqc.zip; Input files updated by another job: Samples/Sample32/QC/Sample32.fastqc.forward.gz
+    wildcards: sample=Sample32, strand=forward
+
+fastqc -o Samples/Sample32/QC --format fastq --noextract Samples/Sample32/QC/Sample32.fastqc.forward.gz
+Submitted job 34 with external jobid 'Your job 4143523 ("snakejob.fastQC.34.sh") has been submitted'.
+
+[Wed Sep  9 21:13:21 2020]
+rule fastQC:
+    input: Samples/Sample10/QC/Sample10.fastqc.forward.gz
+    output: Samples/Sample10/QC/Sample10.fastqc.forward_fastqc.zip
+    jobid: 28
+    reason: Missing output files: Samples/Sample10/QC/Sample10.fastqc.forward_fastqc.zip; Input files updated by another job: Samples/Sample10/QC/Sample10.fastqc.forward.gz
+    wildcards: sample=Sample10, strand=forward
+
+fastqc -o Samples/Sample10/QC --format fastq --noextract Samples/Sample10/QC/Sample10.fastqc.forward.gz
+Submitted job 28 with external jobid 'Your job 4143524 ("snakejob.fastQC.28.sh") has been submitted'.
+
+[Wed Sep  9 21:13:21 2020]
+rule fastQC:
+    input: Samples/Sample1/QC/Sample1.fastqc.reverse.gz
+    output: Samples/Sample1/QC/Sample1.fastqc.reverse_fastqc.zip
+    jobid: 33
+    reason: Missing output files: Samples/Sample1/QC/Sample1.fastqc.reverse_fastqc.zip; Input files updated by another job: Samples/Sample1/QC/Sample1.fastqc.reverse.gz
+    wildcards: sample=Sample1, strand=reverse
+
+fastqc -o Samples/Sample1/QC --format fastq --noextract Samples/Sample1/QC/Sample1.fastqc.reverse.gz
+Submitted job 33 with external jobid 'Your job 4143525 ("snakejob.fastQC.33.sh") has been submitted'.
+
+[Wed Sep  9 21:13:21 2020]
+rule fastQC:
+    input: Samples/Sample32/QC/Sample32.fastqc.reverse.gz
+    output: Samples/Sample32/QC/Sample32.fastqc.reverse_fastqc.zip
+    jobid: 35
+    reason: Missing output files: Samples/Sample32/QC/Sample32.fastqc.reverse_fastqc.zip; Input files updated by another job: Samples/Sample32/QC/Sample32.fastqc.reverse.gz
+    wildcards: sample=Sample32, strand=reverse
+
+fastqc -o Samples/Sample32/QC --format fastq --noextract Samples/Sample32/QC/Sample32.fastqc.reverse.gz
+Submitted job 35 with external jobid 'Your job 4143526 ("snakejob.fastQC.35.sh") has been submitted'.
+[Wed Sep  9 21:13:22 2020]
+Finished job 58.
+6 of 125 steps (5%) done
+
+[Wed Sep  9 21:13:22 2020]
+rule fastQC:
+    input: Samples/Sample10/QC/Sample10.fastqc.reverse.gz
+    output: Samples/Sample10/QC/Sample10.fastqc.reverse_fastqc.zip
+    jobid: 29
+    reason: Missing output files: Samples/Sample10/QC/Sample10.fastqc.reverse_fastqc.zip; Input files updated by another job: Samples/Sample10/QC/Sample10.fastqc.reverse.gz
+    wildcards: sample=Sample10, strand=reverse
+
+fastqc -o Samples/Sample10/QC --format fastq --noextract Samples/Sample10/QC/Sample10.fastqc.reverse.gz
+[Wed Sep  9 21:13:22 2020]
+Finished job 65.
+7 of 125 steps (6%) done
+Submitted job 29 with external jobid 'Your job 4143527 ("snakejob.fastQC.29.sh") has been submitted'.
+
+[Wed Sep  9 21:13:22 2020]
+rule fastQC:
+    input: Samples/Sample33/QC/Sample33.fastqc.forward.gz
+    output: Samples/Sample33/QC/Sample33.fastqc.forward_fastqc.zip
+    jobid: 36
+    reason: Missing output files: Samples/Sample33/QC/Sample33.fastqc.forward_fastqc.zip; Input files updated by another job: Samples/Sample33/QC/Sample33.fastqc.forward.gz
+    wildcards: sample=Sample33, strand=forward
+
+fastqc -o Samples/Sample33/QC --format fastq --noextract Samples/Sample33/QC/Sample33.fastqc.forward.gz
+Submitted job 36 with external jobid 'Your job 4143528 ("snakejob.fastQC.36.sh") has been submitted'.
+[Wed Sep  9 21:13:54 2020]
+Finished job 34.
+8 of 125 steps (6%) done
+
+[Wed Sep  9 21:13:54 2020]
+rule concatFastq:
+    input: /sandbox/users/mguillout/fastQ-APHP/P29-HC_S29_L001_R2_001.fastq.gz
+    output: Samples/Sample29/QC/Sample29.fastqc.reverse.gz
+    jobid: 60
+    reason: Missing output files: Samples/Sample29/QC/Sample29.fastqc.reverse.gz
+    wildcards: sample=Sample29, strand=reverse
+
+cat /sandbox/users/mguillout/fastQ-APHP/P29-HC_S29_L001_R2_001.fastq.gz > Samples/Sample29/QC/Sample29.fastqc.reverse.gz
+Submitted job 60 with external jobid 'Your job 4143529 ("snakejob.concatFastq.60.sh") has been submitted'.
+[Wed Sep  9 21:13:55 2020]
+Finished job 29.
+9 of 125 steps (7%) done
+
+[Wed Sep  9 21:13:55 2020]
+rule concatFastq:
+    input: /sandbox/users/mguillout/fastQ-APHP/P01-AW_S1_L001_R1_001.fastq.gz
+    output: Samples/Sample1/QC/Sample1.fastqc.forward.gz
+    jobid: 61
+    reason: Missing output files: Samples/Sample1/QC/Sample1.fastqc.forward.gz
+    wildcards: sample=Sample1, strand=forward
+
+cat /sandbox/users/mguillout/fastQ-APHP/P01-AW_S1_L001_R1_001.fastq.gz > Samples/Sample1/QC/Sample1.fastqc.forward.gz
+Submitted job 61 with external jobid 'Your job 4143530 ("snakejob.concatFastq.61.sh") has been submitted'.
+[Wed Sep  9 21:14:05 2020]
+Finished job 60.
+10 of 125 steps (8%) done
+
+[Wed Sep  9 21:14:05 2020]
+rule fastQC:
+    input: Samples/Sample29/QC/Sample29.fastqc.reverse.gz
+    output: Samples/Sample29/QC/Sample29.fastqc.reverse_fastqc.zip
+    jobid: 31
+    reason: Missing output files: Samples/Sample29/QC/Sample29.fastqc.reverse_fastqc.zip; Input files updated by another job: Samples/Sample29/QC/Sample29.fastqc.reverse.gz
+    wildcards: sample=Sample29, strand=reverse
+
+fastqc -o Samples/Sample29/QC --format fastq --noextract Samples/Sample29/QC/Sample29.fastqc.reverse.gz
+[Wed Sep  9 21:14:05 2020]
+Finished job 37.
+11 of 125 steps (9%) done
+[Wed Sep  9 21:14:05 2020]
+Finished job 28.
+12 of 125 steps (10%) done
+[Wed Sep  9 21:14:05 2020]
+Finished job 33.
+13 of 125 steps (10%) done
+[Wed Sep  9 21:14:05 2020]
+Finished job 35.
+14 of 125 steps (11%) done
+Submitted job 31 with external jobid 'Your job 4143531 ("snakejob.fastQC.31.sh") has been submitted'.
+
+[Wed Sep  9 21:14:05 2020]
+rule downloadGATK:
+    output: gatkPresent.txt
+    jobid: 49
+    reason: Missing output files: gatkPresent.txt
+
+Submitted job 49 with external jobid 'Your job 4143532 ("snakejob.downloadGATK.49.sh") has been submitted'.
+
+[Wed Sep  9 21:14:05 2020]
+rule concatFastq:
+    input: /sandbox/users/mguillout/fastQ-APHP/P29-HC_S29_L001_R1_001.fastq.gz
+    output: Samples/Sample29/QC/Sample29.fastqc.forward.gz
+    jobid: 59
+    reason: Missing output files: Samples/Sample29/QC/Sample29.fastqc.forward.gz
+    wildcards: sample=Sample29, strand=forward
+
+cat /sandbox/users/mguillout/fastQ-APHP/P29-HC_S29_L001_R1_001.fastq.gz > Samples/Sample29/QC/Sample29.fastqc.forward.gz
+Submitted job 59 with external jobid 'Your job 4143533 ("snakejob.concatFastq.59.sh") has been submitted'.
+
+[Wed Sep  9 21:14:05 2020]
+rule copyBed:
+    input: /sandbox/users/mguillout/pipeline/REFERENCES/Broad.human.exome.b37.bed, /sandbox/users/mguillout/pipeline/REFERENCES/human_g1k_v37.fasta.fai
+    output: BED/capture.bed
+    jobid: 74
+    reason: Missing output files: BED/capture.bed
+
+tr -d '\r' < /sandbox/users/mguillout/pipeline/REFERENCES/Broad.human.exome.b37.bed | grep -v '^browser'  | grep -v '^track' | cut -f1,2,3 | sed 's/^chr//' | LC_ALL=C sort -t '	' -k1,1 -k2,2n -k3,3n | bedtools merge | bedtools sort -faidx /sandbox/users/mguillout/pipeline/REFERENCES/human_g1k_v37.fasta.fai > BED/capture.bed
+Submitted job 74 with external jobid 'Your job 4143534 ("snakejob.copyBed.74.sh") has been submitted'.
+[Wed Sep  9 21:14:06 2020]
+Finished job 36.
+15 of 125 steps (12%) done
+[Wed Sep  9 21:14:06 2020]
+Finished job 61.
+16 of 125 steps (13%) done
+
+[Wed Sep  9 21:14:06 2020]
+rule fastQC:
+    input: Samples/Sample1/QC/Sample1.fastqc.forward.gz
+    output: Samples/Sample1/QC/Sample1.fastqc.forward_fastqc.zip
+    jobid: 32
+    reason: Missing output files: Samples/Sample1/QC/Sample1.fastqc.forward_fastqc.zip; Input files updated by another job: Samples/Sample1/QC/Sample1.fastqc.forward.gz
+    wildcards: sample=Sample1, strand=forward
+
+fastqc -o Samples/Sample1/QC --format fastq --noextract Samples/Sample1/QC/Sample1.fastqc.forward.gz
+Submitted job 32 with external jobid 'Your job 4143535 ("snakejob.fastQC.32.sh") has been submitted'.
+[Wed Sep  9 21:14:16 2020]
+Finished job 59.
+17 of 125 steps (14%) done
+
+[Wed Sep  9 21:14:16 2020]
+rule fastQC:
+    input: Samples/Sample29/QC/Sample29.fastqc.forward.gz
+    output: Samples/Sample29/QC/Sample29.fastqc.forward_fastqc.zip
+    jobid: 30
+    reason: Missing output files: Samples/Sample29/QC/Sample29.fastqc.forward_fastqc.zip; Input files updated by another job: Samples/Sample29/QC/Sample29.fastqc.forward.gz
+    wildcards: sample=Sample29, strand=forward
+
+fastqc -o Samples/Sample29/QC --format fastq --noextract Samples/Sample29/QC/Sample29.fastqc.forward.gz
+Submitted job 30 with external jobid 'Your job 4143536 ("snakejob.fastQC.30.sh") has been submitted'.
+[Wed Sep  9 21:14:27 2020]
+Finished job 49.
+18 of 125 steps (14%) done
+[Wed Sep  9 21:14:27 2020]
+Finished job 74.
+19 of 125 steps (15%) done
+
+[Wed Sep  9 21:14:27 2020]
+rule bedToPicardInterval:
+    input: BED/capture.bed, /sandbox/users/mguillout/pipeline/REFERENCES/human_g1k_v37.dict
+    output: BED/capture.interval_list
+    jobid: 56
+    reason: Missing output files: BED/capture.interval_list; Input files updated by another job: BED/capture.bed
+    wildcards: base=BED/capture
+
+picard BedToIntervalList I=BED/capture.bed O=BED/capture.interval_list SD=/sandbox/users/mguillout/pipeline/REFERENCES/human_g1k_v37.dict
+Submitted job 56 with external jobid 'Your job 4143537 ("snakejob.bedToPicardInterval.56.sh") has been submitted'.
+
+[Wed Sep  9 21:14:27 2020]
+rule extendBed:
+    input: BED/capture.bed, /sandbox/users/mguillout/pipeline/REFERENCES/human_g1k_v37.fasta.fai
+    output: BED/capture.extended1000.bed
+    jobid: 84
+    reason: Missing output files: BED/capture.extended1000.bed; Input files updated by another job: BED/capture.bed
+
+bedtools slop -b 1000 -g /sandbox/users/mguillout/pipeline/REFERENCES/human_g1k_v37.fasta.fai -i BED/capture.bed | LC_ALL=C sort -t '	' -k1,1 -k2,2n -k3,3n | bedtools merge -d 1000 | bedtools sort -faidx /sandbox/users/mguillout/pipeline/REFERENCES/human_g1k_v37.fasta.fai > BED/capture.extended1000.bed
+Submitted job 84 with external jobid 'Your job 4143538 ("snakejob.extendBed.84.sh") has been submitted'.
+
+[Wed Sep  9 21:14:27 2020]
+rule makeChrYBed:
+    input: BED/capture.bed
+    output: BED/chrY.bed
+    jobid: 51
+    reason: Missing output files: BED/chrY.bed; Input files updated by another job: BED/capture.bed
+
+awk -F '	' '($1=="Y")' BED/capture.bed > BED/chrY.bed
+Submitted job 51 with external jobid 'Your job 4143539 ("snakejob.makeChrYBed.51.sh") has been submitted'.
+
+[Wed Sep  9 21:14:27 2020]
+rule makeAutosomesBed:
+    input: BED/capture.bed
+    output: BED/autosomes.bed
+    jobid: 47
+    reason: Missing output files: BED/autosomes.bed; Input files updated by another job: BED/capture.bed
+
+awk -F '	' '(int($1)>0)' BED/capture.bed > BED/autosomes.bed
+Submitted job 47 with external jobid 'Your job 4143540 ("snakejob.makeAutosomesBed.47.sh") has been submitted'.
+[Wed Sep  9 21:14:49 2020]
+Finished job 31.
+20 of 125 steps (16%) done
+
+[Wed Sep  9 21:14:49 2020]
+rule makeChrXBed:
+    input: BED/capture.bed
+    output: BED/chrX.bed
+    jobid: 50
+    reason: Missing output files: BED/chrX.bed; Input files updated by another job: BED/capture.bed
+
+awk -F '	' '($1=="X")' BED/capture.bed > BED/chrX.bed
+[Wed Sep  9 21:14:49 2020]
+Finished job 32.
+21 of 125 steps (17%) done
+[Wed Sep  9 21:14:49 2020]
+Finished job 30.
+22 of 125 steps (18%) done
+Submitted job 50 with external jobid 'Your job 4143541 ("snakejob.makeChrXBed.50.sh") has been submitted'.
+[Wed Sep  9 21:14:49 2020]
+Finished job 84.
+23 of 125 steps (18%) done
+[Wed Sep  9 21:14:50 2020]
+Finished job 51.
+24 of 125 steps (19%) done
+[Wed Sep  9 21:14:50 2020]
+Finished job 47.
+25 of 125 steps (20%) done
+[Wed Sep  9 21:15:00 2020]
+Finished job 50.
+26 of 125 steps (21%) done
+[Wed Sep  9 21:15:00 2020]
+Finished job 56.
+27 of 125 steps (22%) done
+[Wed Sep  9 21:16:30 2020]
+Finished job 111.
+28 of 125 steps (22%) done
+
+[Wed Sep  9 21:16:30 2020]
+rule sort:
+    input: /sandbox/users/mguillout/pipeline/REFERENCES/human_g1k_v37.fasta, Samples/Sample29/BAM/Sample29.p1.sam, /sandbox/users/mguillout/pipeline/REFERENCES/human_g1k_v37.fasta.fai
+    output: Samples/Sample29/BAM/Sample29.p1.sorted.bam
+    jobid: 104
+    reason: Missing output files: Samples/Sample29/BAM/Sample29.p1.sorted.bam; Input files updated by another job: Samples/Sample29/BAM/Sample29.p1.sam
+    wildcards: sample=Sample29, pairID=p1
+
+samtools sort --reference /sandbox/users/mguillout/pipeline/REFERENCES/human_g1k_v37.fasta -l 9 -@ 1 -O bam -o Samples/Sample29/BAM/Sample29.p1.sorted.bam -T Samples/Sample29/BAM/Sample29.p1.sorted.bam.tmp Samples/Sample29/BAM/Sample29.p1.sam
+Submitted job 104 with external jobid 'Your job 4143542 ("snakejob.sort.104.sh") has been submitted'.
+Removing temporary output file Samples/Sample29/BAM/Sample29.p1.sam.
+[Wed Sep  9 21:18:10 2020]
+Finished job 104.
+29 of 125 steps (23%) done
+
+[Wed Sep  9 21:18:10 2020]
+rule merge:
+    input: Samples/Sample29/BAM/Sample29.p1.sorted.bam
+    output: Samples/Sample29/BAM/Sample29.merged.bam, Samples/Sample29/BAM/Sample29.merged.bai
+    jobid: 98
+    reason: Missing output files: Samples/Sample29/BAM/Sample29.merged.bai, Samples/Sample29/BAM/Sample29.merged.bam; Input files updated by another job: Samples/Sample29/BAM/Sample29.p1.sorted.bam
+    wildcards: sample=Sample29
+
+Submitted job 98 with external jobid 'Your job 4143544 ("snakejob.merge.98.sh") has been submitted'.
+Terminating processes on user request, this might take some time.
+Will exit after finishing currently running jobs.
+Cancelling snakemake on user request.

@@ -1,0 +1,88 @@
+Building DAG of jobs...
+Using shell: /usr/bin/bash
+Provided cluster nodes: 12
+Job counts:
+	count	jobs
+	1	annotANNOVAR
+	1	annotINTERVAR
+	1	annotVEP
+	3	bgzip
+	1	extractGNOMAD
+	1	extractGNOMADVEP
+	1	filtration_freq_and_genes
+	1	gunzipCADD
+	1	merge_fields
+	1	scoreCADD
+	3	tabix
+	1	target
+	16
+
+[Fri Aug 21 19:47:28 2020]
+rule annotVEP:
+    input: /sandbox/users/mguillout/pipeline/REFERENCES/human_g1k_v37.fasta, VCF/hapcaller.recal.combined.annot.gnomad.vcf.gz, VCF/hapcaller.recal.combined.annot.gnomad.vcf.gz.tbi, /sandbox/users/mguillout/pipeline/REFERENCES/VEP/CACHE/homo_sapiens_merged_86_GRCh37_cache.done
+    output: VCF/hapcaller.recal.combined.annot.gnomad.vep.vcf
+    jobid: 38
+    reason: Missing output files: VCF/hapcaller.recal.combined.annot.gnomad.vep.vcf
+
+variant_effect_predictor.pl 		--pick 		--cache --dir /sandbox/users/mguillout/pipeline/REFERENCES/VEP/CACHE 		--dir_plugins /sandbox/users/mguillout/tools/VEP_plugins 		--species homo_sapiens_merged 		--assembly GRCh37 		--db_version 86 		--fasta /sandbox/users/mguillout/pipeline/REFERENCES/human_g1k_v37.fasta 		--offline 		--symbol 		--format vcf 		--force_overwrite 		--sift=b 		--polyphen=b 		--xref_refseq 		-i VCF/hapcaller.recal.combined.annot.gnomad.vcf.gz 		-o VCF/hapcaller.recal.combined.annot.gnomad.vep.vcf 		--quiet 		--vcf 		--freq_pop any 		--pubmed 		--hgvs 		--no_stats
+Submitted job 38 with external jobid 'Your job 4090042 ("snakejob.annotVEP.38.sh") has been submitted'.
+Write-protecting output file VCF/hapcaller.recal.combined.annot.gnomad.vep.vcf.
+[Fri Aug 21 19:53:09 2020]
+Finished job 38.
+1 of 16 steps (6%) done
+
+[Fri Aug 21 19:53:09 2020]
+rule bgzip:
+    input: VCF/hapcaller.recal.combined.annot.gnomad.vep.vcf
+    output: VCF/hapcaller.recal.combined.annot.gnomad.vep.vcf.gz
+    jobid: 35
+    reason: Missing output files: VCF/hapcaller.recal.combined.annot.gnomad.vep.vcf.gz; Input files updated by another job: VCF/hapcaller.recal.combined.annot.gnomad.vep.vcf
+    wildcards: base=VCF/hapcaller.recal.combined.annot.gnomad.vep
+
+bgzip -f VCF/hapcaller.recal.combined.annot.gnomad.vep.vcf
+Submitted job 35 with external jobid 'Your job 4090055 ("snakejob.bgzip.35.sh") has been submitted'.
+[Fri Aug 21 19:53:19 2020]
+Finished job 35.
+2 of 16 steps (12%) done
+
+[Fri Aug 21 19:53:19 2020]
+rule tabix:
+    input: VCF/hapcaller.recal.combined.annot.gnomad.vep.vcf.gz
+    output: VCF/hapcaller.recal.combined.annot.gnomad.vep.vcf.gz.tbi
+    jobid: 36
+    reason: Missing output files: VCF/hapcaller.recal.combined.annot.gnomad.vep.vcf.gz.tbi; Input files updated by another job: VCF/hapcaller.recal.combined.annot.gnomad.vep.vcf.gz
+    wildcards: base=VCF/hapcaller.recal.combined.annot.gnomad.vep.vcf.gz
+
+tabix -f -p vcf VCF/hapcaller.recal.combined.annot.gnomad.vep.vcf.gz
+Submitted job 36 with external jobid 'Your job 4090056 ("snakejob.tabix.36.sh") has been submitted'.
+[Fri Aug 21 19:53:39 2020]
+Finished job 36.
+3 of 16 steps (19%) done
+
+[Fri Aug 21 19:53:39 2020]
+rule filtration_freq_and_genes:
+    input: VCF/hapcaller.recal.combined.annot.gnomad.vep.vcf.gz, VCF/hapcaller.recal.combined.annot.gnomad.vep.vcf.gz.tbi
+    output: VCF/hapcaller.recal.combined.annot.gnomad.vep.filtered.vcf
+    jobid: 31
+    reason: Missing output files: VCF/hapcaller.recal.combined.annot.gnomad.vep.filtered.vcf; Input files updated by another job: VCF/hapcaller.recal.combined.annot.gnomad.vep.vcf.gz, VCF/hapcaller.recal.combined.annot.gnomad.vep.vcf.gz.tbi
+
+filter_vep.pl 			-i VCF/hapcaller.recal.combined.annot.gnomad.vep.vcf.gz 			-o VCF/hapcaller.recal.combined.annot.gnomad.vep.filtered.vcf 			-filter '(Gene in ENSG00000121904,ENSG00000198883,ENSG00000156500) and (GMAF < 0.15 or not GMAF)'
+Submitted job 31 with external jobid 'Your job 4090058 ("snakejob.filtration_freq_and_genes.31.sh") has been submitted'.
+Write-protecting output file VCF/hapcaller.recal.combined.annot.gnomad.vep.filtered.vcf.
+[Fri Aug 21 19:53:49 2020]
+Finished job 31.
+4 of 16 steps (25%) done
+
+[Fri Aug 21 19:53:49 2020]
+rule bgzip:
+    input: VCF/hapcaller.recal.combined.annot.gnomad.vep.filtered.vcf
+    output: VCF/hapcaller.recal.combined.annot.gnomad.vep.filtered.vcf.gz
+    jobid: 23
+    reason: Missing output files: VCF/hapcaller.recal.combined.annot.gnomad.vep.filtered.vcf.gz; Input files updated by another job: VCF/hapcaller.recal.combined.annot.gnomad.vep.filtered.vcf
+    wildcards: base=VCF/hapcaller.recal.combined.annot.gnomad.vep.filtered
+
+bgzip -f VCF/hapcaller.recal.combined.annot.gnomad.vep.filtered.vcf
+Submitted job 23 with external jobid 'Your job 4090059 ("snakejob.bgzip.23.sh") has been submitted'.
+Terminating processes on user request, this might take some time.
+Will exit after finishing currently running jobs.
+Cancelling snakemake on user request.

@@ -1,0 +1,29 @@
+Building DAG of jobs...
+Using shell: /usr/bin/bash
+Provided cluster nodes: 12
+Job counts:
+	count	jobs
+	1	annotANNOVAR
+	1	annotINTERVAR
+	2	bgzip
+	1	extractGNOMAD
+	1	extractGNOMADVEP
+	1	filtrationVEP
+	1	gunzipCADD
+	1	scoreCADD
+	2	tabix
+	1	target
+	12
+
+[Fri Aug 21 10:11:10 2020]
+rule filtrationVEP:
+    input: /sandbox/users/mguillout/pipeline/REFERENCES/human_g1k_v37.fasta, VCF/hapcaller.recal.combined.annot.gnomad.vep.vcf.gz, VCF/hapcaller.recal.combined.annot.gnomad.vep.vcf.gz.tbi
+    output: VCF/hapcaller.recal.combined.annot.gnomad.vep.filtered.vcf
+    jobid: 26
+    reason: Missing output files: VCF/hapcaller.recal.combined.annot.gnomad.vep.filtered.vcf
+
+filter_vep.pl 		-i VCF/hapcaller.recal.combined.annot.gnomad.vep.vcf.gz 		-o VCF/hapcaller.recal.combined.annot.gnomad.vep.filtered.vcf 		-filter '(Gene is ENSG00000205403 or ENSG00000000971 or ENSG00000117335 or ENSG00000134389 or ENSG00000243649) and (GMAF < 0.1 or not GMAF)'
+Submitted job 26 with external jobid 'Your job 4088346 ("snakejob.filtrationVEP.26.sh") has been submitted'.
+Terminating processes on user request, this might take some time.
+Will exit after finishing currently running jobs.
+Cancelling snakemake on user request.

@@ -1,0 +1,105 @@
+Building DAG of jobs...
+Using shell: /usr/bin/bash
+Provided cluster nodes: 12
+Job counts:
+	count	jobs
+	5	align
+	1	annotANNOVAR
+	5	annotINTERVAR
+	1	annotVEP
+	5	baseRecalibration
+	3	bgzip
+	1	combineGVCF
+	1	combineVCF
+	5	createBaseRecalibrationTable
+	1	createGVCFList
+	15	depthOfCoverage
+	1	downloadGATK
+	1	extractGNOMAD
+	1	extractGNOMADVEP
+	1	filterIndels
+	1	filterSNVs
+	1	filtration_freq_and_genes
+	1	freqGNOMAD
+	1	genotypeGVCF
+	1	gunzipCADD
+	5	haplotypeCaller
+	5	indelRealign
+	5	markDuplicates
+	5	merge
+	5	merge_fields
+	5	picardMetrics
+	5	realignTargetCreator
+	1	scoreCADD
+	1	selectIndels
+	1	selectSNVs
+	5	sort
+	3	tabix
+	1	target
+	99
+
+[Wed Sep  9 19:47:57 2020]
+rule align:
+    input: /sandbox/users/mguillout/pipeline/REFERENCES/human_g1k_v37.fasta, /sandbox/users/mguillout/fastQ-APHP/P29-HC_S29_L001_R1_001.fastq.gz, /sandbox/users/mguillout/fastQ-APHP/P29-HC_S29_L001_R2_001.fastq.gz, /sandbox/users/mguillout/pipeline/REFERENCES/human_g1k_v37.fasta.bwt
+    output: Samples/Sample29/BAM/Sample29.p1.sam
+    jobid: 111
+    reason: Missing output files: Samples/Sample29/BAM/Sample29.p1.sam
+    wildcards: sample=Sample29, pairID=p1
+
+bwa mem -t 1 -M 		-H '@CO\tProject:pipelineTest Sample:Sample29 Date:2020-09-09 CWD:/sandbox/users/mguillout/externalshares/Application/pipeline/APHP Capture:{ name : captureName , description : exome capture 1 , path : /sandbox/users/mguillout/pipeline/REFERENCES/Broad.human.exome.b37.bed}' 		-R '@RG\tID:Sample29\tLB:Sample29\tSM:Sample29\tPL:Illumina\tCN:CENTER' 		/sandbox/users/mguillout/pipeline/REFERENCES/human_g1k_v37.fasta /sandbox/users/mguillout/fastQ-APHP/P29-HC_S29_L001_R1_001.fastq.gz /sandbox/users/mguillout/fastQ-APHP/P29-HC_S29_L001_R2_001.fastq.gz > Samples/Sample29/BAM/Sample29.p1.sam
+Submitted job 111 with external jobid 'Your job 4143447 ("snakejob.align.111.sh") has been submitted'.
+
+[Wed Sep  9 19:47:57 2020]
+rule align:
+    input: /sandbox/users/mguillout/pipeline/REFERENCES/human_g1k_v37.fasta, /sandbox/users/mguillout/fastQ-APHP/P01-AW_S1_L001_R1_001.fastq.gz, /sandbox/users/mguillout/fastQ-APHP/P01-AW_S1_L001_R2_001.fastq.gz, /sandbox/users/mguillout/pipeline/REFERENCES/human_g1k_v37.fasta.bwt
+    output: Samples/Sample1/BAM/Sample1.p1.sam
+    jobid: 112
+    reason: Missing output files: Samples/Sample1/BAM/Sample1.p1.sam
+    wildcards: sample=Sample1, pairID=p1
+
+bwa mem -t 1 -M 		-H '@CO\tProject:pipelineTest Sample:Sample1 Date:2020-09-09 CWD:/sandbox/users/mguillout/externalshares/Application/pipeline/APHP Capture:{ name : captureName , description : exome capture 1 , path : /sandbox/users/mguillout/pipeline/REFERENCES/Broad.human.exome.b37.bed}' 		-R '@RG\tID:Sample1\tLB:Sample1\tSM:Sample1\tPL:Illumina\tCN:CENTER' 		/sandbox/users/mguillout/pipeline/REFERENCES/human_g1k_v37.fasta /sandbox/users/mguillout/fastQ-APHP/P01-AW_S1_L001_R1_001.fastq.gz /sandbox/users/mguillout/fastQ-APHP/P01-AW_S1_L001_R2_001.fastq.gz > Samples/Sample1/BAM/Sample1.p1.sam
+Submitted job 112 with external jobid 'Your job 4143448 ("snakejob.align.112.sh") has been submitted'.
+
+[Wed Sep  9 19:47:57 2020]
+rule align:
+    input: /sandbox/users/mguillout/pipeline/REFERENCES/human_g1k_v37.fasta, /sandbox/users/mguillout/fastQ-APHP/P32-ISH_S32_L001_R1_001.fastq.gz, /sandbox/users/mguillout/fastQ-APHP/P32-ISH_S32_L001_R2_001.fastq.gz, /sandbox/users/mguillout/pipeline/REFERENCES/human_g1k_v37.fasta.bwt
+    output: Samples/Sample32/BAM/Sample32.p1.sam
+    jobid: 113
+    reason: Missing output files: Samples/Sample32/BAM/Sample32.p1.sam
+    wildcards: sample=Sample32, pairID=p1
+
+bwa mem -t 1 -M 		-H '@CO\tProject:pipelineTest Sample:Sample32 Date:2020-09-09 CWD:/sandbox/users/mguillout/externalshares/Application/pipeline/APHP Capture:{ name : captureName , description : exome capture 1 , path : /sandbox/users/mguillout/pipeline/REFERENCES/Broad.human.exome.b37.bed}' 		-R '@RG\tID:Sample32\tLB:Sample32\tSM:Sample32\tPL:Illumina\tCN:CENTER' 		/sandbox/users/mguillout/pipeline/REFERENCES/human_g1k_v37.fasta /sandbox/users/mguillout/fastQ-APHP/P32-ISH_S32_L001_R1_001.fastq.gz /sandbox/users/mguillout/fastQ-APHP/P32-ISH_S32_L001_R2_001.fastq.gz > Samples/Sample32/BAM/Sample32.p1.sam
+Submitted job 113 with external jobid 'Your job 4143449 ("snakejob.align.113.sh") has been submitted'.
+
+[Wed Sep  9 19:47:57 2020]
+rule downloadGATK:
+    output: gatkPresent.txt
+    jobid: 49
+    reason: Missing output files: gatkPresent.txt
+
+Submitted job 49 with external jobid 'Your job 4143450 ("snakejob.downloadGATK.49.sh") has been submitted'.
+
+[Wed Sep  9 19:47:57 2020]
+rule align:
+    input: /sandbox/users/mguillout/pipeline/REFERENCES/human_g1k_v37.fasta, /sandbox/users/mguillout/fastQ-APHP/P33-KMKN_S33_L001_R1_001.fastq.gz, /sandbox/users/mguillout/fastQ-APHP/P33-KMKN_S33_L001_R2_001.fastq.gz, /sandbox/users/mguillout/pipeline/REFERENCES/human_g1k_v37.fasta.bwt
+    output: Samples/Sample33/BAM/Sample33.p1.sam
+    jobid: 114
+    reason: Missing output files: Samples/Sample33/BAM/Sample33.p1.sam
+    wildcards: sample=Sample33, pairID=p1
+
+bwa mem -t 1 -M 		-H '@CO\tProject:pipelineTest Sample:Sample33 Date:2020-09-09 CWD:/sandbox/users/mguillout/externalshares/Application/pipeline/APHP Capture:{ name : captureName , description : exome capture 1 , path : /sandbox/users/mguillout/pipeline/REFERENCES/Broad.human.exome.b37.bed}' 		-R '@RG\tID:Sample33\tLB:Sample33\tSM:Sample33\tPL:Illumina\tCN:CENTER' 		/sandbox/users/mguillout/pipeline/REFERENCES/human_g1k_v37.fasta /sandbox/users/mguillout/fastQ-APHP/P33-KMKN_S33_L001_R1_001.fastq.gz /sandbox/users/mguillout/fastQ-APHP/P33-KMKN_S33_L001_R2_001.fastq.gz > Samples/Sample33/BAM/Sample33.p1.sam
+Submitted job 114 with external jobid 'Your job 4143451 ("snakejob.align.114.sh") has been submitted'.
+
+[Wed Sep  9 19:47:57 2020]
+rule align:
+    input: /sandbox/users/mguillout/pipeline/REFERENCES/human_g1k_v37.fasta, /sandbox/users/mguillout/fastQ-APHP/P10-BL_S10_L001_R1_001.fastq.gz, /sandbox/users/mguillout/fastQ-APHP/P10-BL_S10_L001_R2_001.fastq.gz, /sandbox/users/mguillout/pipeline/REFERENCES/human_g1k_v37.fasta.bwt
+    output: Samples/Sample10/BAM/Sample10.p1.sam
+    jobid: 110
+    reason: Missing output files: Samples/Sample10/BAM/Sample10.p1.sam
+    wildcards: sample=Sample10, pairID=p1
+
+bwa mem -t 1 -M 		-H '@CO\tProject:pipelineTest Sample:Sample10 Date:2020-09-09 CWD:/sandbox/users/mguillout/externalshares/Application/pipeline/APHP Capture:{ name : captureName , description : exome capture 1 , path : /sandbox/users/mguillout/pipeline/REFERENCES/Broad.human.exome.b37.bed}' 		-R '@RG\tID:Sample10\tLB:Sample10\tSM:Sample10\tPL:Illumina\tCN:CENTER' 		/sandbox/users/mguillout/pipeline/REFERENCES/human_g1k_v37.fasta /sandbox/users/mguillout/fastQ-APHP/P10-BL_S10_L001_R1_001.fastq.gz /sandbox/users/mguillout/fastQ-APHP/P10-BL_S10_L001_R2_001.fastq.gz > Samples/Sample10/BAM/Sample10.p1.sam
+Submitted job 110 with external jobid 'Your job 4143452 ("snakejob.align.110.sh") has been submitted'.
+Terminating processes on user request, this might take some time.
+Will exit after finishing currently running jobs.
+Cancelling snakemake on user request.

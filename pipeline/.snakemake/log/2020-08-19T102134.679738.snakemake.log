@@ -1,0 +1,61 @@
+Building DAG of jobs...
+Using shell: /usr/bin/bash
+Provided cluster nodes: 12
+Job counts:
+	count	jobs
+	1	align
+	1	annotANNOVAR
+	1	annotINTERVAR
+	1	annotVEP
+	1	baseRecalibration
+	1	bedToPicardInterval
+	3	bgzip
+	1	bwaIndex
+	1	combineGVCF
+	1	combineVCF
+	1	copyBed
+	1	createBaseRecalibrationTable
+	1	createGVCFList
+	3	depthOfCoverage
+	1	downloadGenome
+	1	extendBed
+	1	extractGNOMAD
+	1	extractGNOMADVEP
+	1	filterIndels
+	1	filterSNVs
+	1	filtrationVEP
+	1	freqGNOMAD
+	1	genomeDictionary
+	1	genomeIndex
+	1	genotypeGVCF
+	1	haplotypeCaller
+	1	indelRealign
+	1	makeAutosomesBed
+	1	makeChrXBed
+	1	makeChrYBed
+	1	markDuplicates
+	1	merge
+	1	picardMetrics
+	1	realignTargetCreator
+	1	scoreCADD
+	1	selectIndels
+	1	selectSNVs
+	1	sort
+	3	tabix
+	1	target
+	1	unzipGenome
+	47
+
+[Wed Aug 19 10:21:35 2020]
+rule downloadGenome:
+    output: REFERENCES/human_g1k_v37.fasta.gz
+    jobid: 27
+    reason: Missing output files: REFERENCES/human_g1k_v37.fasta.gz
+
+
+		wget -q --retry-connrefused --user=gsapubftp-anonymous "ftp://gsapubftp-anonymous@ftp.broadinstitute.org/bundle/b37/human_g1k_v37.fasta.gz" -O REFERENCES/human_g1k_v37.fasta.gz
+		
+Submitted job 27 with external jobid 'Your job 4077796 ("snakejob.downloadGenome.27.sh") has been submitted'.
+Terminating processes on user request, this might take some time.
+Will exit after finishing currently running jobs.
+Cancelling snakemake on user request.

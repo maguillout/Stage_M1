@@ -1,0 +1,31 @@
+Building DAG of jobs...
+Using shell: /usr/bin/bash
+Provided cluster nodes: 12
+Job counts:
+	count	jobs
+	1	annotINTERVAR
+	1	target
+	2
+
+[Thu Aug 20 19:51:28 2020]
+rule annotINTERVAR:
+    input: VCF/hapcaller.recal.combined.annot.gnomad.vep.filtered.annovar.vcf.avinput, /sandbox/users/mguillout/tools/annovar/table_annovar.pl, /sandbox/users/mguillout/tools/InterVar-master/Intervar.py
+    output: CSV/res_intervar.hg19_multianno.txt.intervar
+    jobid: 3
+    reason: Missing output files: CSV/res_intervar.hg19_multianno.txt.intervar
+
+python /sandbox/users/mguillout/tools/InterVar-master/Intervar.py 		-i VCF/hapcaller.recal.combined.annot.gnomad.vep.filtered.annovar.vcf.avinput 		-o CSV/res_intervar 		--buildver hg19 		--input_type AVinput 		--database_intervar /sandbox/users/mguillout/tools/InterVar-master/Intervar.py/intervardb 		--config=/sandbox/users/mguillout/tools/InterVar-master/Intervar.py/config.ini 		--convert2annovar /sandbox/users/mguillout/tools/InterVar-master/Intervar.py/convert2annovar.pl 		--table_annovar /sandbox/users/mguillout/tools/InterVar-master/Intervar.py/table_annovar.pl 		--annotate_variation /sandbox/users/mguillout/tools/InterVar-master/Intervar.py/annotate_variation.pl 		--database_locat /sandbox/users/mguillout/tools/annovar/table_annovar.pl
+Submitted job 3 with external jobid 'Your job 4087754 ("snakejob.annotINTERVAR.3.sh") has been submitted'.
+[Thu Aug 20 19:51:38 2020]
+Error in rule annotINTERVAR:
+    jobid: 3
+    output: CSV/res_intervar.hg19_multianno.txt.intervar
+    shell:
+        python /sandbox/users/mguillout/tools/InterVar-master/Intervar.py 		-i VCF/hapcaller.recal.combined.annot.gnomad.vep.filtered.annovar.vcf.avinput 		-o CSV/res_intervar 		--buildver hg19 		--input_type AVinput 		--database_intervar /sandbox/users/mguillout/tools/InterVar-master/Intervar.py/intervardb 		--config=/sandbox/users/mguillout/tools/InterVar-master/Intervar.py/config.ini 		--convert2annovar /sandbox/users/mguillout/tools/InterVar-master/Intervar.py/convert2annovar.pl 		--table_annovar /sandbox/users/mguillout/tools/InterVar-master/Intervar.py/table_annovar.pl 		--annotate_variation /sandbox/users/mguillout/tools/InterVar-master/Intervar.py/annotate_variation.pl 		--database_locat /sandbox/users/mguillout/tools/annovar/table_annovar.pl
+        (one of the commands exited with non-zero exit code; note that snakemake uses bash strict mode!)
+    cluster_jobid: Your job 4087754 ("snakejob.annotINTERVAR.3.sh") has been submitted
+
+Error executing rule annotINTERVAR on cluster (jobid: 3, external: Your job 4087754 ("snakejob.annotINTERVAR.3.sh") has been submitted, jobscript: /sandbox/shares/nextcloud/mguillout/files/Application/pipeline/testPipeline2/.snakemake/tmp.pmapzxck/snakejob.annotINTERVAR.3.sh). For error details see the cluster log and the log files of the involved rule(s).
+Shutting down, this might take some time.
+Exiting because a job execution failed. Look above for error message
+Complete log: /sandbox/shares/nextcloud/mguillout/files/Application/pipeline/.snakemake/log/2020-08-20T195128.151321.snakemake.log

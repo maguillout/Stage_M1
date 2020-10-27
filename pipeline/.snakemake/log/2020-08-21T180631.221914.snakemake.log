@@ -1,0 +1,4 @@
+Building DAG of jobs...
+MissingInputException in line 696 of /sandbox/shares/nextcloud/mguillout/files/Application/pipeline/Snakefile:
+Missing input files for rule merge_fields:
+VCF/hapcaller.recal.combined.annot.gnomad.vep.filtered.annovar.vcf.hg19_multianno.txt

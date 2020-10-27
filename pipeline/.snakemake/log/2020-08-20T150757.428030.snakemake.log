@@ -1,0 +1,3 @@
+NameError in line 31 of /sandbox/shares/nextcloud/mguillout/files/Application/pipeline/Snakefile:
+name 'annovar' is not defined
+  File "/sandbox/shares/nextcloud/mguillout/files/Application/pipeline/Snakefile", line 31, in <module>

@@ -1,0 +1,300 @@
+Building DAG of jobs...
+Using shell: /usr/bin/bash
+Provided cluster nodes: 12
+Job counts:
+	count	jobs
+	1	annotANNOVAR
+	5	annotINTERVAR
+	1	annotVEP
+	3	bgzip
+	1	combineVCF
+	1	extractGNOMAD
+	1	extractGNOMADVEP
+	1	filtration_freq_and_genes
+	1	freqGNOMAD
+	1	gunzipCADD
+	5	merge_fields
+	1	scoreCADD
+	3	tabix
+	1	target
+	26
+
+[Thu Sep 10 10:06:43 2020]
+rule combineVCF:
+    input: /sandbox/users/mguillout/pipeline/REFERENCES/human_g1k_v37.fasta, VCF/hapcaller.snv.recal.filter.vcf.gz, VCF/hapcaller.snv.recal.filter.vcf.gz.tbi, VCF/hapcaller.indel.recal.filter.vcf.gz, VCF/hapcaller.indel.recal.filter.vcf.gz.tbi, /sandbox/users/mguillout/pipeline/REFERENCES/human_g1k_v37.dict, gatkPresent.txt
+    output: VCF/hapcaller.recal.combined.vcf.gz, VCF/hapcaller.recal.combined.vcf.gz.tbi
+    jobid: 115
+    reason: Missing output files: VCF/hapcaller.recal.combined.vcf.gz, VCF/hapcaller.recal.combined.vcf.gz.tbi
+
+gatk -Djava.io.tmpdir=VCF -XX:ParallelGCThreads=3 -Xmx3g -T CombineVariants 		-R /sandbox/users/mguillout/pipeline/REFERENCES/human_g1k_v37.fasta 		--genotypemergeoption PRIORITIZE 		--rod_priority_list SNP,INDEL 		--variant:SNP VCF/hapcaller.snv.recal.filter.vcf.gz 		--variant:INDEL VCF/hapcaller.indel.recal.filter.vcf.gz 		-o VCF/hapcaller.recal.combined.vcf.gz
+Submitted job 115 with external jobid 'Your job 4143733 ("snakejob.combineVCF.115.sh") has been submitted'.
+Removing temporary output file VCF/hapcaller.snv.recal.filter.vcf.gz.tbi.
+Removing temporary output file VCF/hapcaller.snv.recal.filter.vcf.gz.
+Removing temporary output file VCF/hapcaller.indel.recal.filter.vcf.gz.
+Removing temporary output file VCF/hapcaller.indel.recal.filter.vcf.gz.tbi.
+[Thu Sep 10 10:07:23 2020]
+Finished job 115.
+1 of 26 steps (4%) done
+
+[Thu Sep 10 10:07:23 2020]
+rule freqGNOMAD:
+    input: /sandbox/users/mguillout/pipeline/REFERENCES/human_g1k_v37.fasta, VCF/hapcaller.recal.combined.vcf.gz, VCF/hapcaller.recal.combined.vcf.gz.tbi, /sandbox/users/mguillout/pipeline/REFERENCES/gnomad.exomes.r2.0.1.sites.vcf.gz, /sandbox/users/mguillout/pipeline/REFERENCES/dbsnp_138.b37.vcf.gz, /sandbox/users/mguillout/pipeline/REFERENCES/human_g1k_v37.dict, gatkPresent.txt
+    output: VCF/hapcaller.recal.combined.annot.gnomad.vcf.gz, VCF/hapcaller.recal.combined.annot.gnomad.vcf.gz.tbi
+    jobid: 108
+    reason: Missing output files: VCF/hapcaller.recal.combined.annot.gnomad.vcf.gz, VCF/hapcaller.recal.combined.annot.gnomad.vcf.gz.tbi; Input files updated by another job: VCF/hapcaller.recal.combined.vcf.gz, VCF/hapcaller.recal.combined.vcf.gz.tbi
+
+gatk -Djava.io.tmpdir=VCF		-XX:ParallelGCThreads=3 		-Xmx3g 		-T VariantAnnotator 		-R /sandbox/users/mguillout/pipeline/REFERENCES/human_g1k_v37.fasta 		--variant VCF/hapcaller.recal.combined.vcf.gz 		-L VCF/hapcaller.recal.combined.vcf.gz 		--resource:gnomad /sandbox/users/mguillout/pipeline/REFERENCES/gnomad.exomes.r2.0.1.sites.vcf.gz 		--resourceAlleleConcordance 		-E gnomad.AF_AFR 		-E gnomad.AF_ASJ 		-E gnomad.AF_AMR 		-E gnomad.AF_EAS 		-E gnomad.AF_FIN 		-E gnomad.AF_NFE 		-E gnomad.AF_OTH 		-E gnomad.AF_SAS 		--dbsnp /sandbox/users/mguillout/pipeline/REFERENCES/dbsnp_138.b37.vcf.gz 		-o VCF/hapcaller.recal.combined.annot.gnomad.vcf.gz
+Submitted job 108 with external jobid 'Your job 4143736 ("snakejob.freqGNOMAD.108.sh") has been submitted'.
+Removing temporary output file VCF/hapcaller.recal.combined.vcf.gz.
+Removing temporary output file VCF/hapcaller.recal.combined.vcf.gz.tbi.
+Removing temporary output file gatkPresent.txt.
+[Thu Sep 10 10:08:53 2020]
+Finished job 108.
+2 of 26 steps (8%) done
+
+[Thu Sep 10 10:08:53 2020]
+rule annotVEP:
+    input: /sandbox/users/mguillout/pipeline/REFERENCES/human_g1k_v37.fasta, VCF/hapcaller.recal.combined.annot.gnomad.vcf.gz, VCF/hapcaller.recal.combined.annot.gnomad.vcf.gz.tbi, /sandbox/users/mguillout/pipeline/REFERENCES/VEP/CACHE/homo_sapiens_merged_86_GRCh37_cache.done
+    output: VCF/hapcaller.recal.combined.annot.gnomad.vep.vcf
+    jobid: 102
+    reason: Missing output files: VCF/hapcaller.recal.combined.annot.gnomad.vep.vcf; Input files updated by another job: VCF/hapcaller.recal.combined.annot.gnomad.vcf.gz, VCF/hapcaller.recal.combined.annot.gnomad.vcf.gz.tbi
+
+variant_effect_predictor.pl 		--pick_order=canonical 		--cache --dir /sandbox/users/mguillout/pipeline/REFERENCES/VEP/CACHE 		--dir_plugins /sandbox/users/mguillout/tools/VEP_plugins 		--species homo_sapiens_merged 		--assembly GRCh37 		--db_version 86 		--fasta /sandbox/users/mguillout/pipeline/REFERENCES/human_g1k_v37.fasta 		--offline 		--symbol 		--format vcf 		--force_overwrite 		--sift=b 		--polyphen=b 		--xref_refseq 		-i VCF/hapcaller.recal.combined.annot.gnomad.vcf.gz 		-o VCF/hapcaller.recal.combined.annot.gnomad.vep.vcf 		--quiet 		--vcf 		--gmaf 		--ccds 		--canonical 		--maf_1kg 		--pubmed 		--hgvs 		--no_stats
+Submitted job 102 with external jobid 'Your job 4143738 ("snakejob.annotVEP.102.sh") has been submitted'.
+Write-protecting output file VCF/hapcaller.recal.combined.annot.gnomad.vep.vcf.
+[Thu Sep 10 12:06:29 2020]
+Finished job 102.
+3 of 26 steps (12%) done
+
+[Thu Sep 10 12:06:29 2020]
+rule bgzip:
+    input: VCF/hapcaller.recal.combined.annot.gnomad.vep.vcf
+    output: VCF/hapcaller.recal.combined.annot.gnomad.vep.vcf.gz
+    jobid: 95
+    reason: Missing output files: VCF/hapcaller.recal.combined.annot.gnomad.vep.vcf.gz; Input files updated by another job: VCF/hapcaller.recal.combined.annot.gnomad.vep.vcf
+    wildcards: base=VCF/hapcaller.recal.combined.annot.gnomad.vep
+
+bgzip -f VCF/hapcaller.recal.combined.annot.gnomad.vep.vcf
+Submitted job 95 with external jobid 'Your job 4143851 ("snakejob.bgzip.95.sh") has been submitted'.
+[Thu Sep 10 12:06:49 2020]
+Finished job 95.
+4 of 26 steps (15%) done
+
+[Thu Sep 10 12:06:49 2020]
+rule tabix:
+    input: VCF/hapcaller.recal.combined.annot.gnomad.vep.vcf.gz
+    output: VCF/hapcaller.recal.combined.annot.gnomad.vep.vcf.gz.tbi
+    jobid: 96
+    reason: Missing output files: VCF/hapcaller.recal.combined.annot.gnomad.vep.vcf.gz.tbi; Input files updated by another job: VCF/hapcaller.recal.combined.annot.gnomad.vep.vcf.gz
+    wildcards: base=VCF/hapcaller.recal.combined.annot.gnomad.vep.vcf.gz
+
+tabix -f -p vcf VCF/hapcaller.recal.combined.annot.gnomad.vep.vcf.gz
+Submitted job 96 with external jobid 'Your job 4143852 ("snakejob.tabix.96.sh") has been submitted'.
+[Thu Sep 10 12:07:09 2020]
+Finished job 96.
+5 of 26 steps (19%) done
+
+[Thu Sep 10 12:07:09 2020]
+rule filtration_freq_and_genes:
+    input: VCF/hapcaller.recal.combined.annot.gnomad.vep.vcf.gz, VCF/hapcaller.recal.combined.annot.gnomad.vep.vcf.gz.tbi
+    output: VCF/hapcaller.recal.combined.annot.gnomad.vep.filtered.vcf
+    jobid: 83
+    reason: Missing output files: VCF/hapcaller.recal.combined.annot.gnomad.vep.filtered.vcf; Input files updated by another job: VCF/hapcaller.recal.combined.annot.gnomad.vep.vcf.gz, VCF/hapcaller.recal.combined.annot.gnomad.vep.vcf.gz.tbi
+
+filter_vep.pl 			-i VCF/hapcaller.recal.combined.annot.gnomad.vep.vcf.gz 			-o VCF/hapcaller.recal.combined.annot.gnomad.vep.filtered.vcf 			-filter '(Gene in ENSG00000205403,ENSG00000000971,ENSG00000117335,ENSG00000134389,ENSG00000243649) and (gnomad.AF_NFE < 0.45 or not gnomad.AF_NFE)'
+Submitted job 83 with external jobid 'Your job 4143854 ("snakejob.filtration_freq_and_genes.83.sh") has been submitted'.
+Write-protecting output file VCF/hapcaller.recal.combined.annot.gnomad.vep.filtered.vcf.
+[Thu Sep 10 12:07:29 2020]
+Finished job 83.
+6 of 26 steps (23%) done
+
+[Thu Sep 10 12:07:29 2020]
+rule bgzip:
+    input: VCF/hapcaller.recal.combined.annot.gnomad.vep.filtered.vcf
+    output: VCF/hapcaller.recal.combined.annot.gnomad.vep.filtered.vcf.gz
+    jobid: 67
+    reason: Missing output files: VCF/hapcaller.recal.combined.annot.gnomad.vep.filtered.vcf.gz; Input files updated by another job: VCF/hapcaller.recal.combined.annot.gnomad.vep.filtered.vcf
+    wildcards: base=VCF/hapcaller.recal.combined.annot.gnomad.vep.filtered
+
+bgzip -f VCF/hapcaller.recal.combined.annot.gnomad.vep.filtered.vcf
+Submitted job 67 with external jobid 'Your job 4143856 ("snakejob.bgzip.67.sh") has been submitted'.
+[Thu Sep 10 12:07:39 2020]
+Finished job 67.
+7 of 26 steps (27%) done
+
+[Thu Sep 10 12:07:39 2020]
+rule tabix:
+    input: VCF/hapcaller.recal.combined.annot.gnomad.vep.filtered.vcf.gz
+    output: VCF/hapcaller.recal.combined.annot.gnomad.vep.filtered.vcf.gz.tbi
+    jobid: 68
+    reason: Missing output files: VCF/hapcaller.recal.combined.annot.gnomad.vep.filtered.vcf.gz.tbi; Input files updated by another job: VCF/hapcaller.recal.combined.annot.gnomad.vep.filtered.vcf.gz
+    wildcards: base=VCF/hapcaller.recal.combined.annot.gnomad.vep.filtered.vcf.gz
+
+tabix -f -p vcf VCF/hapcaller.recal.combined.annot.gnomad.vep.filtered.vcf.gz
+Submitted job 68 with external jobid 'Your job 4143857 ("snakejob.tabix.68.sh") has been submitted'.
+
+[Thu Sep 10 12:07:39 2020]
+rule scoreCADD:
+    input: VCF/hapcaller.recal.combined.annot.gnomad.vep.filtered.vcf.gz, /sandbox/users/mguillout/tools/CADD-scripts/CADD.sh
+    output: CSV/cadd.tsv.gz
+    jobid: 70
+    reason: Missing output files: CSV/cadd.tsv.gz; Input files updated by another job: VCF/hapcaller.recal.combined.annot.gnomad.vep.filtered.vcf.gz
+
+ /sandbox/users/mguillout/tools/CADD-scripts/CADD.sh 		-o CSV/cadd.tsv.gz 		-a 		-g GRCh37 		-v v1.6 VCF/hapcaller.recal.combined.annot.gnomad.vep.filtered.vcf.gz
+Submitted job 70 with external jobid 'Your job 4143858 ("snakejob.scoreCADD.70.sh") has been submitted'.
+
+[Thu Sep 10 12:07:39 2020]
+rule extractGNOMAD:
+    input: /sandbox/users/mguillout/pipeline/REFERENCES/human_g1k_v37.fasta, VCF/hapcaller.recal.combined.annot.gnomad.vep.filtered.vcf.gz
+    output: CSV/gnomad_freq.tsv
+    jobid: 69
+    reason: Missing output files: CSV/gnomad_freq.tsv; Input files updated by another job: VCF/hapcaller.recal.combined.annot.gnomad.vep.filtered.vcf.gz
+
+gatk -T VariantsToTable 		-R /sandbox/users/mguillout/pipeline/REFERENCES/human_g1k_v37.fasta 		-V VCF/hapcaller.recal.combined.annot.gnomad.vep.filtered.vcf.gz 		-o CSV/gnomad_freq.tsv 		-F CHROM 		-F POS 		-F REF 		-F ALT 		-F ID 		-GF GT 		--allowMissingData 		-F gnomad.AF_AFR 		-F gnomad.AF_ASJ 		-F gnomad.AF_AMR 		-F gnomad.AF_EAS 		-F gnomad.AF_FIN 		-F gnomad.AF_NFE 		-F gnomad.AF_OTH 		-F gnomad.AF_SAS 
+Submitted job 69 with external jobid 'Your job 4143859 ("snakejob.extractGNOMAD.69.sh") has been submitted'.
+[Thu Sep 10 12:07:59 2020]
+Finished job 68.
+8 of 26 steps (31%) done
+
+[Thu Sep 10 12:07:59 2020]
+rule annotANNOVAR:
+    input: VCF/hapcaller.recal.combined.annot.gnomad.vep.filtered.vcf.gz, VCF/hapcaller.recal.combined.annot.gnomad.vep.filtered.vcf.gz.tbi, /sandbox/users/mguillout/tools/annovar, /sandbox/users/mguillout/tools/annovar/humandb
+    output: VCF/hapcaller.recal.combined.annot.gnomad.vep.filtered.annovar.vcf.hg19_multianno.vcf, VCF/hapcaller.recal.combined.annot.gnomad.vep.filtered.annovar.vcf.avinput, VCF/hapcaller.recal.combined.annot.gnomad.vep.filtered.annovar.vcf.hg19_multianno.txt
+    jobid: 38
+    reason: Missing output files: VCF/hapcaller.recal.combined.annot.gnomad.vep.filtered.annovar.vcf.hg19_multianno.vcf, VCF/hapcaller.recal.combined.annot.gnomad.vep.filtered.annovar.vcf.hg19_multianno.txt; Input files updated by another job: VCF/hapcaller.recal.combined.annot.gnomad.vep.filtered.vcf.gz.tbi, VCF/hapcaller.recal.combined.annot.gnomad.vep.filtered.vcf.gz
+
+perl /sandbox/users/mguillout/tools/annovar/table_annovar.pl VCF/hapcaller.recal.combined.annot.gnomad.vep.filtered.vcf.gz  		/sandbox/users/mguillout/tools/annovar/humandb		-buildver hg19 		-out VCF/hapcaller.recal.combined.annot.gnomad.vep.filtered.annovar.vcf 		-remove 		-protocol refGene,knownGene,dgvMerged,gwasCatalog,dbnsfp35a,clinvar_20190305 		-operation gx,g,r,r,f,f 		-nastring . 		-polish 		-otherinfo 		-xref /sandbox/users/mguillout/tools/annovar/humandb/hg19_refGene.txt 		-vcfinput
+Submitted job 38 with external jobid 'Your job 4143861 ("snakejob.annotANNOVAR.38.sh") has been submitted'.
+Write-protecting output file CSV/gnomad_freq.tsv.
+[Thu Sep 10 12:08:09 2020]
+Finished job 69.
+9 of 26 steps (35%) done
+
+[Thu Sep 10 12:08:09 2020]
+rule extractGNOMADVEP:
+    input: VCF/hapcaller.recal.combined.annot.gnomad.vep.filtered.vcf.gz, CSV/gnomad_freq.tsv
+    output: CSV/gnomad_vep.tsv
+    jobid: 40
+    reason: Missing output files: CSV/gnomad_vep.tsv; Input files updated by another job: VCF/hapcaller.recal.combined.annot.gnomad.vep.filtered.vcf.gz, CSV/gnomad_freq.tsv
+
+vep-annotation-reporter  VCF/hapcaller.recal.combined.annot.gnomad.vep.filtered.vcf.gz 	Feature HGVSc HGVSp Protein_position Amino_acids Codons CLIN_SIG PUBMED 		-t CSV/gnomad_freq.tsv 		-o CSV/gnomad_vep.tsv 		
+Submitted job 40 with external jobid 'Your job 4143862 ("snakejob.extractGNOMADVEP.40.sh") has been submitted'.
+[Thu Sep 10 12:08:29 2020]
+Finished job 40.
+10 of 26 steps (38%) done
+Write-protecting output file VCF/hapcaller.recal.combined.annot.gnomad.vep.filtered.annovar.vcf.hg19_multianno.vcf.
+[Thu Sep 10 12:09:09 2020]
+Finished job 38.
+11 of 26 steps (42%) done
+
+[Thu Sep 10 12:09:09 2020]
+rule bgzip:
+    input: VCF/hapcaller.recal.combined.annot.gnomad.vep.filtered.annovar.vcf.hg19_multianno.vcf
+    output: VCF/hapcaller.recal.combined.annot.gnomad.vep.filtered.annovar.vcf.hg19_multianno.vcf.gz
+    jobid: 1
+    reason: Missing output files: VCF/hapcaller.recal.combined.annot.gnomad.vep.filtered.annovar.vcf.hg19_multianno.vcf.gz; Input files updated by another job: VCF/hapcaller.recal.combined.annot.gnomad.vep.filtered.annovar.vcf.hg19_multianno.vcf
+    wildcards: base=VCF/hapcaller.recal.combined.annot.gnomad.vep.filtered.annovar.vcf.hg19_multianno
+
+bgzip -f VCF/hapcaller.recal.combined.annot.gnomad.vep.filtered.annovar.vcf.hg19_multianno.vcf
+Submitted job 1 with external jobid 'Your job 4143863 ("snakejob.bgzip.1.sh") has been submitted'.
+[Thu Sep 10 12:09:29 2020]
+Finished job 1.
+12 of 26 steps (46%) done
+
+[Thu Sep 10 12:09:29 2020]
+rule tabix:
+    input: VCF/hapcaller.recal.combined.annot.gnomad.vep.filtered.annovar.vcf.hg19_multianno.vcf.gz
+    output: VCF/hapcaller.recal.combined.annot.gnomad.vep.filtered.annovar.vcf.hg19_multianno.vcf.gz.tbi
+    jobid: 2
+    reason: Missing output files: VCF/hapcaller.recal.combined.annot.gnomad.vep.filtered.annovar.vcf.hg19_multianno.vcf.gz.tbi; Input files updated by another job: VCF/hapcaller.recal.combined.annot.gnomad.vep.filtered.annovar.vcf.hg19_multianno.vcf.gz
+    wildcards: base=VCF/hapcaller.recal.combined.annot.gnomad.vep.filtered.annovar.vcf.hg19_multianno.vcf.gz
+
+tabix -f -p vcf VCF/hapcaller.recal.combined.annot.gnomad.vep.filtered.annovar.vcf.hg19_multianno.vcf.gz
+Submitted job 2 with external jobid 'Your job 4143865 ("snakejob.tabix.2.sh") has been submitted'.
+
+[Thu Sep 10 12:09:29 2020]
+rule annotINTERVAR:
+    input: VCF/hapcaller.recal.combined.annot.gnomad.vep.filtered.annovar.vcf.hg19_multianno.vcf.gz, /sandbox/users/mguillout/tools/annovar, /sandbox/users/mguillout/tools/annovar/humandb, /sandbox/users/mguillout/tools/InterVar-master
+    output: CSV/res_intervar.Sample1.hg19_multianno.txt.intervar
+    jobid: 43
+    reason: Missing output files: CSV/res_intervar.Sample1.hg19_multianno.txt.intervar; Input files updated by another job: VCF/hapcaller.recal.combined.annot.gnomad.vep.filtered.annovar.vcf.hg19_multianno.vcf.gz
+    wildcards: sample=Sample1
+
+python /sandbox/users/mguillout/tools/InterVar-master/Intervar.py 		-i VCF/hapcaller.recal.combined.annot.gnomad.vep.filtered.annovar.vcf.hg19_multianno.vcf.gz 		-o CSV/res_intervar 		--buildver hg19 		--input_type VCF_m 		--database_intervar /sandbox/users/mguillout/tools/InterVar-master/intervardb 		--config=/sandbox/users/mguillout/tools/InterVar-master/config.ini 		--convert2annovar /sandbox/users/mguillout/tools/annovar/convert2annovar.pl 		--table_annovar /sandbox/users/mguillout/tools/annovar/table_annovar.pl 		--annotate_variation /sandbox/users/mguillout/tools/annovar/annotate_variation.pl 		--database_locat /sandbox/users/mguillout/tools/annovar/humandb
+Submitted job 43 with external jobid 'Your job 4143866 ("snakejob.annotINTERVAR.43.sh") has been submitted'.
+
+[Thu Sep 10 12:09:29 2020]
+rule annotINTERVAR:
+    input: VCF/hapcaller.recal.combined.annot.gnomad.vep.filtered.annovar.vcf.hg19_multianno.vcf.gz, /sandbox/users/mguillout/tools/annovar, /sandbox/users/mguillout/tools/annovar/humandb, /sandbox/users/mguillout/tools/InterVar-master
+    output: CSV/res_intervar.Sample10.hg19_multianno.txt.intervar
+    jobid: 39
+    reason: Missing output files: CSV/res_intervar.Sample10.hg19_multianno.txt.intervar; Input files updated by another job: VCF/hapcaller.recal.combined.annot.gnomad.vep.filtered.annovar.vcf.hg19_multianno.vcf.gz
+    wildcards: sample=Sample10
+
+python /sandbox/users/mguillout/tools/InterVar-master/Intervar.py 		-i VCF/hapcaller.recal.combined.annot.gnomad.vep.filtered.annovar.vcf.hg19_multianno.vcf.gz 		-o CSV/res_intervar 		--buildver hg19 		--input_type VCF_m 		--database_intervar /sandbox/users/mguillout/tools/InterVar-master/intervardb 		--config=/sandbox/users/mguillout/tools/InterVar-master/config.ini 		--convert2annovar /sandbox/users/mguillout/tools/annovar/convert2annovar.pl 		--table_annovar /sandbox/users/mguillout/tools/annovar/table_annovar.pl 		--annotate_variation /sandbox/users/mguillout/tools/annovar/annotate_variation.pl 		--database_locat /sandbox/users/mguillout/tools/annovar/humandb
+Submitted job 39 with external jobid 'Your job 4143867 ("snakejob.annotINTERVAR.39.sh") has been submitted'.
+
+[Thu Sep 10 12:09:29 2020]
+rule annotINTERVAR:
+    input: VCF/hapcaller.recal.combined.annot.gnomad.vep.filtered.annovar.vcf.hg19_multianno.vcf.gz, /sandbox/users/mguillout/tools/annovar, /sandbox/users/mguillout/tools/annovar/humandb, /sandbox/users/mguillout/tools/InterVar-master
+    output: CSV/res_intervar.Sample33.hg19_multianno.txt.intervar
+    jobid: 45
+    reason: Missing output files: CSV/res_intervar.Sample33.hg19_multianno.txt.intervar; Input files updated by another job: VCF/hapcaller.recal.combined.annot.gnomad.vep.filtered.annovar.vcf.hg19_multianno.vcf.gz
+    wildcards: sample=Sample33
+
+python /sandbox/users/mguillout/tools/InterVar-master/Intervar.py 		-i VCF/hapcaller.recal.combined.annot.gnomad.vep.filtered.annovar.vcf.hg19_multianno.vcf.gz 		-o CSV/res_intervar 		--buildver hg19 		--input_type VCF_m 		--database_intervar /sandbox/users/mguillout/tools/InterVar-master/intervardb 		--config=/sandbox/users/mguillout/tools/InterVar-master/config.ini 		--convert2annovar /sandbox/users/mguillout/tools/annovar/convert2annovar.pl 		--table_annovar /sandbox/users/mguillout/tools/annovar/table_annovar.pl 		--annotate_variation /sandbox/users/mguillout/tools/annovar/annotate_variation.pl 		--database_locat /sandbox/users/mguillout/tools/annovar/humandb
+Submitted job 45 with external jobid 'Your job 4143868 ("snakejob.annotINTERVAR.45.sh") has been submitted'.
+
+[Thu Sep 10 12:09:29 2020]
+rule annotINTERVAR:
+    input: VCF/hapcaller.recal.combined.annot.gnomad.vep.filtered.annovar.vcf.hg19_multianno.vcf.gz, /sandbox/users/mguillout/tools/annovar, /sandbox/users/mguillout/tools/annovar/humandb, /sandbox/users/mguillout/tools/InterVar-master
+    output: CSV/res_intervar.Sample29.hg19_multianno.txt.intervar
+    jobid: 42
+    reason: Missing output files: CSV/res_intervar.Sample29.hg19_multianno.txt.intervar; Input files updated by another job: VCF/hapcaller.recal.combined.annot.gnomad.vep.filtered.annovar.vcf.hg19_multianno.vcf.gz
+    wildcards: sample=Sample29
+
+python /sandbox/users/mguillout/tools/InterVar-master/Intervar.py 		-i VCF/hapcaller.recal.combined.annot.gnomad.vep.filtered.annovar.vcf.hg19_multianno.vcf.gz 		-o CSV/res_intervar 		--buildver hg19 		--input_type VCF_m 		--database_intervar /sandbox/users/mguillout/tools/InterVar-master/intervardb 		--config=/sandbox/users/mguillout/tools/InterVar-master/config.ini 		--convert2annovar /sandbox/users/mguillout/tools/annovar/convert2annovar.pl 		--table_annovar /sandbox/users/mguillout/tools/annovar/table_annovar.pl 		--annotate_variation /sandbox/users/mguillout/tools/annovar/annotate_variation.pl 		--database_locat /sandbox/users/mguillout/tools/annovar/humandb
+Submitted job 42 with external jobid 'Your job 4143869 ("snakejob.annotINTERVAR.42.sh") has been submitted'.
+
+[Thu Sep 10 12:09:29 2020]
+rule annotINTERVAR:
+    input: VCF/hapcaller.recal.combined.annot.gnomad.vep.filtered.annovar.vcf.hg19_multianno.vcf.gz, /sandbox/users/mguillout/tools/annovar, /sandbox/users/mguillout/tools/annovar/humandb, /sandbox/users/mguillout/tools/InterVar-master
+    output: CSV/res_intervar.Sample32.hg19_multianno.txt.intervar
+    jobid: 44
+    reason: Missing output files: CSV/res_intervar.Sample32.hg19_multianno.txt.intervar; Input files updated by another job: VCF/hapcaller.recal.combined.annot.gnomad.vep.filtered.annovar.vcf.hg19_multianno.vcf.gz
+    wildcards: sample=Sample32
+
+python /sandbox/users/mguillout/tools/InterVar-master/Intervar.py 		-i VCF/hapcaller.recal.combined.annot.gnomad.vep.filtered.annovar.vcf.hg19_multianno.vcf.gz 		-o CSV/res_intervar 		--buildver hg19 		--input_type VCF_m 		--database_intervar /sandbox/users/mguillout/tools/InterVar-master/intervardb 		--config=/sandbox/users/mguillout/tools/InterVar-master/config.ini 		--convert2annovar /sandbox/users/mguillout/tools/annovar/convert2annovar.pl 		--table_annovar /sandbox/users/mguillout/tools/annovar/table_annovar.pl 		--annotate_variation /sandbox/users/mguillout/tools/annovar/annotate_variation.pl 		--database_locat /sandbox/users/mguillout/tools/annovar/humandb
+Submitted job 44 with external jobid 'Your job 4143870 ("snakejob.annotINTERVAR.44.sh") has been submitted'.
+[Thu Sep 10 12:09:39 2020]
+Finished job 2.
+13 of 26 steps (50%) done
+[Thu Sep 10 12:12:29 2020]
+Finished job 70.
+14 of 26 steps (54%) done
+
+[Thu Sep 10 12:12:29 2020]
+rule gunzipCADD:
+    input: CSV/cadd.tsv.gz
+    output: CSV/cadd.tsv
+    jobid: 41
+    reason: Missing output files: CSV/cadd.tsv; Input files updated by another job: CSV/cadd.tsv.gz
+
+gunzip CSV/cadd.tsv.gz ;  sed 1d CSV/cadd.tsv -i
+Submitted job 41 with external jobid 'Your job 4143878 ("snakejob.gunzipCADD.41.sh") has been submitted'.
+[Thu Sep 10 12:12:39 2020]
+Finished job 41.
+15 of 26 steps (58%) done
+[Thu Sep 10 12:22:11 2020]
+Finished job 44.
+16 of 26 steps (62%) done
+
+[Thu Sep 10 12:22:11 2020]
+rule merge_fields:
+    input: VCF/hapcaller.recal.combined.annot.gnomad.vep.filtered.annovar.vcf.hg19_multianno.txt, CSV/res_intervar.Sample32.hg19_multianno.txt.intervar, CSV/gnomad_vep.tsv, CSV/cadd.tsv
+    output: CSV/individual_results_Sample32.tsv
+    jobid: 6
+    reason: Missing output files: CSV/individual_results_Sample32.tsv; Input files updated by another job: CSV/res_intervar.Sample32.hg19_multianno.txt.intervar, CSV/cadd.tsv, VCF/hapcaller.recal.combined.annot.gnomad.vep.filtered.annovar.vcf.hg19_multianno.txt, CSV/gnomad_vep.tsv
+    wildcards: sample=Sample32
+
+Submitted job 6 with external jobid 'Your job 4143886 ("snakejob.merge_fields.6.sh") has been submitted'.

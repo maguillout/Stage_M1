@@ -1,0 +1,3 @@
+KeyError in line 91 of /sandbox/shares/nextcloud/mguillout/files/Application/pipeline/Snakefile:
+'genes_id'
+  File "/sandbox/shares/nextcloud/mguillout/files/Application/pipeline/Snakefile", line 91, in <module>
