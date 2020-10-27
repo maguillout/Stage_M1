@@ -1,0 +1,38 @@
+{% extends 'variantsViz/base.html' %}
+
+{% block content %}
+
+{% if messages %}
+	{% for message in messages %}
+		<div>
+			<strong>{{message|safe}}</strong>
+		</div>
+	{% endfor %}
+
+{% else %}
+
+	<h2>Add genes to database</h2>
+	<p>{{order}}</p>
+
+	<p>The first line should contain one of these three types of identifier
+		<ul>
+			<li>MIM_number</li>
+			<li>Entrez_id</li>
+			<li>Ensembl_id</li>
+		</ul>
+	</p>
+	Additionnal information (name or other identifiers) will automatically be added
+	{{t}}
+	<p>
+		<form method="post" enctype="multipart/form-data">
+				{% csrf_token %}
+				<input type = "file" name="file">
+				<button type="submit"> Upload </button>
+		</form>
+	</p>
+
+{% endif %}
+
+
+
+{% endblock %}

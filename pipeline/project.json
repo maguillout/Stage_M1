@@ -1,5 +1,5 @@
 {
-        "outputDir": "/sandbox/users/mguillout/externalshares/Application/pipeline/test_10",
+        "outputDir": "path/to/the/output/directory",
     "projectName": "pipelineTest",
     "reference":"refName",
     "dbsnp":"dbsnpName",
@@ -21,14 +21,13 @@
                 {
                     "id": "p1",
                     "forward": {
-                        "path": "/sandbox/users/mguillout/fastQ-APHP/P10-BL_S10_L001_R1_001.fastq.gz"
+                        "path": "path/to/forward/reads/of/first/sample"
                     },
                     "reverse": {
-                        "path": "/sandbox/users/mguillout/fastQ-APHP/P10-BL_S10_L001_R2_001.fastq.gz"
+                        "path": "path/to/reverse/reads/of/first/sample"
                     }
                 }
             ]
         }
     ]
 }
-

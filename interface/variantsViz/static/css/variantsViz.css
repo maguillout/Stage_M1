@@ -49,7 +49,9 @@ a{
 /*Texte caché*/
 
 
-
+h5{
+  background-color: #7CD1C0;
+}
 
 /*Tableaux*/
 
@@ -80,8 +82,8 @@ thead {
 /**********************/
 
 label{
-	padding: 10px 10px 10px; /* 3 valeurs */
-	margin-top: 15px;
+	padding: 10px 10px 10px;  
+  margin-top: 15px;
 }
 
 button{
@@ -150,4 +152,3 @@ details[open] summary:after {
 }
 
 
-Context | Request Context

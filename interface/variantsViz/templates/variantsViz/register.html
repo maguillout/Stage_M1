@@ -1,0 +1,11 @@
+{% extends 'variantsViz/base.html' %}
+
+{% block content %}
+
+    {% if messages %}
+        {% for message in messages %}
+          <script>M.toast({html: "{{message}}", classes: 'blue rounded', displayLength:2000});</script>
+        {% endfor %}
+    {% endif %}
+    
+{% endblock %}

@@ -1,7 +1,12 @@
-{% if envoi %}Votre message a bien été envoyé !{% endif %}
+{% extends 'variantsViz/base.html' %}
 
-<form action="{% url "contact" %}" method="post">
-    {% csrf_token %}
-    {{ form.as_p }}
-    <input type="submit" value="Submit" />
+{% block content %}
+
+<form action="" method="POST">
+{% csrf_token %}
+{{form.as_ul}}
+<input type="submit" value="Envoyer"/>
 </form>
+
+
+{% endblock %}

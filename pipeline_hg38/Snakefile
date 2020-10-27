@@ -6,12 +6,6 @@ import shutil
 
 SNAKEFILEDIR = workflow.basedir
 
-
-if(not "par" in config):
-	sys.exit("No params.yml specified !")
-else:
-	configfile: config["par"]
-
 if(not "pro" in config):
 	sys.exit("No project.json specified !")
 else:
@@ -23,9 +17,6 @@ else:
 	configfile: config["ref"]
 
 ## DEFINE GLOBAL VARIABLES
-## have default values but can be modified in references.json file
-## for example, ANNOVAR scripts will be downloaded with git project, but it's possible to use its own annovar databases directories (humandb) if ANNOVAR is already present
-
 PROJECTNAME = config["projectName"]
 DATE = str(datetime.date.today())
 WORKDIR = os.path.abspath(config["outputDir"])
@@ -39,35 +30,35 @@ if(not os.path.exists(os.path.join(WORKDIR,"logs"))):
 
 CAPTURENAME = config["capture"]
 if(not CAPTURENAME or not config["captures"][config["capture"]]["path"]):
-	CAPTURENAME = "Broad.human.exome.b37"
-	CAPTUREDESC = "Broad interval list b37 converted to bed"
-	CAPTUREPATH = "REFERENCES/Broad.human.exome.b37.bed"
+	CAPTURENAME = "MedExome_hg38_empirical_targets"
+	CAPTUREDESC = "MedExome hg38 library capture"
+	CAPTUREPATH = "REFERENCES/MedExome_hg38_empirical_targets.bed"
 else:
 	CAPTUREDESC = config["captures"][config["capture"]]["description"]
 	CAPTUREPATH = config["captures"][config["capture"]]["path"]
 
 #REFNAME = config["reference"]
 if(not config["reference"] or not config["references"][config["reference"]]["path"]):
-	REFPATH = "REFERENCES/human_g1k_v37.fasta"
-	REFDICT = "REFERENCES/human_g1k_v37.dict"
-	REFFAI = "REFERENCES/human_g1k_v37.fasta.fai"
+	REFPATH = "REFERENCES/Homo_sapiens_assembly38.fasta"
+	REFDICT = "REFERENCES/Homo_sapiens_assembly38.dict"
+	REFFAI = "REFERENCES/Homo_sapiens_assembly38.fasta.fai"
 else:
 	REFPATH = config["references"][config["reference"]]["path"]
 	REFDICT = os.path.splitext(config["references"][config["reference"]]["path"])[0]+".dict"
 	REFFAI = config["references"][config["reference"]]["path"]+".fai"
 
 if(not config["onekindels"] or not config["databases"]["onekindels"][config["onekindels"]]):
-	ONEKINDELS = "REFERENCES/1000G_phase1.indels.b37.vcf.gz"
+	ONEKINDELS = "REFERENCES/1000G_phase1.indels.hg38.vcf.gz"
 else:
 	ONEKINDELS = config["databases"]["onekindels"][config["onekindels"]]
 
 if(not config["millsindels"] or not config["databases"]["millsindels"][config["millsindels"]]):
-	MILLSINDELS = "REFERENCES/Mills_and_1000G_gold_standard.indels.b37.vcf.gz"
+	MILLSINDELS = "REFERENCES/Mills_and_1000G_gold_standard.hg38.vcf.gz"
 else:
 	MILLSINDELS = config["databases"]["millsindels"][config["millsindels"]]
 
 if(not config["dbsnp"] or not config["databases"]["dbsnp"][config["dbsnp"]]):
-	DBSNP = "REFERENCES/dbsnp_138.b37.vcf.gz"
+	DBSNP = "REFERENCES/dbsnp_138.hg38.vcf.gz"
 else:
 	DBSNP = config["databases"]["dbsnp"][config["dbsnp"]]
 
@@ -75,28 +66,6 @@ if(not config["gnomad"] or not config["databases"]["gnomad"][config["gnomad"]]):
 	GNOMAD = "REFERENCES/gnomad.exomes.r2.0.1.sites.vcf.gz"
 else:
 	GNOMAD = config["databases"]["gnomad"][config["gnomad"]]
-
-if(not config["annovar"] or not config["tools"]["annovar"][config["annovar"]]):
-        ANNOVAR = "../TOOLS/annovar"
-else:
-        ANNOVAR = config["tools"]["annovar"][config["annovar"]]
-
-if(not config["annovar_db"] or not config["tools"]["annovar_db"][config["annovar_db"]]):
-        ANNOVAR_DATABASES = "../TOOLS/annovar/humandb"
-else:
-        ANNOVAR_DATABASES = config["tools"]["annovar_db"][config["annovar_db"]]
-
-if(not config["cadd"] or not config["tools"]["cadd"][config["cadd"]]):
-        CADD = "../TOOLS/CADD-scripts/CADD.sh"
-else:
-        CADD = config["tools"]["cadd"][config["cadd"]]
-
-if(not config["intervar"] or not config["tools"]["intervar"][config["intervar"]]):
-        INTERVAR = "../TOOLS/InterVar-master"
-else:
-        INTERVAR = config["tools"]["intervar"][config["intervar"]]
-
-
 
 VEPCACHE = config["databases"]["vep"]["cache"]
 if(not VEPCACHE):
@@ -106,10 +75,10 @@ if(not VEPSPECIES):
 	VEPSPECIES = "homo_sapiens_merged"
 VEPASSEMBLY = config["vepassembly"]
 if(not VEPASSEMBLY):
-	VEPASSEMBLY = "GRCh37"
+	VEPASSEMBLY = "GRCh38"
 VEPDBVERSION = config["vepdbversion"]
 if(not VEPDBVERSION):
-	VEPDBVERSION = "86"
+	VEPDBVERSION = "92"
 
 workdir: config["outputDir"]
 
@@ -161,7 +130,9 @@ rule target:
 	input:	
 		"VCF/hapcaller.recal.combined.annot.gnomad.vep.filtered.annovar.vcf.hg19_multianno.vcf.gz",
 		"VCF/hapcaller.recal.combined.annot.gnomad.vep.filtered.annovar.vcf.hg19_multianno.vcf.gz.tbi",
-		expand("CSV/individual_results.tsv", sample=sampleList ),
+		"CSV/res_intervar.hg19_multianno.txt.intervar",
+		"CSV/gnomad_vep.tsv",
+		"CSV/cadd.tsv.gz",
 		expand("Samples/{sample}/QC/{sample}.gatk_doc.{capture}.{suf}", sample=sampleList, capture=bedList, suf=docSuffixList),
 		expand("Samples/{sample}/QC/{sample}.picard_metrics.{suf}", sample=sampleList, suf=picardMetricsList),
 		expand("Samples/{sample}/QC/{sample}.fastqc.{strand}_fastqc.zip", sample=sampleList, strand=strandList)
@@ -190,7 +161,7 @@ rule align:
 	input:	ref = REFPATH,
 		pair = getFastPair,
 		index = REFPATH+".bwt"
-	output:	temp("Samples/{sample}/BAM/{sample}.{pairID}.sam")
+	output:	temp("Samples/{sample}/BAM/{sample}.{pairID}.aligned.sam")
 	shell:	"bwa mem -t 1 -M \
 		-H '@CO\\tProject:{PROJECTNAME} Sample:{wildcards.sample} Date:{DATE} CWD:{WORKDIR} Capture:{{ name : {CAPTURENAME} , description : {CAPTUREDESC} , path : {CAPTUREPATH}}}' \
 		-R '@RG\\tID:{wildcards.sample}\\tLB:{wildcards.sample}\\tSM:{wildcards.sample}\\tPL:Illumina\\tCN:CENTER' \
@@ -199,7 +170,7 @@ rule align:
 ### SORT EACH ALIGNED PAIRS
 rule sort:
 	input:	ref = REFPATH,
-		sam = "Samples/{sample}/BAM/{sample}.{pairID}.sam",
+		sam = "Samples/{sample}/BAM/{sample}.{pairID}.aligned.sam",
 		fai = REFFAI
 	output:	temp("Samples/{sample}/BAM/{sample}.{pairID}.sorted.bam")
 	shell:	"samtools sort --reference {input.ref} -l 9 -@ 1 -O bam -o {output} -T {output}.tmp {input.sam}"
@@ -512,6 +483,7 @@ rule freqGNOMAD:
 	shell:	"gatk -Djava.io.tmpdir={params.tmpdir}\
 		-XX:ParallelGCThreads=3 \
 		-Xmx3g \
+		--annotation Coverage \
 		-T VariantAnnotator \
 		-R {input.ref} \
 		--variant {input.vcf} \
@@ -538,7 +510,6 @@ rule annotVEP:
 	output:	vcf = protected("VCF/hapcaller.recal.combined.annot.gnomad.vep.vcf")
 	params:	
 	shell:	"variant_effect_predictor.pl \
-		--pick_order=canonical \
 		--cache --dir {VEPCACHE} \
 		--dir_plugins /sandbox/users/mguillout/tools/VEP_plugins \
 		--species {VEPSPECIES} \
@@ -557,45 +528,21 @@ rule annotVEP:
 		--quiet \
 		--vcf \
 		--gmaf \
-		--ccds \
-		--canonical \
-		--maf_1kg \
 		--pubmed \
 		--hgvs \
 		--no_stats"
 
-
-if config["genes_list"] != "" :
-
-	### FILTRATION: filter variants from a list of ENSEMBL_id and by Global Allele Frequency
-	rule filtration_freq_and_genes:
-		input:	vcf = "VCF/hapcaller.recal.combined.annot.gnomad.vep.vcf.gz",
-			index = "VCF/hapcaller.recal.combined.annot.gnomad.vep.vcf.gz.tbi",
-		params: thresold = config["seuil_freq"],
-				genes = config["genes_list"],
-				population = config["population"],
-		output:	vcf = protected("VCF/hapcaller.recal.combined.annot.gnomad.vep.filtered.vcf")
-		params:	
-		shell:	"filter_vep.pl \
-			-i {input.vcf} \
-			-o {output.vcf} \
-			-filter '(Gene in {params.genes}) and ({params.population} < {params.thresold} or not {params.population})'"
-else:
-
-	### FILTRATION: filter variants by Global Allele Frequency
-	rule filtration_freq_and_genes:
-		input:	vcf = "VCF/hapcaller.recal.combined.annot.gnomad.vep.vcf.gz",
-			index = "VCF/hapcaller.recal.combined.annot.gnomad.vep.vcf.gz.tbi",
-		params: thresold = config["seuil_freq"],
-			population = config["population"],
-		output:	vcf = protected("VCF/hapcaller.recal.combined.annot.gnomad.vep.filtered.vcf")
-		params:	
-		shell:	"filter_vep.pl \
-			-i {input.vcf} \
-			-o {output.vcf} \
-			-filter '{params.population} < {params.thresold} or not {params.population}'"
-
-
+### FILTRATION: filter from a list of ENSEMBL_id
+rule filtrationVEP:
+	input:	ref = REFPATH,
+		vcf = "VCF/hapcaller.recal.combined.annot.gnomad.vep.vcf.gz",
+		index = "VCF/hapcaller.recal.combined.annot.gnomad.vep.vcf.gz.tbi",
+	output:	vcf = protected("VCF/hapcaller.recal.combined.annot.gnomad.vep.filtered.vcf")
+	params:	
+	shell:	"filter_vep.pl \
+		-i {input.vcf} \
+		-o {output.vcf} \
+		-filter '(Gene is ENSG00000205403 or ENSG00000000971 or ENSG00000117335 or ENSG00000134389 or ENSG00000243649) and (GMAF < 0.1 or not GMAF)'"
 
 ### EXTRACTION: extraction of gnomadFrequencies
 rule extractGNOMAD:
@@ -611,8 +558,9 @@ rule extractGNOMAD:
 		-F POS \
 		-F REF \
 		-F ALT \
+		-F END \
 		-F ID \
-		-GF GT \
+		-F DP \
 		--allowMissingData \
 		-F gnomad.AF_AFR \
 		-F gnomad.AF_ASJ \
@@ -629,109 +577,62 @@ rule extractGNOMADVEP:
 			tsv = "CSV/gnomad_freq.tsv",
 	output:	tsv = "CSV/gnomad_vep.tsv"
 	params:	
-	shell:	"vep-annotation-reporter  {input.vcf} 	Feature HGVSc HGVSp Protein_position Amino_acids Codons CLIN_SIG PUBMED \
+	shell:	"vep-annotation-reporter  {input.vcf} 	Existing_variation Feature EXON INTRON HGVSc HGVSp Protein_position Amino_acids Codons CLIN_SIG PUBMED \
 		-t {input.tsv} \
 		-o {output.tsv} \
 		"
-
-	
+		
 ### CADD Scores
 rule scoreCADD:
 	input:	vcf = "VCF/hapcaller.recal.combined.annot.gnomad.vep.filtered.vcf.gz",
-			cadd_script = CADD,
-	output:	cadd = "CSV/cadd.tsv.gz"
+	output:	tsv = "CSV/cadd.tsv.gz"
 	params:	
-	shell:	" {input.cadd_script} \
-		-o {output.cadd} \
+	shell:	"/sandbox/users/mguillout/tools/CADD-scripts/CADD.sh \
+		-o {output.tsv} \
 		-a \
 		-g GRCh37 \
-		-v v1.6 {input.vcf}"
+		-v v1.6 {input.vcf} "
 
-### CADD Scores: extract tsv file and delete the first line 
-rule gunzipCADD:
-	input:	gz = "CSV/cadd.tsv.gz",
-	output:	tsv = "CSV/cadd.tsv",
-	params:	
-	shell:	"gunzip {input.gz} ;  sed 1d {output.tsv} -i"
 
 ### ANNOTATION AVEC ANNOVAR
 rule annotANNOVAR:
 	input:	vcf = "VCF/hapcaller.recal.combined.annot.gnomad.vep.filtered.vcf.gz",
 		index = "VCF/hapcaller.recal.combined.annot.gnomad.vep.filtered.vcf.gz.tbi",
-		annovar = ANNOVAR,
-		annovar_db = ANNOVAR_DATABASES,
+		databases = "/sandbox/users/mguillout/tools/annovar/humandb/",
 	output:	vcf = protected("VCF/hapcaller.recal.combined.annot.gnomad.vep.filtered.annovar.vcf.hg19_multianno.vcf"),
-		avinput = "VCF/hapcaller.recal.combined.annot.gnomad.vep.filtered.annovar.vcf.avinput",
-		txt = "VCF/hapcaller.recal.combined.annot.gnomad.vep.filtered.annovar.vcf.hg19_multianno.txt",
+		avinput = "VCF/hapcaller.recal.combined.annot.gnomad.vep.filtered.annovar.vcf.avinput"
 	params:
-	shell: "perl {input.annovar}/table_annovar.pl {input.vcf}  \
-		{input.annovar_db}\
+	shell: "perl /sandbox/users/mguillout/tools/annovar/table_annovar.pl {input.vcf}  \
+		{input.databases} \
 		-buildver hg19 \
 		-out VCF/hapcaller.recal.combined.annot.gnomad.vep.filtered.annovar.vcf \
 		-remove \
-		-protocol refGene,knownGene,dgvMerged,gwasCatalog,dbnsfp35a,clinvar_20190305 \
-		-operation gx,g,r,r,f,f \
+		-protocol refGene,knownGene,cytoBand,dgvMerged,gwasCatalog,dbnsfp35a,gnomad211_exome,clinvar_20190305 \
+		-operation gx,g,r,r,r,f,f,f \
 		-nastring . \
 		-polish \
 		-otherinfo \
-		-xref {input.annovar_db}/hg19_refGene.txt \
+		-xref /sandbox/users/mguillout/tools/annovar/humandb/hg19_refGene.txt \
 		-vcfinput"
 
 ### VARIANTS INTERPRETATION WITH INTERVAR
 rule annotINTERVAR:
 	input:	avinput = "VCF/hapcaller.recal.combined.annot.gnomad.vep.filtered.annovar.vcf.avinput",
-		annovar = ANNOVAR,
-		annovar_db = ANNOVAR_DATABASES,
-		intervar_path= INTERVAR,
+		annot_databases = "/sandbox/users/mguillout/tools/annovar/humandb/",
+		intervar_path= "/sandbox/users/mguillout/tools/InterVar-master",
 	output:	vcf = "CSV/res_intervar.hg19_multianno.txt.intervar"
 	params:
-	shell: "python {input.intervar_path}/Intervar.py \
+	shell: "python {input.intervar_path}/Intervar.py  \
 		-i {input.avinput} \
 		-o CSV/res_intervar \
 		--buildver hg19 \
-		--input_type avinput \
+		--input_type AVinput \
 		--database_intervar {input.intervar_path}/intervardb \
 		--config={input.intervar_path}/config.ini \
-		--convert2annovar {input.annovar}/convert2annovar.pl \
-		--table_annovar {input.annovar}/table_annovar.pl \
-		--annotate_variation {input.annovar}/annotate_variation.pl \
-		--database_locat {input.annovar_db}"
-
-
-# ### VARIANTS INTERPRETATION WITH INTERVAR
-# ### creates an intervar file for each sample
-# ### but problems with merge_fields rule : (for using {sample} in "merging_tsv_files.py")
-# rule annotINTERVAR:
-# 	input:	avinput = "VCF/hapcaller.recal.combined.annot.gnomad.vep.filtered.annovar.vcf.hg19_multianno.vcf.gz",
-# 		annovar = ANNOVAR,
-# 		annovar_db = ANNOVAR_DATABASES,
-# 		intervar_path= INTERVAR,
-# 	output:	intervar = "CSV/res_intervar.hg19_multianno_{Sample}.txt.intervar"
-# 	params:
-# 	shell: "python {input.intervar_path}/Intervar.py \
-# 		-i {input.avinput} \
-# 		-o CSV/res_intervar\
-# 		--buildver hg19 \
-# 		--input_type VCF_m \
-# 		--database_intervar {input.intervar_path}/intervardb \
-# 		--config={input.intervar_path}/config.ini \
-# 		--convert2annovar {input.annovar}/convert2annovar.pl \
-# 		--table_annovar {input.annovar}/table_annovar.pl \
-# 		--annotate_variation {input.annovar}/annotate_variation.pl \
-# 		--database_locat {input.annovar_db}"
-
-### Merge of the four csv/tsv files
-rule merge_fields:
-        input :
-                annovar = "VCF/hapcaller.recal.combined.annot.gnomad.vep.filtered.annovar.vcf.hg19_multianno.txt",
-                intervar = "CSV/res_intervar.hg19_multianno.txt.intervar",
-                gnomad_vep = "CSV/gnomad_vep.tsv",
-                cadd = "CSV/cadd.tsv",
-        params : genes = config["genes_list"],
-        output : main_results = "CSV/individual_results.tsv"
-        script:
-                "merging_tsv_files.py"
-
+		--convert2annovar {input.intervar_path}/convert2annovar.pl \
+		--table_annovar {input.intervar_path}/table_annovar.pl \
+		--annotate_variation {input.intervar_path}/annotate_variation.pl \
+		--database_locat {input.annot_databases}"
 
 ### DEPTH OF COVERAGE
 rule depthOfCoverage:
@@ -794,51 +695,48 @@ rule makeAutosomesBed:
 	output:	"BED/autosomes.bed"
 	shell:	"awk -F '	' '(int($1)>0)' {input} > {output}"
 
-
-### The following rules will be executed only at first time	or if the REFERENCES directory is modified
-
-### DOWNLOAD DBSNP IF NOT SPECIFIED
+## DOWNLOAD DBSNP IF NOT SPECIFIED
 rule downloadDBSNP:
-	output:	vcf = "REFERENCES/dbsnp_138.b37.vcf.gz",
-		tbi = "REFERENCES/dbsnp_138.b37.vcf.gz.tbi"
-	shell:	"""
-		wget -q --retry-connrefused --user=gsapubftp-anonymous "ftp://gsapubftp-anonymous@ftp.broadinstitute.org/bundle/b37/dbsnp_138.b37.vcf.gz" -O - | gunzip -c | bgzip > {output.vcf}
-		tabix -f -p vcf {output.vcf}
-		"""
+        output: vcf = "REFERENCES/dbsnp_138.hg38.vcf.gz",
+                tbi = "REFERENCES/dbsnp_138.hg38.vcf.gz.tbi"
+        shell:  """
+                wget -q --retry-connrefused --user=gsapubftp-anonymous "ftp://gsapubftp-anonymous@ftp.broadinstitute.org/bundle/hg38/dbsnp_138.hg38.vcf.gz" -O - | gunzip -c | bgzip > {output.vcf}
+                tabix -f -p vcf {output.vcf}
+                """
 
 ### DOWNLOAD MILLS INDELS IF NOT SPECIFIED
 rule downloadMillsIndels:
-	output:	vcf = "REFERENCES/Mills_and_1000G_gold_standard.indels.b37.vcf.gz",
-		tbi = "REFERENCES/Mills_and_1000G_gold_standard.indels.b37.vcf.gz.tbi"
-	shell:	"""
-		wget -q --retry-connrefused --user=gsapubftp-anonymous "ftp://gsapubftp-anonymous@ftp.broadinstitute.org/bundle/b37/Mills_and_1000G_gold_standard.indels.b37.vcf.gz" -O - | gunzip -c | bgzip > {output.vcf}
-		tabix -f -p vcf {output.vcf}
-		"""
+        output: vcf = "REFERENCES/Mills_and_1000G_gold_standard.hg38.vcf.gz",
+                tbi = "REFERENCES/Mills_and_1000G_gold_standard.hg38.vcf.gz.tbi"
+        shell:  """
+                wget -q --retry-connrefused --user=gsapubftp-anonymous "ftp://gsapubftp-anonymous@ftp.broadinstitute.org/bundle/hg38/Mills_and_1000G_gold_standard.indels.hg38.vcf.gz" -O - | gunzip -c | bgzip > {output.vcf}
+                tabix -f -p vcf {output.vcf}
+                """
 
 ### DOWNLOAD 1K INDELS IF NOT SPECIFIED
 rule downloadOneKIndels:
-	output:	vcf = "REFERENCES/1000G_phase1.indels.b37.vcf.gz",
-		tbi = "REFERENCES/1000G_phase1.indels.b37.vcf.gz.tbi"
-	shell:	"""
-		wget -q --retry-connrefused --user=gsapubftp-anonymous "ftp://gsapubftp-anonymous@ftp.broadinstitute.org/bundle/b37/1000G_phase1.indels.b37.vcf.gz" -O - | gunzip -c | bgzip > {output.vcf}
-		tabix -f -p vcf {output.vcf}
-		"""
+        output: vcf = "REFERENCES/1000G_phase1.indels.hg38.vcf.gz",
+                tbi = "REFERENCES/1000G_phase1.indels.hg38.vcf.gz.tbi"
+        shell:  """
+                wget -q --retry-connrefused --user=gsapubftp-anonymous "ftp://gsapubftp-anonymous@ftp.broadinstitute.org/bundle/hg38/1000G_phase1.snps.high_confidence.hg38.vcf.gz" -O - | gunzip -c | bgzip > {output.vcf}
+                tabix -f -p vcf {output.vcf}
+                """
 
 ### DOWNLOAD GNOMAD IF NOT SPECIFIED
 rule downloadGnomAD:
-	output:	vcf = "REFERENCES/gnomad.exomes.r2.0.1.sites.vcf.gz",
-		tbi = "REFERENCES/gnomad.exomes.r2.0.1.sites.vcf.gz.tbi"
-	shell:	"""
-		wget -q --retry-connrefused "https://storage.googleapis.com/gnomad-public/release/2.0.1/vcf/exomes/gnomad.exomes.r2.0.1.sites.vcf.gz" -O {output.vcf}
-		tabix -f -p vcf {output.vcf}
-		"""
+        output: vcf = "REFERENCES/gnomad.exomes.r2.0.1.sites.vcf.gz",
+                tbi = "REFERENCES/gnomad.exomes.r2.0.1.sites.vcf.gz.tbi"
+        shell:  """
+                wget -q --retry-connrefused "https://storage.googleapis.com/gnomad-public/release/2.0.1/vcf/exomes/gnomad.exomes.r2.0.1.sites.vcf.gz" -O {output.vcf}
+                tabix -f -p vcf {output.vcf}
+                """
 
 ### DOWNLOAD CAPTURE IF NOT SPECIFIED
 rule downloadExomeBed:
-	output:	bed = "REFERENCES/Broad.human.exome.b37.bed"
-	params: interval = "REFERENCES/Broad.human.exome.b37.interval_list.gz"
+	output:	bed = "REFERENCES/MedExome_hg38_empirical_targets.bed"
+	params: interval = "REFERENCES/MedExome_hg38_empirical_targets.interval_list.gz"
 	shell:	"""
-		wget -q --retry-connrefused --user=gsapubftp-anonymous "ftp://gsapubftp-anonymous@ftp.broadinstitute.org/bundle/b37/Broad.human.exome.b37.interval_list.gz" -O {params.interval}
+		"wget https://sequencing.roche.com/content/dam/rochesequence/worldwide/shared-designs/MedExome_design_files.zip" -O {params.interval}
 		gunzip -c {params.interval} | grep -v "^@" | cut -f1-3 | awk '{{print $1"\t"$2-1"\t"$3}}' > {output.bed}
 		"""
 
@@ -858,10 +756,15 @@ rule convertVEPcache:
 
 ### DOWNLOAD GENOME IF NOT SPECIFIED
 rule downloadGenome:
-	output:	fasta = "REFERENCES/human_g1k_v37.fasta.gz"
-	shell:	"""
-		wget -q --retry-connrefused --user=gsapubftp-anonymous "ftp://gsapubftp-anonymous@ftp.broadinstitute.org/bundle/b37/human_g1k_v37.fasta.gz" -O {output.fasta}
-		"""
+        output: fasta = "REFERENCES/Homo_sapiens_assembly38.fasta.gz",
+                fai = "REFERENCES/Homo_sapiens_assembly38.fasta.fai",
+                dict = "REFERENCES/Homo_sapiens_assembly38.dict"
+        shell:  """
+                wget -q --retry-connrefused --user=gsapubftp-anonymous "ftp://gsapubftp-anonymous@ftp.broadinstitute.org/bundle/hg38/Homo_sapiens_assembly38.fasta.gz" -O {output.fasta}
+                wget -q --retry-connrefused --user=gsapubftp-anonymous "ftp://gsapubftp-anonymous@ftp.broadinstitute.org/bundle/hg38/Homo_sapiens_assembly38.fasta.fai" -O {output.fai}
+                wget -q --retry-connrefused --user=gsapubftp-anonymous "ftp://gsapubftp-anonymous@ftp.broadinstitute.org/bundle/hg38/Homo_sapiens_assembly38.dict" -O {output.dict}
+                """
+
 
 ### DOWNLOAS GATK IF NOT PRESENT IN ENVIRONMENT
 rule downloadGATK:
@@ -875,104 +778,6 @@ rule downloadGATK:
 				shell("gatk-register GenomeAnalysisTK-3.7.tar.bz2")
 				shell("rm GenomeAnalysisTK-3.7.tar.bz2")
 		shell("rm gatk.err")
-
-
-### DOWNLOAD mim2gene.txt IF NOT SPECIFIED
-rule download_mim2gene:
-	output:	
-		txt = config["intervar"]"/intervardb/mim2gene.txt"
-	shell:	"""
-		wget https://www.omim.org/static/omim/data/mim2gene.txt -O {output.txt}
-		"""
-
-####### DOWNLOAD ANNOVAR DATABASES IF NOT PRESENT IN ANNOVAR_DATABASES DIRECTORY
-rule download_dgvMerged:
-	input :
-			annovar = ANNOVAR,
-			annovar_db = ANNOVAR_DATABASES,
-	output:	txt = config["annovar_db"]"/hg19_dgvMerged.txt"
-	shell:	"""
-		perl {input.annovar}/annotate_variation.pl -build hg19 -downdb dgvMerged {input.annovar_db}
-		"""
-
-####### DOWNLOAD ANNOVAR DATABASES IF NOT PRESENT IN ANNOVAR_DATABASES DIRECTORY
-rule download_gwasCatalog:
-	input :
-			annovar = ANNOVAR,
-			annovar_db = ANNOVAR_DATABASES,
-	output:	txt = config["annovar_db"]"/hg19_gwasCatalog.txt"
-	shell:	"""
-		perl {input.annovar}/annotate_variation.pl -build hg19 -downdb gwasCatalog {input.annovar_db}/ 
-		"""
-
-
-### DOWNLOAD ANNOVAR DATABASES IF NOT PRESENT IN ANNOVAR_DATABASES DIRECTORY
-rule download_dbnsfp35a:
-	input :
-			annovar = ANNOVAR,
-			annovar_db = ANNOVAR_DATABASES,
-	output:	txt = config["annovar_db"]"/hg19_dbnsfp35a.txt"
-	shell:	"""
-		perl {input.annovar}/annotate_variation.pl -build hg19 -downdb -webfrom annovar dbnsfp35a {input.annovar_db}/ 
-		"""
-
-
-### DOWNLOAD ANNOVAR DATABASES IF NOT PRESENT IN ANNOVAR_DATABASES DIRECTORY
-rule download_clinvar_20200316:
-	input :
-			annovar = ANNOVAR,
-			annovar_db = ANNOVAR_DATABASES,
-	output:	txt = config["annovar_db"]"/hg19_clinvar_20190305.txt"
-	shell:	"""
-		perl {input.annovar}/annotate_variation.pl -build hg19 -downdb -webfrom annovar clinvar_20200316 {input.annovar_db}/
-
-		"""
-
-### DOWNLOAD ANNOVAR DATABASES IF NOT PRESENT IN ANNOVAR_DATABASES DIRECTORY
-rule download_gnomad211_exome:
-	input :
-			annovar = ANNOVAR,
-			annovar_db = ANNOVAR_DATABASES,
-	output:	txt = config["annovar_db"]"/hg19_gnomad211_exome.txt"
-	shell:	"""
-		perl {input.annovar}/annotate_variation.pl -build hg19 -downdb -webfrom annovar gnomad211_exome {input.annovar_db}/ 
-		"""
-
-
-### DOWNLOAD ANNOVAR DATABASES IF NOT PRESENT IN ANNOVAR_DATABASES DIRECTORY
-rule download_hg19_seq:
-	input :
-			annovar = ANNOVAR,
-			annovar_db = ANNOVAR_DATABASES,
-	output:	txt = config["annovar_db"]"/hg19_seq"
-	shell:	"""
-		perl {input.annovar}/annotate_variation.pl -build hg19 -downdb seq {input.annovar_db}/hg19_seq
-		"""
-
-### DOWNLOAD ANNOVAR DATABASES IF NOT PRESENT IN ANNOVAR_DATABASES DIRECTORY
-rule download_knownGene:
-	input :
-			annovar = ANNOVAR,
-			annovar_db = ANNOVAR_DATABASES,
-	output:	txt = config["annovar_db"]"/hg19_knownGeneMrna.fa"
-	shell:	"""
-		perl {input.annovar}/retrieve_seq_from_fasta.pl {input.annovar_db}/hg19_knownGene.txt -seqdir {input.annovar_db}/hg19_seq -format knownGene -outfile {input.annovar_db}/hg19_knownGeneMrna.fa; \
-		perl {input.annovar}/annotate_variation.pl -build hg19 -downdb -webfrom annovar knownGene {input.annovar_db}/
-		"""
-
-
-### DOWNLOAD CADD DATABASES AND REFERENCES IF NOT PRESENT IN CADD ANNOTATIONS DIRECTORY
-rule download_CADD_ref:
-	input :
-			CADD = CADD,
-	output:	GRCH37 = config["cadd"]"/data/annotations/annotationsGRCh37_v1.6.tar.gz"
-	shell:	"""
-		wget -c {input.CADD}/data/annotations http://krishna.gs.washington.edu/download/CADD/v1.6/annotationsGRCh37_v1.6.tar.gz
-		tar -zxvf {input.CADD}/data/annotations/annotationsGRCh37_v1.6.tar.gz
-		"""
-
-
-
 
 ### HELPER RULES
 rule tabix:
@@ -1011,3 +816,5 @@ rule unzipGenome:
 
 
 
+
+/bin/bash: q : commande introuvable
