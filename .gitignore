@@ -1,9 +1,8 @@
-pipeline/Brouillon
-interface/*.pyc
-interface/.vscode
-interface/__pycache__
-interface/myvenv
-interface/db.sqlite3
-interface/static
-interface/.DS_Store
+*.pyc
+*~
+/.vscode
+__pycache__
+db.sqlite3
+/static
+.DS_Store
 
