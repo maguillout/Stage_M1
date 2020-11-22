@@ -9,4 +9,7 @@ Le script _download_references_hg38.sh_ contient les commandes pour télécharge
 - base de données VEP
 - genome hg38
 
-    -> il faudrait aussi installer la version hg38 pour CADD avec pipeline/TOOLS/CADD-scripts/install.sh
+    -> il faudrait aussi installer la version hg38 pour CADD avec 
+    ```
+    pipeline/TOOLS/CADD-scripts/install.sh
+    ```
