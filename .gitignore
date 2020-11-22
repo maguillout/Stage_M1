@@ -5,4 +5,8 @@ __pycache__
 db.sqlite3
 /static
 .DS_Store
-
+.snakemake/
+*.fasta
+*.gz
+pipeline/TOOLS/CADD-scripts/data/models/*
+pipeline/TOOLS/annovar/humandb/*

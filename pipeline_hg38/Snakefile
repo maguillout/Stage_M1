@@ -6,6 +6,11 @@ import shutil
 
 SNAKEFILEDIR = workflow.basedir
 
+if(not "par" in config):
+	sys.exit("No params.yml specified !")
+else:
+	configfile: config["par"]
+
 if(not "pro" in config):
 	sys.exit("No project.json specified !")
 else:
@@ -17,6 +22,9 @@ else:
 	configfile: config["ref"]
 
 ## DEFINE GLOBAL VARIABLES
+## have default values but can be modified in references.json file
+## for example, ANNOVAR scripts will be downloaded with git project, but it's possible to use its own annovar databases directories (humandb) if ANNOVAR is already present
+
 PROJECTNAME = config["projectName"]
 DATE = str(datetime.date.today())
 WORKDIR = os.path.abspath(config["outputDir"])
@@ -66,6 +74,26 @@ if(not config["gnomad"] or not config["databases"]["gnomad"][config["gnomad"]]):
 	GNOMAD = "REFERENCES/gnomad.exomes.r2.0.1.sites.vcf.gz"
 else:
 	GNOMAD = config["databases"]["gnomad"][config["gnomad"]]
+
+if(not config["annovar"] or not config["tools"]["annovar"][config["annovar"]]):
+        ANNOVAR = "../TOOLS/annovar"
+else:
+        ANNOVAR = config["tools"]["annovar"][config["annovar"]]
+
+if(not config["annovar_db"] or not config["tools"]["annovar_db"][config["annovar_db"]]):
+        ANNOVAR_DB = "../TOOLS/annovar/humandb"
+else:
+        ANNOVAR_DB = config["tools"]["annovar_db"][config["annovar_db"]]
+
+if(not config["cadd"] or not config["tools"]["cadd"][config["cadd"]]):
+        CADD = "../TOOLS/CADD-scripts/"
+else:
+        CADD = config["tools"]["cadd"][config["cadd"]]
+
+if(not config["intervar"] or not config["tools"]["intervar"][config["intervar"]]):
+        INTERVAR = "../TOOLS/Intervar-master"
+else:
+        INTERVAR = config["tools"]["intervar"][config["intervar"]]	
 
 VEPCACHE = config["databases"]["vep"]["cache"]
 if(not VEPCACHE):
@@ -128,11 +156,9 @@ strandList = ["forward","reverse"]
 ### TARGETS
 rule target:
 	input:	
-		"VCF/hapcaller.recal.combined.annot.gnomad.vep.filtered.annovar.vcf.hg19_multianno.vcf.gz",
-		"VCF/hapcaller.recal.combined.annot.gnomad.vep.filtered.annovar.vcf.hg19_multianno.vcf.gz.tbi",
-		"CSV/res_intervar.hg19_multianno.txt.intervar",
-		"CSV/gnomad_vep.tsv",
-		"CSV/cadd.tsv.gz",
+		"VCF/hapcaller.recal.combined.annot.gnomad.vep.filtered.annovar.vcf.hg38_multianno.vcf.gz",
+		"VCF/hapcaller.recal.combined.annot.gnomad.vep.filtered.annovar.vcf.hg38_multianno.vcf.gz.tbi",
+		expand("CSV/individual_results.tsv", sample=sampleList ),
 		expand("Samples/{sample}/QC/{sample}.gatk_doc.{capture}.{suf}", sample=sampleList, capture=bedList, suf=docSuffixList),
 		expand("Samples/{sample}/QC/{sample}.picard_metrics.{suf}", sample=sampleList, suf=picardMetricsList),
 		expand("Samples/{sample}/QC/{sample}.fastqc.{strand}_fastqc.zip", sample=sampleList, strand=strandList)
@@ -532,17 +558,37 @@ rule annotVEP:
 		--hgvs \
 		--no_stats"
 
-### FILTRATION: filter from a list of ENSEMBL_id
-rule filtrationVEP:
-	input:	ref = REFPATH,
-		vcf = "VCF/hapcaller.recal.combined.annot.gnomad.vep.vcf.gz",
-		index = "VCF/hapcaller.recal.combined.annot.gnomad.vep.vcf.gz.tbi",
-	output:	vcf = protected("VCF/hapcaller.recal.combined.annot.gnomad.vep.filtered.vcf")
-	params:	
-	shell:	"filter_vep.pl \
-		-i {input.vcf} \
-		-o {output.vcf} \
-		-filter '(Gene is ENSG00000205403 or ENSG00000000971 or ENSG00000117335 or ENSG00000134389 or ENSG00000243649) and (GMAF < 0.1 or not GMAF)'"
+
+if config["genes_list"] != "" :
+
+	### FILTRATION: filter variants from a list of ENSEMBL_id and by Global Allele Frequency
+	rule filtration_freq_and_genes:
+		input:	vcf = "VCF/hapcaller.recal.combined.annot.gnomad.vep.vcf.gz",
+			index = "VCF/hapcaller.recal.combined.annot.gnomad.vep.vcf.gz.tbi",
+		params: thresold = config["seuil_freq"],
+				genes = config["genes_list"],
+				population = config["population"],
+		output:	vcf = protected("VCF/hapcaller.recal.combined.annot.gnomad.vep.filtered.vcf")
+		params:	
+		shell:	"filter_vep.pl \
+			-i {input.vcf} \
+			-o {output.vcf} \
+			-filter '(Gene in {params.genes}) and ({params.population} < {params.thresold} or not {params.population})'"
+else:
+
+	### FILTRATION: filter variants by Global Allele Frequency
+	rule filtration_freq_and_genes:
+		input:	vcf = "VCF/hapcaller.recal.combined.annot.gnomad.vep.vcf.gz",
+			index = "VCF/hapcaller.recal.combined.annot.gnomad.vep.vcf.gz.tbi",
+		params: thresold = config["seuil_freq"],
+			population = config["population"],
+		output:	vcf = protected("VCF/hapcaller.recal.combined.annot.gnomad.vep.filtered.vcf")
+		params:	
+		shell:	"filter_vep.pl \
+			-i {input.vcf} \
+			-o {output.vcf} \
+			-filter '{params.population} < {params.thresold} or not {params.population}'"
+
 
 ### EXTRACTION: extraction of gnomadFrequencies
 rule extractGNOMAD:
@@ -585,54 +631,86 @@ rule extractGNOMADVEP:
 ### CADD Scores
 rule scoreCADD:
 	input:	vcf = "VCF/hapcaller.recal.combined.annot.gnomad.vep.filtered.vcf.gz",
+		cadd_script = CADD+"/CADD.sh",
+		annotations = CADD+"/data/annotations/GRCh38_v1.6/",
 	output:	tsv = "CSV/cadd.tsv.gz"
 	params:	
-	shell:	"/sandbox/users/mguillout/tools/CADD-scripts/CADD.sh \
+	shell:	"{input.cadd_script} \
 		-o {output.tsv} \
 		-a \
-		-g GRCh37 \
+		-g GRCh38 \
 		-v v1.6 {input.vcf} "
+
+### CADD Scores: extract tsv file and delete the first line 
+rule gunzipCADD:
+	input:	gz = "CSV/cadd.tsv.gz",
+	output:	tsv = "CSV/cadd.tsv",
+	params:	
+	shell:	"gunzip {input.gz} ;  sed 1d {output.tsv} -i"
 
 
 ### ANNOTATION AVEC ANNOVAR
 rule annotANNOVAR:
 	input:	vcf = "VCF/hapcaller.recal.combined.annot.gnomad.vep.filtered.vcf.gz",
 		index = "VCF/hapcaller.recal.combined.annot.gnomad.vep.filtered.vcf.gz.tbi",
-		databases = "/sandbox/users/mguillout/tools/annovar/humandb/",
-	output:	vcf = protected("VCF/hapcaller.recal.combined.annot.gnomad.vep.filtered.annovar.vcf.hg19_multianno.vcf"),
-		avinput = "VCF/hapcaller.recal.combined.annot.gnomad.vep.filtered.annovar.vcf.avinput"
+		annovar = ANNOVAR,
+		annovar_db = ANNOVAR_DB,
+		mim2gene = INTERVAR+"/intervardb/mim2gene.txt",
+		dgvMerged = ANNOVAR_DB+"/hg38_dgvMerged.txt",
+		gwasCatalog = ANNOVAR_DB+"/hg38_gwasCatalog.txt",
+		dbnsfp35a = ANNOVAR_DB+"/hg38_dbnsfp35a.txt",
+		clinvar = ANNOVAR_DB+"/hg38_clinvar_20200316.txt",
+		gnomad = ANNOVAR_DB+"/hg38_gnomad30_genome.txt",
+		seq = ANNOVAR_DB+"/hg38_seq.txt",
+		knownGene = ANNOVAR_DB+"/hg38_knownGeneMrna.fa",
+	output:	vcf = protected("VCF/hapcaller.recal.combined.annot.gnomad.vep.filtered.annovar.vcf.hg38_multianno.vcf"),
+		avinput = "VCF/hapcaller.recal.combined.annot.gnomad.vep.filtered.annovar.vcf.avinput",
+		txt = "VCF/hapcaller.recal.combined.annot.gnomad.vep.filtered.annovar.vcf.hg38_multianno.txt",
 	params:
-	shell: "perl /sandbox/users/mguillout/tools/annovar/table_annovar.pl {input.vcf}  \
-		{input.databases} \
-		-buildver hg19 \
+	shell: "perl {input.annovar}/table_annovar.pl {input.vcf}  \
+		{input.annovar_db} \
+		-buildver hg38 \
 		-out VCF/hapcaller.recal.combined.annot.gnomad.vep.filtered.annovar.vcf \
 		-remove \
-		-protocol refGene,knownGene,cytoBand,dgvMerged,gwasCatalog,dbnsfp35a,gnomad211_exome,clinvar_20190305 \
+		-protocol refGene,knownGene,dgvMerged,gwasCatalog,dbnsfp35a,clinvar_20200316 \
 		-operation gx,g,r,r,r,f,f,f \
 		-nastring . \
 		-polish \
 		-otherinfo \
-		-xref /sandbox/users/mguillout/tools/annovar/humandb/hg19_refGene.txt \
+		-xref {input.annovar_db}/hg38_refGene.txt\
 		-vcfinput"
 
 ### VARIANTS INTERPRETATION WITH INTERVAR
 rule annotINTERVAR:
 	input:	avinput = "VCF/hapcaller.recal.combined.annot.gnomad.vep.filtered.annovar.vcf.avinput",
-		annot_databases = "/sandbox/users/mguillout/tools/annovar/humandb/",
-		intervar_path= "/sandbox/users/mguillout/tools/InterVar-master",
-	output:	vcf = "CSV/res_intervar.hg19_multianno.txt.intervar"
-	params:
+		annovar = ANNOVAR,
+		annovar_db = ANNOVAR_DB,
+		intervar_path= INTERVAR,
+	output:	vcf = "CSV/res_intervar.hg38_multianno.txt.intervar"
 	shell: "python {input.intervar_path}/Intervar.py  \
 		-i {input.avinput} \
 		-o CSV/res_intervar \
-		--buildver hg19 \
+		--buildver hg38 \
 		--input_type AVinput \
 		--database_intervar {input.intervar_path}/intervardb \
 		--config={input.intervar_path}/config.ini \
 		--convert2annovar {input.intervar_path}/convert2annovar.pl \
 		--table_annovar {input.intervar_path}/table_annovar.pl \
 		--annotate_variation {input.intervar_path}/annotate_variation.pl \
-		--database_locat {input.annot_databases}"
+		--database_locat {input.annovar_db}"
+
+### Merge of the four csv/tsv files
+rule merge_fields:
+        input :
+                annovar = "VCF/hapcaller.recal.combined.annot.gnomad.vep.filtered.annovar.vcf.hg38_multianno.txt",
+                intervar = "CSV/res_intervar.hg38_multianno.txt.intervar",
+                gnomad_vep = "CSV/gnomad_vep.tsv",
+                cadd = "CSV/cadd.tsv",
+        params : genes = config["genes_list"],
+        output : main_results = "CSV/individual_results.tsv"
+        script:
+                "merging_tsv_files.py"
+
 
 ### DEPTH OF COVERAGE
 rule depthOfCoverage:
@@ -695,50 +773,7 @@ rule makeAutosomesBed:
 	output:	"BED/autosomes.bed"
 	shell:	"awk -F '	' '(int($1)>0)' {input} > {output}"
 
-## DOWNLOAD DBSNP IF NOT SPECIFIED
-rule downloadDBSNP:
-        output: vcf = "REFERENCES/dbsnp_138.hg38.vcf.gz",
-                tbi = "REFERENCES/dbsnp_138.hg38.vcf.gz.tbi"
-        shell:  """
-                wget -q --retry-connrefused --user=gsapubftp-anonymous "ftp://gsapubftp-anonymous@ftp.broadinstitute.org/bundle/hg38/dbsnp_138.hg38.vcf.gz" -O - | gunzip -c | bgzip > {output.vcf}
-                tabix -f -p vcf {output.vcf}
-                """
 
-### DOWNLOAD MILLS INDELS IF NOT SPECIFIED
-rule downloadMillsIndels:
-        output: vcf = "REFERENCES/Mills_and_1000G_gold_standard.hg38.vcf.gz",
-                tbi = "REFERENCES/Mills_and_1000G_gold_standard.hg38.vcf.gz.tbi"
-        shell:  """
-                wget -q --retry-connrefused --user=gsapubftp-anonymous "ftp://gsapubftp-anonymous@ftp.broadinstitute.org/bundle/hg38/Mills_and_1000G_gold_standard.indels.hg38.vcf.gz" -O - | gunzip -c | bgzip > {output.vcf}
-                tabix -f -p vcf {output.vcf}
-                """
-
-### DOWNLOAD 1K INDELS IF NOT SPECIFIED
-rule downloadOneKIndels:
-        output: vcf = "REFERENCES/1000G_phase1.indels.hg38.vcf.gz",
-                tbi = "REFERENCES/1000G_phase1.indels.hg38.vcf.gz.tbi"
-        shell:  """
-                wget -q --retry-connrefused --user=gsapubftp-anonymous "ftp://gsapubftp-anonymous@ftp.broadinstitute.org/bundle/hg38/1000G_phase1.snps.high_confidence.hg38.vcf.gz" -O - | gunzip -c | bgzip > {output.vcf}
-                tabix -f -p vcf {output.vcf}
-                """
-
-### DOWNLOAD GNOMAD IF NOT SPECIFIED
-rule downloadGnomAD:
-        output: vcf = "REFERENCES/gnomad.exomes.r2.0.1.sites.vcf.gz",
-                tbi = "REFERENCES/gnomad.exomes.r2.0.1.sites.vcf.gz.tbi"
-        shell:  """
-                wget -q --retry-connrefused "https://storage.googleapis.com/gnomad-public/release/2.0.1/vcf/exomes/gnomad.exomes.r2.0.1.sites.vcf.gz" -O {output.vcf}
-                tabix -f -p vcf {output.vcf}
-                """
-
-### DOWNLOAD CAPTURE IF NOT SPECIFIED
-rule downloadExomeBed:
-	output:	bed = "REFERENCES/MedExome_hg38_empirical_targets.bed"
-	params: interval = "REFERENCES/MedExome_hg38_empirical_targets.interval_list.gz"
-	shell:	"""
-		"wget https://sequencing.roche.com/content/dam/rochesequence/worldwide/shared-designs/MedExome_design_files.zip" -O {params.interval}
-		gunzip -c {params.interval} | grep -v "^@" | cut -f1-3 | awk '{{print $1"\t"$2-1"\t"$3}}' > {output.bed}
-		"""
 
 ### DOWNLOAD VEP TARBALL
 rule downloadVEPcache:
@@ -779,6 +814,93 @@ rule downloadGATK:
 				shell("rm GenomeAnalysisTK-3.7.tar.bz2")
 		shell("rm gatk.err")
 
+####### DOWNLOAD ANNOVAR DATABASES IF NOT PRESENT IN ANNOVAR_DB DIRECTORY
+rule download_dgvMerged:
+	input :
+			annovar = ANNOVAR,
+			annovar_db = ANNOVAR_DB,
+	output:	txt = ANNOVAR_DB+"/hg38_dgvMerged.txt"
+	shell:	"""
+		perl {input.annovar}/annotate_variation.pl -build hg38 -downdb dgvMerged {input.annovar_db}
+		"""
+
+####### DOWNLOAD ANNOVAR DATABASES IF NOT PRESENT IN ANNOVAR_DB DIRECTORY
+rule download_gwasCatalog:
+	input :
+			annovar = ANNOVAR,
+			annovar_db = ANNOVAR_DB,
+	output:	txt = ANNOVAR_DB+"/hg38_gwasCatalog.txt"
+	shell:	"""
+		perl {input.annovar}/annotate_variation.pl -build hg38 -downdb gwasCatalog {input.annovar_db}/ 
+		"""
+
+
+### DOWNLOAD ANNOVAR DATABASES IF NOT PRESENT IN ANNOVAR_DB DIRECTORY
+rule download_dbnsfp35a:
+	input :
+			annovar = ANNOVAR,
+			annovar_db = ANNOVAR_DB,
+	output:	txt = ANNOVAR_DB+"/hg38_dbnsfp35a.txt"
+	shell:	"""
+		perl {input.annovar}/annotate_variation.pl -build hg38 -downdb -webfrom annovar dbnsfp35a {input.annovar_db}/ 
+		"""
+
+
+### DOWNLOAD ANNOVAR DATABASES IF NOT PRESENT IN ANNOVAR_DB DIRECTORY
+rule download_clinvar_20200316:
+	input :
+			annovar = ANNOVAR,
+			annovar_db = ANNOVAR_DB,
+	output:	txt = ANNOVAR_DB+"/hg38_clinvar_20200316.txt"
+	shell:	"""
+		perl {input.annovar}/annotate_variation.pl -build hg38 -downdb -webfrom annovar clinvar_20200316 {input.annovar_db}/
+
+		"""
+
+### DOWNLOAD ANNOVAR DATABASES IF NOT PRESENT IN ANNOVAR_DB DIRECTORY
+rule download_gnomad30_genome:
+	input :
+			annovar = ANNOVAR,
+			annovar_db = ANNOVAR_DB,
+	output:	txt = ANNOVAR_DB+"/hg38_gnomad30_genome.txt"
+	shell:	"""
+		perl {input.annovar}/annotate_variation.pl -build hg38 -downdb -webfrom annovar gnomad30_genome {input.annovar_db}/ 
+		"""
+
+
+### DOWNLOAD ANNOVAR DATABASES IF NOT PRESENT IN ANNOVAR_DB DIRECTORY
+rule download_hg38_seq:
+	input :
+			annovar = ANNOVAR,
+			annovar_db = ANNOVAR_DB,
+	output:	txt = ANNOVAR_DB+"/hg38_seq.txt"
+	shell:	"""
+		perl {input.annovar}/annotate_variation.pl -build hg38 -downdb seq {input.annovar_db}/hg38_seq
+		"""
+
+### DOWNLOAD ANNOVAR DATABASES IF NOT PRESENT IN ANNOVAR_DB DIRECTORY
+rule download_knownGene:
+	input :
+			annovar = ANNOVAR,
+			annovar_db = ANNOVAR_DB,			
+			hg38_seq = ANNOVAR_DB+"/hg38_seq.txt",
+	output:	txt = ANNOVAR_DB+"/hg38_knownGeneMrna.fa"
+	shell:	"""
+		perl {input.annovar}/retrieve_seq_from_fasta.pl {input.annovar_db}/hg38_knownGene.txt -seqdir {input.annovar_db}/hg38_seq -format knownGene -outfile {input.annovar_db}/hg38_knownGeneMrna.fa; \
+		perl {input.annovar}/annotate_variation.pl -build hg38 -downdb -webfrom annovar knownGene {input.annovar_db}/
+		"""
+
+### DOWNLOAD CADD DATABASES AND REFERENCES IF NOT PRESENT IN CADD ANNOTATIONS DIRECTORY
+rule download_CADD_ref:
+	input :
+			CADD = CADD,
+	output:	GRCH38 = CADD+"/data/annotations/GRCh38_v1.6/"
+	shell:	"""
+		wget -c {input.CADD}/data/annotations http://krishna.gs.washington.edu/download/CADD/v1.6/nnotationsGRCh38_v1.6.tar.gz
+		tar -zxvf {input.CADD}/data/annotations/annotationsGRCh38_v1.6.tar.gz
+		"""
+
+
 ### HELPER RULES
 rule tabix:
 	input:	"{base}"
@@ -817,4 +939,5 @@ rule unzipGenome:
 
 
 
-/bin/bash: q : commande introuvable
+
+

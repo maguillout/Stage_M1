@@ -1,47 +1,45 @@
 {
         "references":{
                 "refName":{
-                        "path":"../REFERENCES/human_g1k_v37.fasta"
+                        "path":"../REFERENCES/Homo_sapiens_assembly38.fasta"
                 }
         },
         "databases":{
                 "dbsnp":{
-                                "dbsnpName":"../REFERENCES/dbsnp_138.b37.vcf.gz"
+                                "dbsnpName":"../REFERENCES/dbsnp_138.hg38.vcf.gz"
                         },
                 "onekindels":{
-                                "onekindelsName":"../REFERENCES/1000G_phase1.indels.b37.vcf.gz"
+                                "onekindelsName":"../REFERENCES/1000G_phase1.indels.hg38.vcf.gz"
                         },
                 "millsindels":{
-                                "millsindesName":"../REFERENCES/Mills_and_1000G_gold_standard.indels.b37.vcf.gz"
+                                "millsindesName":"../REFERENCES/Mills_and_1000G_gold_standard.hg38.vcf.gz"
                         },
                 "gnomad":{
                                 "gnomadName":"../REFERENCES/gnomad.exomes.r2.0.1.sites.vcf.gz"
                         },
                 "vep":{
-                                "cache":"../REFERENCES/VEP"
+                                "cache":"../REFERENCES/VEP/CACHE"
                         }
         },
         "captures": {
                 "captureName":{
                                 "description":"exome capture 1",
-                                "path":"../REFERENCES/Broad.human.exome.b37.bed"
+                                "path":"../REFERENCES/MedExome_hg38_empirical_targets.bed"
                 }
         },
         "tools":{
                 "annovar":{
-                                "annovarName":"../TOOLS/annovar"
+                                "annovarName":"../../pipeline/TOOLS/annovar"
                         },
                 "annovar_db":{
-                                "annovar_db_path":"../TOOLS/annovar/humandb"
+                                "annovar_db_path":"../../pipeline/TOOLS/annovar/humandb"
                         },
                 "cadd":{
-                                "caddName":"../TOOLS/CADD-scripts"
-
+                                "caddName":"../../pipeline/TOOLS/CADD-scripts"
                         },
                 "intervar":{
-                                "intervarName":"../TOOLS/Intervar-master"
+                                "intervarName":"../../pipeline/TOOLS/Intervar-master"
                         }
         }
 }
-
 
