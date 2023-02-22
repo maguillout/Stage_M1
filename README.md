@@ -1,3 +1,8 @@
+Code of my project for my M1 internship at CRTI in 2020, Nantes
+
+The original snakemake pipeline comes from https://gitlab.univ-nantes.fr/bird_pipeline_registry/exome-pipeline
+
+
 Exome analysis
 ==============
 This application comprises an analysis pipeline and a graphical interface
